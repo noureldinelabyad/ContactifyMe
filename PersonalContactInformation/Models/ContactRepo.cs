@@ -8,7 +8,8 @@ namespace PersonalContactInformation.Models  //  repo way of orgnazing the code 
 {
     public  class ContactRepo
     {
-        public static List<Contact> ContactList = new List<Contact>()
+        // DATA List
+        public static List<Contact> ContactList = new List<Contact>() 
         {
 
              new Contact() {Id = 1, Name="John Doe", Email="Doe@doe.com", PhoneNumber = 123456789},
@@ -27,7 +28,7 @@ namespace PersonalContactInformation.Models  //  repo way of orgnazing the code 
 
         };
 
-        //creat method +
+        //creat method 
 
         public static void AddContact (Contact contact)
         {
@@ -47,7 +48,7 @@ namespace PersonalContactInformation.Models  //  repo way of orgnazing the code 
                 ContactList.Add(contact);
                 Shell.Current.DisplayAlert("Succes", "Contact Added Done ", "Ok");
                 //Shell.Current.GoToAsync("..");// pass to the homepage navegating after adding 
-                Shell.Current.GoToAsync($"{ nameof(MainPage)}"); // pass to the homepage navegating after adding - an other method 
+                Shell.Current.GoToAsync($"//{ nameof(MainPage)}"); // pass to the homepage navegating after adding - an other method 
 
 
 
@@ -56,7 +57,7 @@ namespace PersonalContactInformation.Models  //  repo way of orgnazing the code 
         }
 
         //Get Method
-        //read 1 (all) method
+        //read 1 (all) method 
         public static List<Contact> GatAllContacts() => ContactList;
 
 
@@ -78,8 +79,8 @@ namespace PersonalContactInformation.Models  //  repo way of orgnazing the code 
                 result . Email = contact.Email;
                 result . PhoneNumber = contact.PhoneNumber;
                 Shell.Current.DisplayAlert("Succes", "Contact Updated ", "Ok");
-                Shell.Current.GoToAsync("..");// pass to the homepage navegating after updating 
-
+                // Shell.Current.GoToAsync("..");// pass to the homepage navegating after updating 
+                Shell.Current.GoToAsync($"//{nameof(MainPage)}");
 
             }
         }
@@ -95,24 +96,26 @@ namespace PersonalContactInformation.Models  //  repo way of orgnazing the code 
 
                 Shell.Current.DisplayAlert("Succes", "Contact Deleted ", "Ok");
                 //Shell.Current.GoToAsync("..");// pass to the homepage navegating after updating 
+                Shell.Current.GoToAsync($"//{nameof(MainPage)}");
             }
         }
 
-        ////search method 
-        //public static List<Contact> Searchcontacts(string filter)
-        //{
-        //    var contacts = ContactList. Where (x=> !string.IsNullOrWhiteSpace(x.Name) && x.Name.ToLower().Contains (filter.ToLower())).ToList();
-        //   if (contacts == null || contacts.Count <=0)
-        //    contacts = ContactList.Where(x => !string.IsNullOrWhiteSpace(x.Email) && x.Email.ToLower().Contains(filter.ToLower())).ToList();
-
-        //    else return contacts;
+        //search method 
+        public static List<Contact> Searchcontacts(string filter)
+        {
+            var contacts = ContactList.Where(x => !string.IsNullOrWhiteSpace(x.Name) && x.Name.ToLower().Contains(filter.ToLower())).ToList();
             
-        //    if (contacts == null || contacts.Count <=0)
-        //    contacts = ContactList.Where(x => x.PhoneNumber == (filter.ToLower())).ToList();
+            if (contacts == null || contacts.Count <= 0)
+                contacts = ContactList.Where(x => !string.IsNullOrWhiteSpace(x.Email) && x.Email.ToLower().Contains(filter.ToLower())).ToList();
 
-           // else return contacts;
-           
-       // }
+            else return contacts;
+
+            if (contacts == null || contacts.Count <= 0)
+                contacts = ContactList.Where(x => x.PhoneNumber == int .Parse (filter)).ToList();
+
+            else return contacts;
+            return contacts;
+        }
 
 
     }

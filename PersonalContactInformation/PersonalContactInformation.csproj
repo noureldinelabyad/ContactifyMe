@@ -58,6 +58,9 @@
 	  <MauiXaml Update="Views\AddContact.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Controls\ContactControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\EditContact.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

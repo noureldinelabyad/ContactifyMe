@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="PersonalContactInformation.Views.Controls.ContactControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!--  // every Auto for (lable , component, name , phonenumber , Email )  -->
+    <Grid
+        Margin="10"
+        Padding="10"
+        ColumnDefinitions=".60*"
+        RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+        RowSpacing="10">
+
+        <Label
+            Grid.Row="0"
+            FontSize="18"
+            Text="Name" />
+        <Entry x:Name="Entry_Name" Grid.Row="1" />
+
+        <Label
+            Grid.Row="2"
+            FontSize="18"
+            Text="Email" />
+        <Entry x:Name="Entry_Email" Grid.Row="3" />
+
+        <Label
+            Grid.Row="4"
+            FontSize="18"
+            Text="Phone Number" />
+        <Entry x:Name="Entry_PhoneNumber" Grid.Row="5" />
+
+        <Button
+            x:Name="BtnContactSave"
+            Grid.Row="6"
+            Clicked="BtnContactSave_Clicked"
+            Text="Save" />
+
+
+
+
+
+    </Grid>
+
+
+</ContentView>

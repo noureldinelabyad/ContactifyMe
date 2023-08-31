@@ -1,7 +1,6 @@
 ﻿
 using PersonalContactInformation.Views;
 
-using PersonalContactInformation.Views;
 
 namespace PersonalContactInformation
 {
