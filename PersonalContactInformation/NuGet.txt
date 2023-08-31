@@ -1,2 +1,5 @@
-﻿sqlite-net-pcl
-SQLitePCLRaw.bundle_green
+﻿Microsoft.EntityFrameworkCore
+Microsoft.EntityFrameworkCore.Tools
+Microsoft.EntityFrameworkCore.Design
+Microsoft.EntityFrameworkCore.SqlServer
+Microsoft.Extensions.Http
