@@ -9,6 +9,7 @@ namespace PersonalContactInformation
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
