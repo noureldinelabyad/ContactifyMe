@@ -8,79 +8,102 @@
     <Grid
         Margin="10"
         Padding="10"
-        ColumnDefinitions=".70*,.30*"
         ColumnSpacing="5"
-        RowDefinitions=" Auto,100*"     
         RowSpacing="10">
 
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="7*" />
+            <ColumnDefinition Width="3*" />
 
-        
+        </Grid.ColumnDefinitions>
 
-            <SearchBar
-                
-                Grid.Row="0"
-                Grid.Column="0"
-                HorizontalOptions="FillAndExpand"
-                Placeholder="Search..."
-                Margin="10"
-                x:Name="searchBar"
-                TextChanged="searchBar_TextChanged"/>
-        
-
-              <Button
-                Margin="10,10,10,10"
-                Padding="0,10,1,10"
-                BackgroundColor="DarkBlue"
-                HorizontalOptions="End"
-                Text="Search"
-                WidthRequest="80" />
+        <Grid.RowDefinitions Height="Auto">
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="100*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
 
 
 
-              <Button
-               x:Name="BtnAddContact"
-               Grid.Row="0"
-               Grid.Column="1"
-               BackgroundColor="Transparent"
-               BorderWidth="0"
-               Clicked="BtnAddContact_Clicked"
-               HorizontalOptions="End"
-               Text="Add"
-               TextColor="Blue"
-               VerticalOptions="Center"
-               WidthRequest="80" />
-               
+
+        <Button
+            x:Name="BtnSearch"
+            Grid.Row="0"
+            Grid.Column="1"
+            BackgroundColor="Purple"
+            BorderWidth="1"
+            CharacterSpacing="0.2"
+            Clicked="BtnSearch_Clicked"
+            HorizontalOptions="End"
+            Text="Search"
+            VerticalOptions="Center"
+            WidthRequest="80" />
+
+
+
+
+        <Button
+            x:Name="BtnAddContact"
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            BackgroundColor="DarkGreen"
+            BorderWidth="0"
+            CharacterSpacing="0.3"
+            Clicked="BtnAddContact_Clicked"
+            FontSize="Medium"
+            HorizontalOptions="End"
+            Text="Add Contact"
+            TextColor="White"
+            VerticalOptions="Start" />
+
+        <SearchBar
+            x:Name="searchBar"
+            Grid.Row="0"
+            Grid.Column="0"
+            CharacterSpacing="1"
+            FontAttributes="Bold"
+            FontSize="Medium"
+            HorizontalOptions="FillAndExpand"
+            HorizontalTextAlignment="Start"
+            Placeholder="Search..."
+            TextChanged="searchBar_TextChanged" />
+
+
         <ListView
             x:Name="xmalContactList"
             Grid.Row="1"
-            Grid.ColumnSpan="2"
+            Grid.Column="0"
             BackgroundColor="Transparent"
+            HorizontalOptions="FillAndExpand"
             ItemSelected="xmalContactList_ItemSelected"
             ItemTapped="xmalContactList_ItemTapped"
             RowHeight="50"
-            SeparatorColor="Blue">
+            SeparatorColor="Purple">
+
             <ListView.ItemTemplate>
-                
+
                 <DataTemplate>
 
-                    <TextCell Detail="{Binding Email}"  Text="{Binding Path=Name}" >
+                    <TextCell Detail="{Binding Email}" Text="{Binding Nachname}">
 
                         <TextCell.ContextActions>
-                            <MenuItem Text="Delete"
-                                      x:Name="MenueItemDelete"
-                                      IsDestructive="True"
-                                      Clicked="MenueItemDelete_Clicked"
-                                      CommandParameter="{Binding .}"/>
+                            <MenuItem
+                                x:Name="MenueItemDelete"
+                                Clicked="MenueItemDelete_Clicked"
+                                CommandParameter="{Binding .}"
+                                IsDestructive="True"
+                                Text="Delete" />
 
-                            <MenuItem Text="Edit"
-                                      x:Name="MenuItemEdit"
-                                      Clicked="MenuItemEdit_Clicked"
-                                      CommandParameter="{Binding .}"/>
+                            <MenuItem
+                                x:Name="MenuItemEdit"
+                                Clicked="MenuItemEdit_Clicked"
+                                CommandParameter="{Binding .}"
+                                Text="Edit" />
 
                         </TextCell.ContextActions>
-                        
+
                     </TextCell>
 
                 </DataTemplate>

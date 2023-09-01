@@ -1,4 +1,5 @@
 using PersonalContactInformation.Models;
+using System.Diagnostics;
 
 namespace PersonalContactInformation.Views;
 
@@ -13,10 +14,13 @@ public partial class AddContact : ContentPage
     {
 		var newContact = new Models.Contact()
 		{
-			Name = ContactCtrl.Name,
+			Nachname = ContactCtrl.Name,
 			Email = ContactCtrl.Email,
-			PhoneNumber = ContactCtrl.PhoneNumber
-		};
+			Telefonnummer = ContactCtrl.PhoneNumber,
+            Hausnummer = ContactCtrl.Hausnummer,
+            Straﬂe = ContactCtrl.Straﬂe,
+
+        };
 		
 		ContactRepo.AddContact(newContact);
 
