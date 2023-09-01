@@ -28,7 +28,7 @@ namespace PersonalContactInformation.Api.Services
             {
                 appDbContext.People.Add(person);
                 await appDbContext.SaveChangesAsync();
-                return new ServiceResponse() { Message = "Contact already added", Success = true };
+                return new ServiceResponse() { Message = "Contact added", Success = true };
             }
                 return new ServiceResponse() { Message = "Contact already added", Success = false };
         }
