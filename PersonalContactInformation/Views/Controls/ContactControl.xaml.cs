@@ -39,6 +39,7 @@ public partial class ContactControl : ContentView
     private void BtnContactSave_Clicked(object sender, EventArgs e) //submit on this click 
 	{
         OnSave?.Invoke(sender, e);
+
 		
 	}
 

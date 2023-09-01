@@ -34,5 +34,6 @@ public partial class EditContact : ContentPage
 		contact.PhoneNumber = ContactCtrl.PhoneNumber;
 
 		ContactRepo.UpdateContact(contact);
+
     }
 }

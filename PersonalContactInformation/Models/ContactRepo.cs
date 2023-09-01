@@ -30,7 +30,7 @@ namespace PersonalContactInformation.Models  //  repo way of orgnazing the code 
 
         //creat method 
 
-        public static void AddContact (Contact contact)
+        public static async void AddContact (Contact contact)
         {
             if (contact != null)
             {
@@ -39,17 +39,17 @@ namespace PersonalContactInformation.Models  //  repo way of orgnazing the code 
                 if(checkEmail != null) //email found 
                 {
 
-                        Shell.Current.DisplayAlert("Error", "Contact already added", "Ok");
+                       await Shell.Current.DisplayAlert("Error", "Contact already added", "Ok");
                     return;
                 }
 
                 int maxId = ContactList.Max(x => x.Id);
                 contact.Id = maxId + 1;
                 ContactList.Add(contact);
-                Shell.Current.DisplayAlert("Succes", "Contact Added Done ", "Ok");
+               await Shell.Current.DisplayAlert("Succes", "Contact Added Done ", "Ok");
                 //Shell.Current.GoToAsync("..");// pass to the homepage navegating after adding 
-                Shell.Current.GoToAsync($"//{ nameof(MainPage)}"); // pass to the homepage navegating after adding - an other method 
-
+                // await Shell.Current.GoToAsync($"//{ nameof(MainPage)}"); // pass to the homepage navegating after adding - an other method 
+                await Shell.Current.GoToAsync("//MainPage");
 
 
 
@@ -70,7 +70,7 @@ namespace PersonalContactInformation.Models  //  repo way of orgnazing the code 
         }
 
         //Update Method 
-        public static void UpdateContact(Contact contact)
+        public static async void UpdateContact(Contact contact)
         {
             var result = ContactList.FirstOrDefault(x => x.Id == contact.Id); //id set auto so no need to update 
             if (result != null)
@@ -78,25 +78,31 @@ namespace PersonalContactInformation.Models  //  repo way of orgnazing the code 
                 result . Name = contact.Name;
                 result . Email = contact.Email;
                 result . PhoneNumber = contact.PhoneNumber;
-                Shell.Current.DisplayAlert("Succes", "Contact Updated ", "Ok");
-                // Shell.Current.GoToAsync("..");// pass to the homepage navegating after updating 
-                Shell.Current.GoToAsync($"//{nameof(MainPage)}");
+               await Shell.Current.DisplayAlert("Succes", "Contact Updated ", "Ok");
+
+                //Shell.Current.GoToAsync(".."); // pass to the homepage navegating after updating 
+                // Shell.Current.GoToAsync($"//{nameof(MainPage)}");
+                // await Shell.Current.GoToAsync($"//{nameof(MainPage)}");
+                await Shell.Current.GoToAsync("//MainPage");
 
             }
         }
 
 
         //Delete Method 
-        public static void DeletContact(int Id)
+        public static async void DeletContact(int Id)
         {
             var result = ContactList.FirstOrDefault(x => x.Id == Id);
             if (result != null)
             {
                 ContactList.Remove(result);
 
-                Shell.Current.DisplayAlert("Succes", "Contact Deleted ", "Ok");
+               await Shell.Current.DisplayAlert("Succes", "Contact Deleted ", "Ok");
                 //Shell.Current.GoToAsync("..");// pass to the homepage navegating after updating 
-                Shell.Current.GoToAsync($"//{nameof(MainPage)}");
+                // Shell.Current.GoToAsync($"//{nameof(MainPage)}");
+                //await Shell.Current.GoToAsync($"//{nameof(MainPage)}");
+                await Shell.Current.GoToAsync("//MainPage");
+
             }
         }
 
@@ -108,10 +114,10 @@ namespace PersonalContactInformation.Models  //  repo way of orgnazing the code 
             if (contacts == null || contacts.Count <= 0)
                 contacts = ContactList.Where(x => !string.IsNullOrWhiteSpace(x.Email) && x.Email.ToLower().Contains(filter.ToLower())).ToList();
 
-            else return contacts;
+            //else return contacts;
 
-            if (contacts == null || contacts.Count <= 0)
-                contacts = ContactList.Where(x => x.PhoneNumber == int .Parse (filter)).ToList();
+            //if (contacts == null || contacts.Count <= 0)
+               // contacts = ContactList.Where(x => x.PhoneNumber == int .Parse (filter)).ToList();
 
             else return contacts;
             return contacts;
