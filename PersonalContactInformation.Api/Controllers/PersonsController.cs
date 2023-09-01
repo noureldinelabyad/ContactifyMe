@@ -9,11 +9,11 @@ namespace PersonalContactInformation.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PersonController : ControllerBase
+    public class PersonsController : ControllerBase
     {
-        private readonly PersonService personService;
+        private readonly IPersonService personService;
 
-        public PersonController(PersonService personService)
+        public PersonsController(IPersonService personService)
         {
             this.personService = personService;
         }
