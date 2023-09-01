@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PersonalContactInformation.Api.Data;
+using PersonalContactInformation.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection") ?? throw new InvalidOperationException("Database connection string 'DbConnection' is not found"));
 });
+builder.Services.AddScoped<IPersonService, PersonService>();
 
 var app = builder.Build();
 
