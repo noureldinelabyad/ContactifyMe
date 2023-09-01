@@ -9,7 +9,7 @@ public partial class MainPage : ContentPage
 	public MainPage()
 	{
 		InitializeComponent();
-		LoadContacts();
+		//LoadContacts();
 	}
 
     protected override void OnAppearing()
