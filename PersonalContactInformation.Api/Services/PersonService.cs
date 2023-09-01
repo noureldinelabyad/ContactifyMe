@@ -62,7 +62,16 @@ namespace PersonalContactInformation.Api.Services
                 return new ServiceResponse() { Message = "Contact not found", Success = false };
             }
 
-            appDbContext.Update(person);
+            result.Nachname = person.Nachname;
+            result.Vorname = person.Vorname;
+            result.Zwischenname = person.Zwischenname;
+            result.Telefonnummer = person.Telefonnummer;
+            result.EMail = person.EMail;
+            result.Straße = person.Straße;
+            result.Hausnummer = person.Hausnummer;
+            result.PLZ = person.PLZ;
+            result.Stadt = person.Stadt;
+            result.Land = person.Land;
             await appDbContext.SaveChangesAsync();
             return new ServiceResponse() { Message = "Contact updated", Success = true };
         }
