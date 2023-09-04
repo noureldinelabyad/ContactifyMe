@@ -67,7 +67,7 @@ namespace PersonalContactInformation.Api.Services
             result.Zwischenname = person.Zwischenname;
             result.Telefonnummer = person.Telefonnummer;
             result.EMail = person.EMail;
-            result.Straße = person.Straße;
+            result.Strasse = person.Strasse;
             result.Hausnummer = person.Hausnummer;
             result.PLZ = person.PLZ;
             result.Stadt = person.Stadt;
