@@ -1,0 +1,24 @@
+﻿For JSON File export we can probably just take the API-return of the function which gets all elements
+For import we either need to find a way to loop through a list and add the elements through the existing addcontact function or we need to purpose build a complete function
+idea 1:
+PutJson()
+{
+	listFromJsonFile = read(whatever.JSON);
+	lenght = howManyElements(listFromJsonFile);
+	while(i <= length, i++)
+	{
+		contactToBeAdded = getLastEntry(listFromJsonFile);
+		AddContact(contactToBeAdded);
+		deleteLastEntry(listFromJsonFile);
+	}
+	return "all done";
+}
+
+idea 2:
+this would be the same concept as above, but with a AddContact function which does not return a message (might print a "added contact" message for every entry)
+
+idea 3:
+there might also be a function which just adds a list to a sql database
+
+(solved) now working on a query to convert JSON into A SQLTable, having some problems, basically getting either an error message or an empty table
+above has been mitigated, still working on making the query
