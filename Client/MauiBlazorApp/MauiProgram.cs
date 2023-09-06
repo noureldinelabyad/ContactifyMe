@@ -1,5 +1,4 @@
-﻿using MauiBlazorApp.Data;
-using MauiBlazorApp.Services;
+﻿using MauiBlazorApp.Services;
 using Microsoft.Extensions.Logging;
 
 namespace MauiBlazorApp
@@ -24,8 +23,6 @@ namespace MauiBlazorApp
 #endif
 
             builder.Services.AddSingleton<IPersonService, PersonService>();
-
-            builder.Services.AddSingleton<WeatherForecastService>();
 
             return builder.Build();
         }
