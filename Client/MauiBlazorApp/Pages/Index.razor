@@ -1,0 +1,71 @@
+﻿@page "/"
+@using MauiBlazorApp.Services
+@inject IPersonService PersonService;
+
+<h1>Person List</h1>
+
+
+@if (_PersonList == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class= "table">
+            <thead>
+                <tr>
+
+                <th>Vorname</th>
+               <td>Nachname</td>
+               <td>Email</td>
+                <td>Zwischenname</td>
+                 <td>Telefonnummer</td>
+                <td>email</td>
+                <td>Straße</td>
+                <td>Hausnummer</td>
+                <td>PLZ</td>
+                <td>Stadt</td>
+                <td>Land</td>
+@*                res of the list 
+ *@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var person in _PersonList)
+                {
+                    <tr>
+                        <td>@person.Nachname</td>
+                        <td>@person.Vorname</td>
+                        <td>@person.Zwischenname</td>
+                        <td>@person.Telefonnummer</td>
+                        <td>@person.email</td>
+                        <td>@person.Straße</td>
+                        <td>@person.Hausnummer</td>
+                        <td>@person.PLZ</td>
+                        <td>@person.Stadt</td>
+                        <td>@person.Land</td>
+                        <!-- Add other table data here -->
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+}
+
+
+
+@code {
+    List<Models.PersonModel> _PersonList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _PersonList = await PersonService.GetAllPersonsList();
+    }
+
+    
+
+}
+
+
