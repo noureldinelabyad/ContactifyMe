@@ -22,3 +22,8 @@ there might also be a function which just adds a list to a sql database
 
 (solved) now working on a query to convert JSON into A SQLTable, having some problems, basically getting either an error message or an empty table
 above has been mitigated, still working on making the query
+
+almost done
+
+!!!!
+change telnr and hausnr to string make own commit

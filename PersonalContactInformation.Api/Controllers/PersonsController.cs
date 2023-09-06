@@ -25,10 +25,11 @@ namespace PersonalContactInformation.Api.Controllers
         public async Task<ActionResult<Person>> GetPersonByIdAsync(int id)
         {
             var person = await personService.GetPersonByIdAsync(id);
-            if(person == null)
+            if (person == null)
             {
                 return NotFound("Contact not found");
-            } else
+            }
+            else
             {
                 return Ok(person);
             }
@@ -38,7 +39,7 @@ namespace PersonalContactInformation.Api.Controllers
         public async Task<ActionResult<ServiceResponse>> DeletePersonAsync(int id)
         {
             var person = await personService.GetPersonByIdAsync(id);
-            if(person == null)
+            if (person == null)
             {
                 return NotFound("Contact not found");
             }
@@ -63,16 +64,38 @@ namespace PersonalContactInformation.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<ServiceResponse>> AddPersonAsync(Person person)
         {
-            if(person == null)
+            if (person == null)
             {
                 return BadRequest("Bad request");
             }
 
             var result = await personService.AddPersonAsync(person);
-            if(result.Success)
+            if (result.Success)
             {
                 return Ok(result);
-            } else
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [HttpPost("json")]
+        public async Task<ActionResult<ServiceResponse>> AddPersonJSONAsync(IFormFile jsonFile, UpdateStrategy updateStrategy)
+        {
+            if (jsonFile == null)
+            {
+                return BadRequest("Bad request");
+            }
+            var sr = new StreamReader(jsonFile.OpenReadStream());
+            var jsonContent = sr.ReadToEnd();
+
+            var result = await personService.AddPersonJSONAsync(jsonContent, updateStrategy);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
             {
                 return BadRequest(result);
             }

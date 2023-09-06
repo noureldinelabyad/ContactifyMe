@@ -10,5 +10,6 @@ namespace PersonalContactInformation.Api.Services
         Task<ServiceResponse> DeletePersonAsync(int id);
         Task<Person> GetPersonByIdAsync(int id);
         Task<List<Person>> GetPersonsAsync();
+        Task<ServiceResponse> AddPersonJSONAsync(string jsonContent, UpdateStrategy strategy);
     }
 }
