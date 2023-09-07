@@ -27,3 +27,20 @@ almost done
 
 !!!!
 change telnr and hausnr to string make own commit
+(done)
+
+next creating a new table to have the tel.nr. in, since one person can and/or will have more than one number
+the Tel.Nr. table stores a PersonId which corresponds to the given Id in the Person Table
+have to remove the Telefonnummer comlumn from people which likely needs me to remove it from the peolple class, since it seems like that's where sql is taking the columns from
+so either a struct in person class or, which is more likely, a telefonnummer class
+having to modify the adding and updating functions to go into the telnr table and make an entry or update data there
+	considering if adding these numbers should be a seperate api call, basically having the frontend submit all the other data first and then submitting tel numbers one by one
+	this may require some hacky calls
+		addContac(allDataButTelNr) -> wait for database to do its thing -> addTelNr(listOfTelNr, PersonId) -> show addedSuccess if both operations were completed
+		repeat this for updateOverwrite
+		if updateMerge, call addTelNr(singleTel, PersonId)
+		how to edit a certain TelNr, need to have an id for that, how to put id for that into person table
+	need the people table to be able to point at telNr and telNr table to point at person table
+		hau
+	for update i can bulid updateTelNr(oldTelNr, newTelNr, PersonId)
+	we should consider having limit on how many phone numbers a single contact can have, for example if we have 4 max, we might be able to have sql assign ids for data under a certain personId
