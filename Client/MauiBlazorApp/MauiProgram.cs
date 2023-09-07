@@ -1,6 +1,8 @@
 ﻿using MauiBlazorApp.Services;
 using Microsoft.Extensions.Logging;
 
+
+
 namespace MauiBlazorApp
 {
     public static class MauiProgram

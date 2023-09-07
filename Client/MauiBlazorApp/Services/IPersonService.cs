@@ -12,5 +12,7 @@ namespace MauiBlazorApp.Services
     {
 
         Task<List<PersonModel>> GetAllPersonsList();
+
+        Task<MainResponseModel> AddPerson(AddUpdatePersonRequest personRequest);
     }
 }

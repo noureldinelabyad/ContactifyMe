@@ -8,7 +8,7 @@ namespace MauiBlazorApp.Models
 {
     public class MainResponseModel
     {
-        public bool IsSuccess { get; set; }
+        public bool Success { get; set; }
         public string ErrorMessage { get; set; }
         public object Content { get; set; }
     }
