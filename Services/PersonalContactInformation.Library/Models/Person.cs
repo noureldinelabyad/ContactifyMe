@@ -19,5 +19,6 @@ namespace PersonalContactInformation.Library.Models
         public int PLZ { get; set; }
         public string Stadt { get; set; }
         public string Land { get; set;}
+        public string Gender { get; set; }
     }
 }
