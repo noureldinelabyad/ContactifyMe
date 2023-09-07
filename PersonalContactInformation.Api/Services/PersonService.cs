@@ -79,20 +79,20 @@ namespace PersonalContactInformation.Api.Services
         public async Task<ServiceResponse> AddPersonJSONAsync(string jsonContent, UpdateStrategy strategy)
         {
             List<Person> toBeInserted = new List<Person>();                                                              // helper for converting and input
-            toBeInserted = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(jsonContent);                     // formating "raw JSON string"                                                                 // how many people are in this list
+            toBeInserted = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(jsonContent);                     // formating "raw JSON string"
             bool isAnyDuplicates = false;
-            foreach (var person in toBeInserted)                                                                                  // going until we went through the whole list
+            foreach (var person in toBeInserted)                                                                         // going until we went through the whole list
             {
                 var dbItem = await appDbContext.People.FirstOrDefaultAsync(p => p.Nachname == person.Nachname && p.Vorname == person.Vorname); // checking if first and last name already exists in db
-                isAnyDuplicates = isAnyDuplicates || dbItem != null;
+                isAnyDuplicates = isAnyDuplicates || dbItem != null;    // if the flag is true and/or dbitem is not null, set flag to true
 
                 if (dbItem != null)
                 {
-                    switch (strategy)
+                    switch (strategy)   // switch case depending on what the user wants to do with the JSON File in case of duplicates
                     {
-                        case UpdateStrategy.Skip:
+                        case UpdateStrategy.Skip:   // skipping over elements which are duplicates
                             break;
-                        case UpdateStrategy.Merge:
+                        case UpdateStrategy.Merge:  // merginig "old" data of duplicate elements with "new" data from JSON file excluding names, since they are technically the identifier
                             // TODO merge info in multivalue case
                             dbItem.PLZ = person.PLZ;
                             dbItem.Stadt = person.Stadt;
@@ -104,7 +104,7 @@ namespace PersonalContactInformation.Api.Services
                             await this.appDbContext.SaveChangesAsync();
 
                             break;
-                        case UpdateStrategy.Replace:
+                        case UpdateStrategy.Replace:    // updating data in table with new data from JSON file excluding names, since they are technically the identifier
                             dbItem.PLZ = person.PLZ;
                             dbItem.Stadt = person.Stadt;    
                             dbItem.Land = person.Land;
@@ -116,19 +116,19 @@ namespace PersonalContactInformation.Api.Services
 
                             break;
                         default:
-                            throw new InvalidOperationException();
+                            throw new InvalidOperationException();  // since this case should not actually happen, something went wrong and we throw an exception instead of letting the progam run wild
                     }
                 }
                 else
                 {
-                    person.Id = 0; // id is identity column
-                    await AddPersonAsync(person);                                                                                             // iteration does not work like in C, not happy about that one
+                    person.Id = 0; // setting id to 0 will make sql assign a new id (working around id being used in input)
+                    await AddPersonAsync(person);
                 }
 
             }
-            if (isAnyDuplicates == true)                                                                                       // not completely necessary but sending a msg if we had duplicates for completions sake
+            if (isAnyDuplicates == true)                                                                                       
             {
-                return new ServiceResponse() { Message = "Done, there were one or more duplicate contacts", Success = true };
+                return new ServiceResponse() { Message = "Done, there were one or more duplicate contacts", Success = true };// not completely necessary but sending a msg if we had duplicates for completions sake
             }
             else
             {
