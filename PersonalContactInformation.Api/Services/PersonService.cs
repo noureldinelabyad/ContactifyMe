@@ -65,7 +65,8 @@ namespace PersonalContactInformation.Api.Services
             result.Nachname = person.Nachname;
             result.Vorname = person.Vorname;
             result.Zwischenname = person.Zwischenname;
-            result.Telefonnummer = person.Telefonnummer;
+            UpdateTelefonnummerAsync(result, result.TelId, person.TelId);
+            // result.Telefonnummer = person.Telefonnummer; // line above shold do this when that function is implemented
             result.EMail = person.EMail;
             result.Strasse = person.Strasse;
             result.Hausnummer = person.Hausnummer;
@@ -85,7 +86,7 @@ namespace PersonalContactInformation.Api.Services
             {
                 var dbItem = await appDbContext.People.FirstOrDefaultAsync(p => p.Nachname == person.Nachname && p.Vorname == person.Vorname); // checking if first and last name already exists in db
                 isAnyDuplicates = isAnyDuplicates || dbItem != null;                                                     // if the flag is true and/or dbitem is not null, set flag to true
-
+                
                 if (dbItem != null)
                 {
                     switch (strategy)                                                                                    // switch case depending on what the user wants to do with the JSON File in case of duplicates
@@ -97,7 +98,8 @@ namespace PersonalContactInformation.Api.Services
                             dbItem.PLZ = person.PLZ;
                             dbItem.Stadt = person.Stadt;
                             dbItem.Land = person.Land;
-                            dbItem.Telefonnummer = person.Telefonnummer;
+                            MergeTelefonnummerAsync(dbItem, newNumber); // this doesn't work, ask reza about this on monday
+                            // dbItem.Telefonnummer = person.Telefonnummer;
                             dbItem.Hausnummer = person.Hausnummer;
                             dbItem.EMail = person.EMail;
 
@@ -134,6 +136,17 @@ namespace PersonalContactInformation.Api.Services
             {
                 return new ServiceResponse() { Message = "Done", Success = true };
             }
+        }
+
+        public async Task<ServiceResponse> MergeTelefonnummerAsync(Person person, int newNumberId)
+        {
+            // should take a person object, and add a new phone number with the assocciated personId
+        }
+
+        public async Task<ServiceResponse> UpdateTelefonnummerAsync(Person person, int oldNumberId, int newNumberId)
+        {
+            // should take a person object or just personId, a already existing phone number and a new phone number
+            // should fetch the table entry which matches both the personId and the old phone number, then replace it
         }
     }
 }

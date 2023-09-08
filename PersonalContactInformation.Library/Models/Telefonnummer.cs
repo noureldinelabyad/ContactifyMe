@@ -10,6 +10,6 @@ namespace PersonalContactInformation.Library.Models
     {
         public int Id { get; set; }
         public int PersonId { get; set; }
-        public string Nummer { get; set; }
+        public string TelNummer { get; set; }
     }
 }
