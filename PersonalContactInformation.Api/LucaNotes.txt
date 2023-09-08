@@ -43,4 +43,9 @@ having to modify the adding and updating functions to go into the telnr table an
 	need the people table to be able to point at telNr and telNr table to point at person table
 		hau
 	for update i can bulid updateTelNr(oldTelNr, newTelNr, PersonId)
-	we should consider having limit on how many phone numbers a single contact can have, for example if we have 4 max, we might be able to have sql assign ids for data under a certain personId
+	we should consider having limit on how many phone numbers a single contact can have, for example if we have 4 max, we might be able to have sql assign ids for data under a certain personI
+
+Experimenting with TelNrId as a way to pass vaiables into functions, doesn't work that well
+	have to find out how to take passed in tel numbers, since they should be saved to a seperate table than the rest, but the frontend obviously won't pass two db tables through the api
+	maybe have it pass the tel. number as a seperate string and the person object without telId filled in
+		this would also require me to build getTelNr (which i have to do anyways i guess)
