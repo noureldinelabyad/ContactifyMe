@@ -1,6 +1,8 @@
 ﻿@page "/"
+@using MauiBlazorApp.Models
 @using MauiBlazorApp.Services
 @inject IPersonService PersonService;
+@inject NavigationManager NavManager;
 
 <h1>Person List</h1>
 
@@ -16,12 +18,11 @@ else
             <thead>
                 <tr>
 
-                <th>Vorname</th>
                <td>Nachname</td>
-               <td>Email</td>
+                <th>Vorname</th>
                 <td>Zwischenname</td>
+               <td>Email</td>
                  <td>Telefonnummer</td>
-                <td>email</td>
                 <td>Strasse</td>
                 <td>Hausnummer</td>
                 <td>PLZ</td>
@@ -35,12 +36,12 @@ else
             <tbody>
                 @foreach (var person in _PersonList)
                 {
-                    <tr>
+                    <tr @onclick = "@(() => DisplayOption(person))">
                         <td>@person.Nachname</td>
                         <td>@person.Vorname</td>
                         <td>@person.Zwischenname</td>
+                        <td>@person.Email</td>
                         <td>@person.Telefonnummer</td>
-                        <td>@person.email</td>
                         <td>@person.Strasse</td>
                         <td>@person.Hausnummer</td>
                         <td>@person.PLZ</td>
@@ -59,14 +60,39 @@ else
 
 
 @code {
-    List<Models.PersonModel> _PersonList;
+    List<PersonModel> _PersonList;
 
     protected override async Task OnInitializedAsync()
     {
         _PersonList = await PersonService.GetAllPersonsList();
     }
 
-    
+    private async void DisplayOption(PersonModel personDetail )
+    {
+
+        var response =  await App.Current.MainPage.DisplayActionSheet("Select Option", "Ok", null, "Update Contact", "Delete Contact");
+
+        if(response == "Update Contact")
+
+        {
+            NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+        }
+        else if (response == "Delete Contact")
+
+        {
+            var deleteresponse = await  PersonService.DeletePerson(new AddUpdatePersonRequest
+                {
+                      Id = personDetail.Id
+                });
+
+            if (deleteresponse . Success)
+            {
+                await OnInitializedAsync();
+                this.StateHasChanged();
+            }
+        }
+    }
+
 
 }
 

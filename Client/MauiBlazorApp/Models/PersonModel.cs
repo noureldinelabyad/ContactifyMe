@@ -12,7 +12,7 @@ namespace MauiBlazorApp.Models
         public string Nachname { get; set; }
         public string Vorname { get; set; }
         public string Zwischenname { get; set; }
-        public string email { get; set; }
+        public string Email { get; set; }
         public string Telefonnummer { get; set; }
         public string Strasse { get; set; }
         public string Hausnummer { get; set; }

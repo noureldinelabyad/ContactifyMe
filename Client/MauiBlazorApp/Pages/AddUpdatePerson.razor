@@ -1,4 +1,5 @@
 ﻿@page "/addperson"
+@page "/UpdatePerson/{Id:int}"
 @using MauiBlazorApp.Models;
 @using MauiBlazorApp.Services
 @inject IPersonService PersonService;
@@ -28,19 +29,19 @@
     <label>Gender</label>
     <div class="d-flex flex-row">
         <div class="form-check mr-3 mx-3">
-            <input @onchange="@(()=>SetGender("Male"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+            <input checked ="@(gender == "Male")" @onchange="@(()=>SetGender("Male"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
             <label class="form-check-label" for="flexRadioDefault1">
                 Male
             </label>
         </div>
         <div class="form-check mr-3 mx-3">
-            <input @onchange="@(()=>SetGender("Female"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+            <input checked="@(gender == "Female")" @onchange="@(()=>SetGender("Female"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
             <label class="form-check-label" for="flexRadioDefault2">
                 Female
             </label>
         </div>
         <div class="form-check mx-3">
-            <input @onchange="@(()=>SetGender("Divers"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
+            <input checked="@(gender == "Divers")" @onchange="@(()=>SetGender("Divers"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
             <label class="form-check-label" for="flexRadioDefault3">
                 Divers
             </label>
@@ -90,7 +91,10 @@
 
 @code {
 
+
     [Parameter]
+
+
 
     public int Id { get; set; }
 
@@ -112,15 +116,38 @@
         this. gender = gender;
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id > 0)
+        {
+            var existingPersonDetail = await PersonService.GetPersonDetailById(Id);
+            if (existingPersonDetail?.Id> 0)
+            {
+                Nachname = existingPersonDetail.Nachname;
+                Vorname = existingPersonDetail.Vorname;
+                Zwischenname = existingPersonDetail.Zwischenname;
+                Email = existingPersonDetail.Email;
+                Telefonnummer = existingPersonDetail.Telefonnummer;
+                Strasse = existingPersonDetail.Strasse;
+                Hausnummer = existingPersonDetail.Hausnummer;
+                PLZ = existingPersonDetail.PLZ.ToString();  // convert plz from int to string only here 
+                Stadt = existingPersonDetail.Stadt;
+                Land = existingPersonDetail.Land;
+                gender = existingPersonDetail.Gender;
+
+
+            }
+        }
+    }
 
     private async void AddUpdatePersonDetails()
     {
         var addUpdateRequest = new AddUpdatePersonRequest
 
-        {
-            Id = Id,
+            {
+                Id = Id,
 
-          Nachname = Nachname,
+                Nachname = Nachname,
                 Vorname = Vorname,
                 Zwischenname = Zwischenname,
                 Email = Email,
@@ -134,23 +161,40 @@
 
 
 
-        };
+            };
 
-        var response = await PersonService.AddPerson(addUpdateRequest);
-
-        if (response.Success )
+        if (Id > 0)
         {
-            Nachname = Vorname = Zwischenname = Email = Telefonnummer = Strasse = Hausnummer = PLZ = Stadt = Land =  gender = string.Empty;
-
-            this.StateHasChanged();
-
-            await App.Current.MainPage.DisplayAlert("Contact Added", "Contact Added Successfully", "OK");
+            var response = await PersonService.UpdatePerson(addUpdateRequest);
+            if (response.Success)
+            {
+                await App.Current.MainPage.DisplayAlert("Record Updated", "Contact Updated Successfully", "OK");
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Oops", response.ErrorMessage, "OK");
+            }
         }
         else
         {
-            await App.Current.MainPage.DisplayAlert("Oops", response.ErrorMessage, "OK");
+
+
+
+            var response = await PersonService.AddPerson(addUpdateRequest);
+
+            if (response.Success)
+            {
+                Nachname = Vorname = Zwischenname = Email = Telefonnummer = Strasse = Hausnummer = PLZ = Stadt = Land = gender = string.Empty;
+
+                this.StateHasChanged();
+
+                await App.Current.MainPage.DisplayAlert("Contact Added", "Contact Added Successfully", "OK");
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Oops", response.ErrorMessage, "OK");
+            }
+
         }
-
     }
-
 }
