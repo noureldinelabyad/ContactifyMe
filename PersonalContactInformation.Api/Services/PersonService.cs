@@ -84,15 +84,15 @@ namespace PersonalContactInformation.Api.Services
             foreach (var person in toBeInserted)                                                                         // going until we went through the whole list
             {
                 var dbItem = await appDbContext.People.FirstOrDefaultAsync(p => p.Nachname == person.Nachname && p.Vorname == person.Vorname); // checking if first and last name already exists in db
-                isAnyDuplicates = isAnyDuplicates || dbItem != null;    // if the flag is true and/or dbitem is not null, set flag to true
+                isAnyDuplicates = isAnyDuplicates || dbItem != null;                                                     // if the flag is true and/or dbitem is not null, set flag to true
 
                 if (dbItem != null)
                 {
-                    switch (strategy)   // switch case depending on what the user wants to do with the JSON File in case of duplicates
+                    switch (strategy)                                                                                    // switch case depending on what the user wants to do with the JSON File in case of duplicates
                     {
-                        case UpdateStrategy.Skip:   // skipping over elements which are duplicates
+                        case UpdateStrategy.Skip:                                                                        // skipping over elements which are duplicates
                             break;
-                        case UpdateStrategy.Merge:  // merginig "old" data of duplicate elements with "new" data from JSON file excluding names, since they are technically the identifier
+                        case UpdateStrategy.Merge:                                                                       // merginig "old" data of duplicate elements with "new" data from JSON file excluding names, since they are technically the identifier
                             // TODO merge info in multivalue case
                             dbItem.PLZ = person.PLZ;
                             dbItem.Stadt = person.Stadt;
@@ -104,7 +104,7 @@ namespace PersonalContactInformation.Api.Services
                             await this.appDbContext.SaveChangesAsync();
 
                             break;
-                        case UpdateStrategy.Replace:    // updating data in table with new data from JSON file excluding names, since they are technically the identifier
+                        case UpdateStrategy.Replace:                                                                     // updating data in table with new data from JSON file excluding names, since they are technically the identifier
                             dbItem.PLZ = person.PLZ;
                             dbItem.Stadt = person.Stadt;    
                             dbItem.Land = person.Land;
@@ -116,12 +116,12 @@ namespace PersonalContactInformation.Api.Services
 
                             break;
                         default:
-                            throw new InvalidOperationException();  // since this case should not actually happen, something went wrong and we throw an exception instead of letting the progam run wild
+                            throw new InvalidOperationException();                                                       // since this case should not actually happen, something went wrong and we throw an exception instead of letting the progam run wild
                     }
                 }
                 else
                 {
-                    person.Id = 0; // setting id to 0 will make sql assign a new id (working around id being used in input)
+                    person.Id = 0;                                                                                       // setting id to 0 will make sql assign a new id (working around id being used in input)
                     await AddPersonAsync(person);
                 }
 
