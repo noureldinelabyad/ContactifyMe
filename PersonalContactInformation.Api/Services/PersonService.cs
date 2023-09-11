@@ -98,7 +98,7 @@ namespace PersonalContactInformation.Api.Services
                             dbItem.PLZ = person.PLZ;
                             dbItem.Stadt = person.Stadt;
                             dbItem.Land = person.Land;
-                            MergeTelefonnummerAsync(dbItem, newNumber); // this doesn't work, ask reza about this on monday
+                            AddTelefonnummerAsync(dbItem, newNumber); // this doesn't work, ask reza about this on monday, i might get it to work, i will ask him anyways :]
                             // dbItem.Telefonnummer = person.Telefonnummer;
                             dbItem.Hausnummer = person.Hausnummer;
                             dbItem.EMail = person.EMail;
@@ -138,15 +138,57 @@ namespace PersonalContactInformation.Api.Services
             }
         }
 
-        public async Task<ServiceResponse> MergeTelefonnummerAsync(Person person, int newNumberId)
+        public async Task<ServiceResponse> AddTelefonnummerAsync(Person person, string newNumber)
         {
-            // should take a person object, and add a new phone number with the assocciated personId
+            /*
+            var helperJuan = person.Id;
+            var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == helperJuan && p.TelNummer == newNumber);
+            if (dbItem != null) 
+            {
+                return new ServiceResponse() { Message = "Number already saved", Success = false };
+            }
+
+            newNumberWhoDis = new Telefonnummer;
+            newNumberWhoDis.PersonId = person.Id;
+            newNumberWhoDis.TelNummer = newNumber;
+
+            appDbContext.TelNr.Add(newNumberWhoDis);
+            await appDbContext.SaveChangesAsync();
+            return new ServiceResponse() { Message = "Number added", Success = true };
+            */
         }
 
-        public async Task<ServiceResponse> UpdateTelefonnummerAsync(Person person, int oldNumberId, int newNumberId)
+        public async Task<ServiceResponse> DeleteTelefonnummerAsync(Person person, string deleteNumber)
+        {
+            /*
+            var helperCarlos = person.Id;
+            var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == helperCarlos && p.TelNummer == deleteNumber);   // i need this but it returns a item instead
+            if (dbItem == null)
+            {
+                return new ServiceResponse() { Message = "Number does not exist", Success = false };
+            }
+
+            appDbContext.TelNr.Remove(deleteThis);
+            await appDbContext.SaveChangesAsync();
+            return new ServiceResponse() { Message = "Number deleted", Success = true };
+             */
+        }
+
+        public async Task<ServiceResponse> UpdateTelefonnummerAsync(Person person, string oldNumber, string newNumber)
         {
             // should take a person object or just personId, a already existing phone number and a new phone number
             // should fetch the table entry which matches both the personId and the old phone number, then replace it
+            /*
+            var helperJoaquin = person.Id;
+            var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == helperJoaquin && p.TelNummer == oldNumber);
+            if (dbItem == null)
+            {
+                return new ServiceResponse() { Message = "Number not found", Success = false };
+            }
+            var replaceThis = findTheNumberInTheTableFunction.TelNr();
+            replaceThis.TelNummer = newNumber;
+
+            */
         }
     }
 }
