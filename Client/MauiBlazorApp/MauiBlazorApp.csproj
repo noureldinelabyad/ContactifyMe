@@ -53,7 +53,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
           <PrivateAssets>all</PrivateAssets>
@@ -71,10 +70,6 @@
 
     <ItemGroup>
       <Folder Include="Data\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\CommonCode\CommonCode.csproj" />
     </ItemGroup>
 
 </Project>
