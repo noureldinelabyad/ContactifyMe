@@ -80,7 +80,8 @@ namespace PersonalContactInformation.Api.Services
         public async Task<ServiceResponse> AddPersonJSONAsync(string jsonContent, UpdateStrategy strategy)
         {
             List<Person> toBeInserted = new List<Person>();                                                              // helper for converting and input
-            toBeInserted = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(jsonContent);                     // formating "raw JSON string"
+            toBeInserted = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(jsonContent);                     // formating "raw JSON string"         Can i extract 2 classes out of this?
+            List<Telefonnummer> toBeInsertedTel = List<Telefonnummer>();
             bool isAnyDuplicates = false;
             foreach (var person in toBeInserted)                                                                         // going until we went through the whole list
             {
@@ -98,7 +99,10 @@ namespace PersonalContactInformation.Api.Services
                             dbItem.PLZ = person.PLZ;
                             dbItem.Stadt = person.Stadt;
                             dbItem.Land = person.Land;
-                            AddTelefonnummerAsync(dbItem, newNumber); // this doesn't work, ask reza about this on monday, i might get it to work, i will ask him anyways :]
+                            foreach(var nummer in toBeInsertedTel)
+                            {
+                                AddTelefonnummerAsync(dbItem, nummer.TelNummer); // this doesn't work, ask reza about this on monday, i might get it to work, i will ask him anyways :]
+                            }
                             // dbItem.Telefonnummer = person.Telefonnummer;
                             dbItem.Hausnummer = person.Hausnummer;
                             dbItem.EMail = person.EMail;
@@ -110,7 +114,10 @@ namespace PersonalContactInformation.Api.Services
                             dbItem.PLZ = person.PLZ;
                             dbItem.Stadt = person.Stadt;    
                             dbItem.Land = person.Land;
-                            dbItem.Telefonnummer    = person.Telefonnummer;
+                            foreach (var nummer in toBeInsertedTel)
+                            {
+                                UpdateTelefonnummerAsync(dbItem, dbItem.TelId, nummer.TelNummer); // help
+                            }
                             dbItem.Hausnummer   = person.Hausnummer;
                             dbItem.EMail = person.EMail;
 
@@ -178,6 +185,7 @@ namespace PersonalContactInformation.Api.Services
         {
             // should take a person object or just personId, a already existing phone number and a new phone number
             // should fetch the table entry which matches both the personId and the old phone number, then replace it
+            // have to figure a way out, how to replace the old numbers, i could just straight delete the number, then add the new one, though that wouldn't work for wanting to update one specific one
             /*
             var helperJoaquin = person.Id;
             var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == helperJoaquin && p.TelNummer == oldNumber);
@@ -188,6 +196,26 @@ namespace PersonalContactInformation.Api.Services
             var replaceThis = findTheNumberInTheTableFunction.TelNr();
             replaceThis.TelNummer = newNumber;
 
+            */
+        }
+
+        public async Task<ServiceResponse> ReplaceTelefonnummerAsync(Person person, List<Telefonnummer> telefonnummern)
+        {
+            // deletes all existing numbers related to a specific person object, then inputs from list
+            /*
+            foreach ( var telNr in Table.TelNr) 
+            {
+                if (telNr == exist && telNr.PersonId == person.Id)
+                {
+                    appDbContext.TelNr.Remove(nummer);
+                    await appDbContext.SaveChangesAsync();
+                    AddTelefonnummerAsync(person, telNr);
+                }
+                else
+                {
+                    AddTelefonnummerAsync(person, telNr);
+                }
+            }
             */
         }
     }
