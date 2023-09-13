@@ -1,4 +1,4 @@
-﻿using MauiBlazorApp.Models;
+﻿using MauiContact.Models;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
@@ -10,15 +10,15 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
-namespace MauiBlazorApp.Services
+namespace MauiContact.Services
 {
+
 
     public class PersonService : IPersonService
     {
-         private string _baseUrl = "https://localhost:7078"; // URL of the API database
-
-        //private string _baseUrl = "https://10.0.2.2:7078"; // tried this form chat gpt to show it on android but ...
+        private string _baseUrl = "https://localhost:7078"; // URL of the API database
 
         public async Task<MainResponseModel> AddPerson(AddUpdatePersonRequest personRequest)
         {
@@ -28,13 +28,13 @@ namespace MauiBlazorApp.Services
                 using (var client = new HttpClient())
                 {
                     string url = $"{_baseUrl}/api/Persons/Add";
-                    
+
                     var seralizeContent = JsonConvert.SerializeObject(personRequest);
 
                     // var apiResponse = await client.PostAsync(url, new StringContent(seralizeContent, Encoding.UTF8, "application/json"));
                     var apiResponse = await client.PostAsync(url, JsonContent.Create(personRequest, personRequest.GetType()));
 
-                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    if (apiResponse.StatusCode == HttpStatusCode.OK)
                     {
                         var response = await apiResponse.Content.ReadAsStringAsync();
                         returnResponse = JsonConvert.DeserializeObject<MainResponseModel>(response);
@@ -70,7 +70,7 @@ namespace MauiBlazorApp.Services
                     string url = $"{_baseUrl}/api/Persons";
                     var apiResponse = await client.GetAsync(url);
 
-                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    if (apiResponse.StatusCode == HttpStatusCode.OK)
                     {
                         var response = await apiResponse.Content.ReadAsStringAsync();
                         returnResponse = JsonConvert.DeserializeObject<List<PersonModel>>(response);
@@ -94,7 +94,7 @@ namespace MauiBlazorApp.Services
 
                         }
 
-                                            
+
 
                         if (person.Gender == null)
                         {
@@ -127,7 +127,7 @@ namespace MauiBlazorApp.Services
                     string url = $"{_baseUrl}/api/Persons/{Id}";
                     var apiResponse = await client.GetAsync(url);
 
-                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    if (apiResponse.StatusCode == HttpStatusCode.OK)
                     {
                         var response = await apiResponse.Content.ReadAsStringAsync();
                         returnResponse = JsonConvert.DeserializeObject<PersonModel>(response);
@@ -135,9 +135,9 @@ namespace MauiBlazorApp.Services
 
                     }
 
-                    
 
-                    
+
+
 
                 }
             }
@@ -150,7 +150,7 @@ namespace MauiBlazorApp.Services
             return returnResponse;
         }
 
-        public async Task<MainResponseModel> DeletePerson (AddUpdatePersonRequest personRequest )
+        public async Task<MainResponseModel> DeletePerson(AddUpdatePersonRequest personRequest)
         {
             var returnresponse = new MainResponseModel();
 
@@ -174,7 +174,7 @@ namespace MauiBlazorApp.Services
                     var apiresponse = await client.SendAsync(request);
 
 
-                    if (apiresponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    if (apiresponse.StatusCode == HttpStatusCode.OK)
                     {
                         var response = await apiresponse.Content.ReadAsStringAsync();
                         returnresponse = JsonConvert.DeserializeObject<MainResponseModel>(response);
@@ -189,25 +189,25 @@ namespace MauiBlazorApp.Services
             }
             return returnresponse;
         }
-        
+
 
         public async Task<MainResponseModel> UpdatePerson(AddUpdatePersonRequest personRequest)
         {
             var returnresponse = new MainResponseModel();
 
-            
+
             try
             {
 
                 using (var client = new HttpClient())
                 {
-                   // string url = $"{_baseUrl}/api/Persons/Update";
+                    // string url = $"{_baseUrl}/api/Persons/Update";
                     string url = $"{_baseUrl}/api/Persons/{personRequest.Id}";
 
 
                     var serializeContent = JsonConvert.SerializeObject(personRequest);
                     var apiresponse = await client.PutAsync(url, new StringContent(serializeContent, Encoding.UTF8, "application/json"));
-                    if (apiresponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    if (apiresponse.StatusCode == HttpStatusCode.OK)
                     {
                         var response = await apiresponse.Content.ReadAsStringAsync();
                         returnresponse = JsonConvert.DeserializeObject<MainResponseModel>(response);
@@ -217,40 +217,12 @@ namespace MauiBlazorApp.Services
             }
 
             catch (Exception ex)
-            { 
+            {
                 string msg = ex.Message;
             }
             return returnresponse;
         }
 
-
-
-
-        public async Task<List<PersonModel>> SearchPersonsByName(string searchText)
-        {
-            List<PersonModel> returnResponse = new List<PersonModel>();
-            try
-            {
-                using (var client = new HttpClient())
-                {
-                    string url = $"{_baseUrl}/api/Persons/SearchByName?searchText={searchText}"; // Assuming you have an API endpoint for searching by name
-                    var apiResponse = await client.GetAsync(url);
-
-                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        var response = await apiResponse.Content.ReadAsStringAsync();
-                        returnResponse = JsonConvert.DeserializeObject<List<PersonModel>>(response);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log or handle the exception gracefully.
-                string Msg = ex.Message;
-                // You might also consider rethrowing the exception if you want to propagate it further.
-            }
-            return returnResponse;
-        }
 
     }
 

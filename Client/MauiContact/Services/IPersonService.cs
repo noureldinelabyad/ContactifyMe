@@ -1,4 +1,4 @@
-﻿using MauiBlazorApp.Models;
+﻿using MauiContact.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace MauiBlazorApp.Services
+namespace MauiContact.Services
 {
     public interface IPersonService
     {
@@ -17,7 +17,5 @@ namespace MauiBlazorApp.Services
         Task<MainResponseModel> UpdatePerson(AddUpdatePersonRequest personRequest);
         Task<MainResponseModel> DeletePerson(AddUpdatePersonRequest personRequest );
         Task<PersonModel> GetPersonDetailById(int Id);
-        Task<List<PersonModel>> SearchPersonsByName(string searchText);
-
     }
 }

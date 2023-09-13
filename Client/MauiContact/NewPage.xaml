@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="PersonalContactInformation.Views.MainPage"
+    x:Class="MauiContact.NewPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="My Contacts">
-
+    Title="NewPage">
     <Grid
         Margin="10"
         Padding="10"
@@ -116,5 +115,3 @@
     </Grid>
 
 </ContentPage>
-    
-    

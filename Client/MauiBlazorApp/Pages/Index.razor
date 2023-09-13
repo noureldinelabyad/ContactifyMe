@@ -7,6 +7,63 @@
 <h1>Person List</h1>
 
 
+
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Search..." @bind="searchText" />
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" @onclick="HandleSearch">Search</button>
+    </div>
+</div>
+
+@if (searchResults != null)
+{
+    <div class="table-responsive">
+        <table class="table">
+            <!-- Your table headers here -->
+            <tbody>
+                @foreach (var person in searchResults)
+                {
+                    <tr>
+                        <td>@person.Nachname</td>
+                        <!-- Add other table data here -->
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private string searchText = string.Empty;
+    private List<PersonModel> allPersons;
+
+    private List<PersonModel> searchResults;
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     allPersons = await PersonService.GetAllPersonsList();
+    //     searchResults = allPersons;
+    // }
+
+    private void HandleSearch()
+    {
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            searchResults = allPersons
+                .Where(person => person.Nachname.Contains(searchText) || person.Vorname.Contains(searchText))
+                .ToList();
+        }
+        else
+        {
+            searchResults = allPersons;
+        }
+
+    }
+}
+
+
+
+
 @if (_PersonList == null)
 {
     <p>Loading...</p>
@@ -64,7 +121,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _PersonList = await PersonService.GetAllPersonsList();
+        //_PersonList = await PersonService.GetAllPersonsList();
+        allPersons = await PersonService.GetAllPersonsList();
+        searchResults = allPersons;
     }
 
     private async void DisplayOption(PersonModel personDetail )

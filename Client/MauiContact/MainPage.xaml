@@ -86,9 +86,23 @@
 
                     <DataTemplate>
 
-                        <TextCell>
+                        <TextCell Detail="{Binding Email}" Text="{Binding Nachname}">
 
-                            
+                            <TextCell.ContextActions>
+                                <MenuItem
+                                     x:Name="MenueItemDelete"
+                                     Clicked="MenueItemDelete_Clicked"
+                                     CommandParameter="{Binding .}"
+                                     IsDestructive="True"
+                                     Text="Delete" />
+
+                                <MenuItem
+                                     x:Name="MenuItemEdit"
+                                     Clicked="MenueItemDelete_Clicked"
+                                     CommandParameter="{Binding .}"
+                                     Text="Edit" />
+
+                            </TextCell.ContextActions>
 
                         </TextCell>
 

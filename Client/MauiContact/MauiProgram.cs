@@ -15,6 +15,8 @@ namespace MauiContact
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            //builder.Services.AddHttpClient("api", httpClient => httpClient.BaseAddress = new Uri("https://localhost:7078/");
+
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
