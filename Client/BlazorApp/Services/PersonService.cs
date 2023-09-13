@@ -224,7 +224,32 @@ namespace CommonCode.Services
             return returnresponse;
         }
 
-        
+        public async Task<List<PersonModel>> SearchPersonsByName(string searchText)
+        {
+            List<PersonModel> returnResponse = new List<PersonModel>();
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    string url = $"{_baseUrl}/api/Persons/SearchByName?searchText={searchText}"; // Assuming you have an API endpoint for searching by name
+                    var apiResponse = await client.GetAsync(url);
+
+                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var response = await apiResponse.Content.ReadAsStringAsync();
+                        returnResponse = JsonConvert.DeserializeObject<List<PersonModel>>(response);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception gracefully.
+                string Msg = ex.Message;
+                // You might also consider rethrowing the exception if you want to propagate it further.
+            }
+            return returnResponse;
+        }
+
     }
     
 }

@@ -17,5 +17,8 @@ namespace CommonCode.Services
         Task<MainResponseModel> UpdatePerson(AddUpdatePersonRequest personRequest);
         Task<MainResponseModel> DeletePerson(AddUpdatePersonRequest personRequest );
         Task<PersonModel> GetPersonDetailById(int Id);
+
+        Task<List<PersonModel>> SearchPersonsByName(string searchText);
+
     }
 }
