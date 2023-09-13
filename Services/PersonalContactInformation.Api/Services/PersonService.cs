@@ -22,15 +22,15 @@ namespace PersonalContactInformation.Api.Services
                 return new ServiceResponse() { Message = "Bad Request", Success = false };
             }
 
-            var chk = await appDbContext.People.Where(p => p.Nachname.ToLower().Equals(person.Nachname.ToLower())).FirstOrDefaultAsync();
+           // var chk = await appDbContext.People.Where(p => p.Nachname.ToLower().Equals(person.Nachname.ToLower())).FirstOrDefaultAsync();
 
-            if(chk is null)
-            {
+           // if(chk is null)
+            //{
                 appDbContext.People.Add(person);
                 await appDbContext.SaveChangesAsync();
                 return new ServiceResponse() { Message = "Contact added", Success = true };
-            }
-                return new ServiceResponse() { Message = "Contact already added", Success = false };
+            //}
+               // return new ServiceResponse() { Message = "Contact already added", Success = false };
         }
 
         public async Task<ServiceResponse> DeletePersonAsync(int id)
@@ -67,7 +67,7 @@ namespace PersonalContactInformation.Api.Services
             result.Zwischenname = person.Zwischenname;
             result.Telefonnummer = person.Telefonnummer;
             result.EMail = person.EMail;
-            result.Straße = person.Straße;
+            result.Strasse = person.Strasse;
             result.Hausnummer = person.Hausnummer;
             result.PLZ = person.PLZ;
             result.Stadt = person.Stadt;

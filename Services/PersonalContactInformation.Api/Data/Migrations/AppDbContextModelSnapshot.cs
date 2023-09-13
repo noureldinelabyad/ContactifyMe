@@ -33,8 +33,13 @@ namespace PersonalContactInformation.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Hausnummer")
-                        .HasColumnType("int");
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Hausnummer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Land")
                         .IsRequired()
@@ -51,12 +56,13 @@ namespace PersonalContactInformation.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Straße")
+                    b.Property<string>("Strasse")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Telefonnummer")
-                        .HasColumnType("float");
+                    b.Property<string>("Telefonnummer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Vorname")
                         .IsRequired()

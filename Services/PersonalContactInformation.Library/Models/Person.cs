@@ -12,12 +12,13 @@ namespace PersonalContactInformation.Library.Models
         public string Nachname { get; set; }
         public string Vorname { get; set; }
         public string? Zwischenname { get; set; }
-        public double Telefonnummer { get; set; }
+        public string Telefonnummer { get; set; }
         public string EMail { get; set; }
-        public string Straße { get; set; }
-        public int Hausnummer { get; set; }
+        public string Strasse { get; set; }
+        public string Hausnummer { get; set; }
         public int PLZ { get; set; }
         public string Stadt { get; set; }
         public string Land { get; set;}
+        public string Gender { get; set; }
     }
 }

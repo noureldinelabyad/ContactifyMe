@@ -21,7 +21,7 @@ namespace PersonalContactInformation.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Person>>> GetPersonsAsync() => Ok(await personService.GetPersonsAsync());
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Person>> GetPersonByIdAsync(int id)
         {
             var person = await personService.GetPersonByIdAsync(id);
@@ -34,7 +34,7 @@ namespace PersonalContactInformation.Api.Controllers
             }
 
         }
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<ServiceResponse>> DeletePersonAsync(int id)
         {
             var person = await personService.GetPersonByIdAsync(id);
@@ -47,7 +47,7 @@ namespace PersonalContactInformation.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<ServiceResponse>> UpdatePersonAsync(Person person)
         {
             var result = await personService.GetPersonByIdAsync(person.Id);
@@ -60,7 +60,7 @@ namespace PersonalContactInformation.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<ServiceResponse>> AddPersonAsync(Person person)
         {
             if(person == null)
