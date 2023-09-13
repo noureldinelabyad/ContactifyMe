@@ -1,30 +1,48 @@
 ﻿@page "/"
 @using MauiBlazorApp.Models
 @using MauiBlazorApp.Services
-@inject IPersonService PersonService;
-@inject NavigationManager NavManager;
+@inject IPersonService PersonService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
 
 <h1>Person List</h1>
 
-
-
 <div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="Search..." @bind="searchText" />
+    <input type="text" class="form-control" placeholder="Search..." @bind="searchText" @oninput="HandleSearchTextChanged" />
     <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="button" @onclick="HandleSearch">Search</button>
+        <button class="btn btn-outline-secondary" type="button" @onclick="BtnSearch_Clicked">Search</button>
     </div>
+</div>
+
+<div class="dropdown">
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        @if (searchResults != null)
+        {
+            @foreach (var person in searchResults)
+            {
+                <li class="dropdown-item">@person.Nachname</li>
+            }
+        }
+    </ul>
 </div>
 
 @if (searchResults != null)
 {
     <div class="table-responsive">
         <table class="table">
-            <!-- Your table headers here -->
+            <thead>
+                <tr>
+                    <td>Nachname</td>
+                    <th>Vorname</th>
+                    <!-- Add other table headers here -->
+                </tr>
+            </thead>
             <tbody>
                 @foreach (var person in searchResults)
                 {
-                    <tr>
+                    <tr @onclick="@( () => DisplayOption(person) )">
                         <td>@person.Nachname</td>
+                        <td>@person.Vorname</td>
                         <!-- Add other table data here -->
                     </tr>
                 }
@@ -33,37 +51,6 @@
     </div>
 }
 
-@code {
-    private string searchText = string.Empty;
-    private List<PersonModel> allPersons;
-
-    private List<PersonModel> searchResults;
-
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     allPersons = await PersonService.GetAllPersonsList();
-    //     searchResults = allPersons;
-    // }
-
-    private void HandleSearch()
-    {
-        if (!string.IsNullOrWhiteSpace(searchText))
-        {
-            searchResults = allPersons
-                .Where(person => person.Nachname.Contains(searchText) || person.Vorname.Contains(searchText))
-                .ToList();
-        }
-        else
-        {
-            searchResults = allPersons;
-        }
-
-    }
-}
-
-
-
-
 @if (_PersonList == null)
 {
     <p>Loading...</p>
@@ -71,29 +58,27 @@
 else
 {
     <div class="table-responsive">
-        <table class= "table">
+        <table class="table">
             <thead>
                 <tr>
-
-               <td>Nachname</td>
-                <th>Vorname</th>
-                <td>Zwischenname</td>
-               <td>Email</td>
-                 <td>Telefonnummer</td>
-                <td>Strasse</td>
-                <td>Hausnummer</td>
-                <td>PLZ</td>
-                <td>Stadt</td>
-                <td>Land</td>
-                <td>Gender</td>
-@*                res of the list 
- *@
+                    <td>Nachname</td>
+                    <th>Vorname</th>
+                    <td>Zwischenname</td>
+                    <td>Email</td>
+                    <td>Telefonnummer</td>
+                    <td>Strasse</td>
+                    <td>Hausnummer</td>
+                    <td>PLZ</td>
+                    <td>Stadt</td>
+                    <td>Land</td>
+                    <td>Gender</td>
+                    <!-- Add other table headers here -->
                 </tr>
             </thead>
             <tbody>
                 @foreach (var person in _PersonList)
                 {
-                    <tr @onclick = "@(() => DisplayOption(person))">
+                    <tr @onclick="@( () => DisplayOption(person) )">
                         <td>@person.Nachname</td>
                         <td>@person.Vorname</td>
                         <td>@person.Zwischenname</td>
@@ -110,49 +95,92 @@ else
                 }
             </tbody>
         </table>
-
     </div>
 }
-
-
 
 @code {
     List<PersonModel> _PersonList;
 
+    private string searchText = string.Empty;
+    private List<PersonModel> allPersons;
+    private List<PersonModel> searchResults;
+
     protected override async Task OnInitializedAsync()
     {
-        //_PersonList = await PersonService.GetAllPersonsList();
         allPersons = await PersonService.GetAllPersonsList();
-        searchResults = allPersons;
+        _PersonList = await PersonService.GetAllPersonsList();
     }
 
-    private async void DisplayOption(PersonModel personDetail )
+    private void HandleSearchTextChanged(ChangeEventArgs e)
     {
+        searchText = e.Value.ToString();
+        HandleSearch();
+    }
 
-        var response =  await App.Current.MainPage.DisplayActionSheet("Select Option", "Ok", null, "Update Contact", "Delete Contact");
+    private void HandleSearch()
+    {
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            searchResults = allPersons
+                .Where(person => person.Nachname.Contains(searchText) || person.Vorname.Contains(searchText))
+                .ToList();
+        }
+        else
+        {
+            searchResults = null; // Set it to null when search text is empty
+        }
+    }
 
-        if(response == "Update Contact")
+    private async void BtnSearch_Clicked()
+{
+    string searchText = this.searchText;
 
+    if (!string.IsNullOrEmpty(searchText))
+    {
+        var results = await PersonService.SearchPersonsByName(searchText);
+
+        if (results.Count > 0)
+        {
+            searchResults = results;
+        }
+        else
+        {
+            bool addContact = await JSRuntime.InvokeAsync<bool>("confirm", $"Contact with name '{searchText}' does not exist. Do you want to add it?");
+
+            if (addContact)
+            {
+                NavManager.NavigateTo($"addPerson?name={searchText}");
+            }
+        }
+    }
+    else
+    {
+        await OnInitializedAsync();
+    }
+}
+
+
+    private async void DisplayOption(PersonModel personDetail)
+    {
+        var response = await App.Current.MainPage.DisplayActionSheet("Select Option", "Ok", null, "Update Contact", "Delete Contact");
+
+        if (response == "Update Contact")
         {
             NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
         }
         else if (response == "Delete Contact")
-
         {
-            var deleteresponse = await  PersonService.DeletePerson(new AddUpdatePersonRequest
+            var deleteresponse = await PersonService.DeletePerson(new AddUpdatePersonRequest
                 {
-                      Id = personDetail.Id
+                    Id = personDetail.Id
                 });
 
-            if (deleteresponse . Success)
+            if (deleteresponse.Success)
             {
+                allPersons.Remove(personDetail); // Remove the deleted person from the list
                 await OnInitializedAsync();
                 this.StateHasChanged();
             }
         }
     }
-
-
 }
-
-
