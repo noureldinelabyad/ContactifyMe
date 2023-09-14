@@ -3,6 +3,7 @@
 @using MauiBlazorApp.Models;
 @using MauiBlazorApp.Services
 @inject IPersonService PersonService;
+@inject NavigationManager NavManager
 
 
 <h3>AddUpdatePerson</h3>
@@ -10,7 +11,7 @@
 <div class="form-group d-flex">
    <div class=" form-group mx-2 ">
        <label for="Entry_Name">Nachname</label>
-       <input id="Entry_Name" @bind="Nachname" class="form-control" />
+        <input id="Entry_Name" @bind="Nachname"  class="form-control" />
    </div>
 
     <div class=" form-group mx-2 ">
@@ -169,6 +170,8 @@
             if (response.Success)
             {
                 await App.Current.MainPage.DisplayAlert("Record Updated", "Contact Updated Successfully", "OK");
+
+                 NavManager.NavigateTo("/");
             }
             else
             {
@@ -189,6 +192,7 @@
                 this.StateHasChanged();
 
                 await App.Current.MainPage.DisplayAlert("Contact Added", "Contact Added Successfully", "OK");
+                NavManager.NavigateTo("/");
             }
             else
             {
