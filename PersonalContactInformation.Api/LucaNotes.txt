@@ -52,3 +52,5 @@ Experimenting with TelNrId as a way to pass vaiables into functions, doesn't wor
 
 My idea is now to have the people table have a column for TelId instead of Telefonnummer and have the TelNr table have PersonId, which should then be pointing at each other
 	upon investigating on this idea it seems not impossible but normally i should make a third table, though i may be able to get around this
+
+FirstOrDefaultAsync returns an object
