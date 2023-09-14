@@ -16,16 +16,26 @@ namespace MauiBlazorApp.Services
 
     public class PersonService : IPersonService
     {
-         private string _baseUrl = "https://localhost:7078"; // URL of the API database
+        // private string _baseUrl = "https://localhost:7078"; // URL of the API database
 
-        //private string _baseUrl = "https://10.0.2.2:7078"; // tried this form chat gpt to show it on android but ...
+        private string _baseUrl = "https://10.0.2.2:7078"; // tried this form chat gpt to show it on android but ...
 
         public async Task<MainResponseModel> AddPerson(AddUpdatePersonRequest personRequest)
         {
             var returnResponse = new MainResponseModel();
             try
             {
-                using (var client = new HttpClient())
+
+                // for the certifecate to run on android
+
+                //using (var client = new HttpClient())
+                var handler = new HttpClientHandler()
+                {
+                    ClientCertificateOptions = ClientCertificateOption.Manual,
+                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
+                };
+
+                using (var client = new HttpClient(handler))
                 {
                     string url = $"{_baseUrl}/api/Persons/Add";
                     
@@ -65,7 +75,15 @@ namespace MauiBlazorApp.Services
             var returnResponse = new List<PersonModel>();
             try
             {
-                using (var client = new HttpClient())
+
+                //using (var client = new HttpClient())
+                var handler = new HttpClientHandler()
+                {
+                    ClientCertificateOptions = ClientCertificateOption.Manual,
+                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
+                };
+
+                using (var client = new HttpClient(handler))
                 {
                     string url = $"{_baseUrl}/api/Persons";
                     var apiResponse = await client.GetAsync(url);
@@ -122,7 +140,15 @@ namespace MauiBlazorApp.Services
             var returnResponse = new PersonModel();
             try
             {
-                using (var client = new HttpClient())
+
+                //using (var client = new HttpClient())
+                var handler = new HttpClientHandler()
+                {
+                    ClientCertificateOptions = ClientCertificateOption.Manual,
+                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
+                };
+
+                using (var client = new HttpClient(handler))
                 {
                     string url = $"{_baseUrl}/api/Persons/{Id}";
                     var apiResponse = await client.GetAsync(url);
@@ -157,7 +183,16 @@ namespace MauiBlazorApp.Services
             try
             {
 
-                using (var client = new HttpClient())
+                
+
+                //using (var client = new HttpClient())
+                var handler = new HttpClientHandler()
+                {
+                    ClientCertificateOptions = ClientCertificateOption.Manual,
+                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
+                };
+
+                using (var client = new HttpClient(handler))
                 {
                     //string url = $"{_baseUrl}/api/Persons/Delete";
                     string url = $"{_baseUrl}/api/Persons/{personRequest.Id}";
@@ -199,7 +234,14 @@ namespace MauiBlazorApp.Services
             try
             {
 
-                using (var client = new HttpClient())
+                //using (var client = new HttpClient())
+                var handler = new HttpClientHandler()
+                {
+                    ClientCertificateOptions = ClientCertificateOption.Manual,
+                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
+                };
+
+                using (var client = new HttpClient(handler))
                 {
                    // string url = $"{_baseUrl}/api/Persons/Update";
                     string url = $"{_baseUrl}/api/Persons/{personRequest.Id}";
