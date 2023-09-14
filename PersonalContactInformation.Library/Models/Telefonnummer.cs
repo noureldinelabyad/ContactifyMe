@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PersonalContactInformation.Library.Models
 {
-    internal class Telefonnummer
+    public class Telefonnummer
     {
         public int Id { get; set; }
         public int PersonId { get; set; }

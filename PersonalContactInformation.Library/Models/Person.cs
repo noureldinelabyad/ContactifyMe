@@ -12,7 +12,7 @@ namespace PersonalContactInformation.Library.Models
         public string Nachname { get; set; }
         public string Vorname { get; set; }
         public string? Zwischenname { get; set; }
-        public int TelId { get; set; }   // change this to list or array of TelNrId?
+        public List<Telefonnummer> PersonNummern { get; set; }   // change this to list or array of TelNrId?
         public string EMail { get; set; }
         public string Strasse { get; set; }
         public string Hausnummer { get; set; }

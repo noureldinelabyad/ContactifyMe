@@ -65,8 +65,12 @@ namespace PersonalContactInformation.Api.Services
             result.Nachname = person.Nachname;
             result.Vorname = person.Vorname;
             result.Zwischenname = person.Zwischenname;
-            UpdateTelefonnummerAsync(result, result.TelId, person.TelId);
-            // result.Telefonnummer = person.Telefonnummer; // line above shold do this when that function is implemented
+            int index = 0;
+            foreach (var id in person.PersonNummern) // y u no work
+            {
+                Telefonnummer helperTel = await GetTelefonnummerByIdAsync(id.Id);
+                await UpdateTelefonnummerAsync(result, helperTel.TelNummer, person.PersonNummern[index].TelNummer); // how to get Telefonnummer from Person JSON list thingy
+            }
             result.EMail = person.EMail;
             result.Strasse = person.Strasse;
             result.Hausnummer = person.Hausnummer;
@@ -81,7 +85,7 @@ namespace PersonalContactInformation.Api.Services
         {
             List<Person> toBeInserted = new List<Person>();                                                              // helper for converting and input
             toBeInserted = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(jsonContent);                     // formating "raw JSON string"         Can i extract 2 classes out of this?
-            List<Telefonnummer> toBeInsertedTel = List<Telefonnummer>();
+            List<Telefonnummer> toBeInsertedTel = new List<Telefonnummer>();
             bool isAnyDuplicates = false;
             foreach (var person in toBeInserted)                                                                         // going until we went through the whole list
             {
@@ -101,7 +105,7 @@ namespace PersonalContactInformation.Api.Services
                             dbItem.Land = person.Land;
                             foreach(var nummer in toBeInsertedTel)
                             {
-                                AddTelefonnummerAsync(dbItem, nummer.TelNummer); // this doesn't work, ask reza about this on monday, i might get it to work, i will ask him anyways :]
+                                await AddTelefonnummerAsync(dbItem, nummer.TelNummer); // this doesn't work, ask reza about this on monday, i might get it to work, i will ask him anyways :]
                             }
                             // dbItem.Telefonnummer = person.Telefonnummer;
                             dbItem.Hausnummer = person.Hausnummer;
@@ -116,7 +120,7 @@ namespace PersonalContactInformation.Api.Services
                             dbItem.Land = person.Land;
                             foreach (var nummer in toBeInsertedTel)
                             {
-                                UpdateTelefonnummerAsync(dbItem, dbItem.TelId, nummer.TelNummer); // help
+                                await ReplaceTelefonnummerAsync(dbItem, toBeInsertedTel);
                             }
                             dbItem.Hausnummer   = person.Hausnummer;
                             dbItem.EMail = person.EMail;
@@ -147,38 +151,38 @@ namespace PersonalContactInformation.Api.Services
 
         public async Task<ServiceResponse> AddTelefonnummerAsync(Person person, string newNumber)
         {
-            /*
-            var helperJuan = person.Id;
-            var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == helperJuan && p.TelNummer == newNumber);
+            var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == person.Id && p.TelNummer == newNumber);
             if (dbItem != null) 
             {
                 return new ServiceResponse() { Message = "Number already saved", Success = false };
             }
 
-            newNumberWhoDis = new Telefonnummer;
+            Telefonnummer newNumberWhoDis = new Telefonnummer();
             newNumberWhoDis.PersonId = person.Id;
             newNumberWhoDis.TelNummer = newNumber;
 
             appDbContext.TelNr.Add(newNumberWhoDis);
             await appDbContext.SaveChangesAsync();
             return new ServiceResponse() { Message = "Number added", Success = true };
-            */
+        }
+
+        public async Task<Telefonnummer> GetTelefonnummerByIdAsync(int id)
+        {
+            var telefonnummer = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.Id == id);
+            return telefonnummer!;
         }
 
         public async Task<ServiceResponse> DeleteTelefonnummerAsync(Person person, string deleteNumber)
         {
-            /*
-            var helperCarlos = person.Id;
-            var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == helperCarlos && p.TelNummer == deleteNumber);   // i need this but it returns a item instead
+            var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == person.Id && p.TelNummer == deleteNumber);   // i need this but it returns a item instead
             if (dbItem == null)
             {
                 return new ServiceResponse() { Message = "Number does not exist", Success = false };
             }
 
-            appDbContext.TelNr.Remove(deleteThis);
+            appDbContext.TelNr.Remove(dbItem);
             await appDbContext.SaveChangesAsync();
-            return new ServiceResponse() { Message = "Number deleted", Success = true };
-             */
+            return new ServiceResponse() { Message = "Number deleted", Success = true }; 
         }
 
         public async Task<ServiceResponse> UpdateTelefonnummerAsync(Person person, string oldNumber, string newNumber)
@@ -186,37 +190,42 @@ namespace PersonalContactInformation.Api.Services
             // should take a person object or just personId, a already existing phone number and a new phone number
             // should fetch the table entry which matches both the personId and the old phone number, then replace it
             // have to figure a way out, how to replace the old numbers, i could just straight delete the number, then add the new one, though that wouldn't work for wanting to update one specific one
-            /*
-            var helperJoaquin = person.Id;
-            var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == helperJoaquin && p.TelNummer == oldNumber);
+            var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == person.Id && p.TelNummer == oldNumber);
             if (dbItem == null)
             {
                 return new ServiceResponse() { Message = "Number not found", Success = false };
             }
-            var replaceThis = findTheNumberInTheTableFunction.TelNr();
-            replaceThis.TelNummer = newNumber;
-
-            */
+            else if (oldNumber == newNumber)
+            {
+                return new ServiceResponse() { Message = "Number not changed", Success = true };
+            }
+            dbItem.TelNummer = newNumber;
+            await appDbContext.SaveChangesAsync();
+            return new ServiceResponse() { Message = "Number updated", Success = true };
         }
 
-        public async Task<ServiceResponse> ReplaceTelefonnummerAsync(Person person, List<Telefonnummer> telefonnummern)
+        public async Task<ServiceResponse> ReplaceTelefonnummerAsync(Person person, List<Telefonnummer> newTelefonnummern)
         {
             // deletes all existing numbers related to a specific person object, then inputs from list
-            /*
-            foreach ( var telNr in Table.TelNr) 
+            int index = 0;
+            foreach ( var telNr in appDbContext.TelNr)
             {
-                if (telNr == exist && telNr.PersonId == person.Id)
+                if (telNr != null && telNr.PersonId == person.Id)
                 {
-                    appDbContext.TelNr.Remove(nummer);
+                    var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(tn => tn.Id == telNr.Id);
+                    appDbContext.TelNr.Remove(dbItem);
                     await appDbContext.SaveChangesAsync();
-                    AddTelefonnummerAsync(person, telNr);
+                    Telefonnummer helperTel = newTelefonnummern[index];
+                    await AddTelefonnummerAsync(person, helperTel.TelNummer);
                 }
                 else
                 {
-                    AddTelefonnummerAsync(person, telNr);
+                    Telefonnummer helperTel = newTelefonnummern[index];
+                    await AddTelefonnummerAsync(person, helperTel.TelNummer);
                 }
+                index++;
             }
-            */
+            return new ServiceResponse() { Message = "Numbers replaced", Success = true };
         }
     }
 }
