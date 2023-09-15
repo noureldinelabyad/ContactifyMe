@@ -54,3 +54,11 @@ My idea is now to have the people table have a column for TelId instead of Telef
 	upon investigating on this idea it seems not impossible but normally i should make a third table, though i may be able to get around this
 
 FirstOrDefaultAsync returns an object
+
+For some reason the database migration did not create the Personnummer column in the people table, or it is just not visible to me, also returns null and is visible through api with getAll
+	i am assuming the table did actually not get the column and it returns null since the function knows person has Personnummer as a property, but no data = null
+	first theory was sql not allowing for tables to point at each other, but i have not found anything which implicitly states this
+	current guess is the List<Telefonnummer> is probably not quiet correct, since i only want Telefonnummer.Id in that list but List<Telefonnummer.Id> does not work
+		at this point i'm somewhat convinced this is the case, though i don't know how to rebuild this yet
+		maybe having List<int> and then after add-migration, write the foreign key into the migration manually (i haven't actually checked if a table can take a list of anything)
+		i may have to build a third table, though that wouldn't help with the problm i'm having
