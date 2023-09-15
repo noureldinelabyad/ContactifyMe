@@ -27,6 +27,7 @@ namespace MauiBlazorApp
             builder.Services.AddSingleton<IPersonService, PersonService>();
 
             return builder.Build();
+
         }
     }
 }

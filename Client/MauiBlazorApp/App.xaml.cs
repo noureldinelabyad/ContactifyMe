@@ -1,5 +1,11 @@
 ﻿using Microsoft.Maui;
 using Microsoft.Maui.Controls;
+using MauiBlazorApp.Services;
+using MauiBlazorApp.Pages;
+using Xamarin.Essentials;
+using Microsoft.AspNetCore.Components;
+
+
 namespace MauiBlazorApp
 {
     public partial class App : Application
@@ -10,10 +16,19 @@ namespace MauiBlazorApp
 
             MainPage = new MainPage();
 
-            //MainPage = new Microsoft.Maui.Controls.NavigationPage(new MainPage());
+//#if ANDROID || IOS
+//       MainPage = new NavigationPage(new AndroidIndex());
+
+//#else
+//            MainPage = new MainPage();
+
+//#endif
+
+
 
         }
+
+
+
     }
-
-
 }

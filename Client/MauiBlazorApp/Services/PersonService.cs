@@ -11,14 +11,29 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace MauiBlazorApp.Services
 {
 
     public class PersonService : IPersonService
     {
+        private string _baseUrl = "";
+
+        public PersonService()
+        {
+            if (Device.RuntimePlatform == Device.Android)
+            {
+                _baseUrl = "https://10.0.2.2:7078";
+            }
+            else
+            {
+                _baseUrl = "https://localhost:7078";
+            }
+        }
+
         // private string _baseUrl = "https://localhost:7078"; // URL of the API database
 
-        private string _baseUrl = "https://10.0.2.2:7078"; // tried this form chat gpt to show it on android but ...
+        // private string _baseUrl = "https://10.0.2.2:7078"; // tried this form chat gpt to show it on android but ..
 
         public async Task<MainResponseModel> AddPerson(AddUpdatePersonRequest personRequest)
         {

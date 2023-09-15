@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/android"
 @using MauiBlazorApp.Models
 @using MauiBlazorApp.Services
 @inject IPersonService PersonService
@@ -24,6 +24,7 @@
 </head>
 
 <h1>Person List</h1>
+<h1> Android </h1>
 
 @* <iframe width="560" height="315" src="https://www.youtube.com/embed/m8e-FF8MsqU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
  *@
@@ -149,6 +150,30 @@
         box-shadow: none;
             background-color: green;
         }
+
+
+    .person-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .person-item {
+        padding: 2px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .person-name {
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+
+    .person-vorname {
+        margin-right: 2px;
+    }
+
+    .person-telefonnummer {
+        margin-top: 1px;
+        color: #666;
 </style>
 
 <div class="dropdown">
@@ -202,59 +227,17 @@ else
 
     <div class="table-responsive">
         <table class="table">
-            <thead>
-                <tr>
-
-                    <th>Vorname</th>
-                    <td>Nachname</td>
-                    <td>Zwischenname</td>
-                    <td>Email</td>
-                    <td>Telefonnummer</td>
-                    <td>Strasse</td>
-                    <td>Hausnummer</td>
-                    <td>PLZ</td>
-                    <td>Stadt</td>
-                    <td>Land</td>
-                    <td>Gender</td>
-                    @*                res of the list
-                *@
-                </tr>
-            </thead>
+           
             <tbody>
                 @foreach (var person in _PersonList)
                 {
-                    <tr @onclick="@(() => DisplayOption(person))">
-
-                    @* <tr> *@
-                       @*  <td>
-                            <div class="position-relative">
-                                @person.Vorname
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Options
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <button class="btn btn-primary mx-1 mr-3" @onclick="@(() => DisplayUpdate(person.Id))">Update</button>
-                                        <button class="btn btn-danger mx-1 mr-3 " @onclick="@(() => DisplayDeleteConfirmation(person.Id))">Delete</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </td> *@
-                        <td>@person.Vorname</td>
-                        <td>@person.Nachname</td>
-                        <td>@person.Zwischenname</td>
-                        <td>@person.Email</td>
-                        <td>@person.Telefonnummer</td>
-                        <td>@person.Strasse</td>
-                        <td>@person.Hausnummer</td>
-                        <td>@person.PLZ</td>
-                        <td>@person.Stadt</td>
-                        <td>@person.Land</td>
-                        <td>@person.Gender</td>
-                        <!-- Add other table data here -->
-                        <td>
-                        </td>
-                    </tr>
+                    <div class="person-item" @onclick="@(() => DisplayOption(person))">
+                        <div class="person-name">
+                            <span class="person-vorname">@person.Vorname</span>
+                            <span class="person-nachname">@person.Nachname</span>
+                        </div>
+                        <div class="person-telefonnummer">@person.Telefonnummer</div>
+                    </div>
                 }
             </tbody>
         </table>
