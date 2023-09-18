@@ -5,6 +5,7 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager;
 
+
 <head>
     <!-- for the deopdown update , delete  -->
     <link rel="stylesheet" href="_content/Blazorise/blazorise.css" />
@@ -121,7 +122,7 @@
             border-color: None;
             color: lightblue;
             font-weight: normal;
-            border: none
+            border: solid;
         }
 
         .btn-secondary:active,
@@ -267,6 +268,8 @@ else
 
 
 @code {
+
+
 
     private void ClearSearchText()
     {

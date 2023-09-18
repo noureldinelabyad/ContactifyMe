@@ -16,13 +16,13 @@ namespace MauiBlazorApp
 
             MainPage = new MainPage();
 
-//#if ANDROID || IOS
-//       MainPage = new NavigationPage(new AndroidIndex());
 
-//#else
-//            MainPage = new MainPage();
 
-//#endif
+#if ANDROID
+            //MainPage = new Android();
+#else
+            MainPage = new MainPage();
+#endif
 
 
 

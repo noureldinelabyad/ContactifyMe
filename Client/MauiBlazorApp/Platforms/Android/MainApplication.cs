@@ -12,5 +12,7 @@ namespace MauiBlazorApp
         }
 
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+
+
     }
 }

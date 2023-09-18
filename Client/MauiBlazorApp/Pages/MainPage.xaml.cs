@@ -10,7 +10,7 @@ namespace MauiBlazorApp
         {
             InitializeComponent();
         }
-
-      
+        
     }
+
 }
