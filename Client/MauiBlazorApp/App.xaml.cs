@@ -18,11 +18,11 @@ namespace MauiBlazorApp
 
 
 
-#if ANDROID
-            //MainPage = new Android();
-#else
-            MainPage = new MainPage();
-#endif
+//#if ANDROID
+//            MainPage = new Android();
+//#else
+//            MainPage = new MainPage();
+//#endif
 
 
 

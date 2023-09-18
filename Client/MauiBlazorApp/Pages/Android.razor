@@ -7,8 +7,14 @@
 
 <head>
     <!-- for the deopdown update , delete  -->
-    <link rel="stylesheet" href="_content/Blazorise/blazorise.css" />
-    <link rel="stylesheet" href="_content/Blazorise.Bootstrap/blazorise.bootstrap.css" />
+    @* <link rel="stylesheet" href="_content/Blazorise/blazorise.css" />
+    <link rel="stylesheet" href="_content/Blazorise.Bootstrap/blazorise.bootstrap.css" /> *@
+
+@*     font awsome
+ *@    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+
 
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
     <script src="_content/Blazorise/blazorise.js"></script>
@@ -20,7 +26,6 @@
 
 
 
-
 </head>
 
 <h1>Person List</h1>
@@ -29,10 +34,13 @@
 @* <iframe width="560" height="315" src="https://www.youtube.com/embed/m8e-FF8MsqU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
  *@
 
+
 <div class="input-group mb-3">
     <input type="text" class="search-bar" placeholder="Search..." @bind="searchText" @oninput="HandleSearchTextChanged" />
 
-    <button class="btn btn-clear" type="button" @onclick="ClearSearchText"><i class="fas fa-times-circle"> X </i></button>
+    <button class="btn btn-clear" type="button" @onclick="ClearSearchText">
+        <i class="fa-regular fa-delete-left"></i> X
+    </button>
 
     <div class="input-group-append">
         <button class="btn btn-Search" type="button" @onclick="BtnSearch_Clicked">Search</button>
@@ -41,6 +49,12 @@
 
 
 <style>
+
+    .custom-icon {
+        color: red;
+        block-size:auto;
+    }
+
 
     .search-bar {
         border: solid;

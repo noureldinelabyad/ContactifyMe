@@ -1,4 +1,11 @@
-﻿<Router AppAssembly="@typeof(Main).Assembly">
+﻿@using Xamarin.Essentials
+@inject NavigationManager NavManager
+@using Microsoft.AspNetCore.Components;
+
+
+
+
+<Router AppAssembly="@typeof(Main).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -9,3 +16,19 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+
+@code
+{
+    //to show the android view 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (DeviceInfo.Platform == DevicePlatform.Android)
+        {
+            NavManager.NavigateTo("/android");
+        }
+    }
+}
+
