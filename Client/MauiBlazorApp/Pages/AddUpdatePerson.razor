@@ -170,8 +170,8 @@
             if (response.Success)
             {
                 await App.Current.MainPage.DisplayAlert("Record Updated", "Contact Updated Successfully", "OK");
-
-                 NavManager.NavigateTo("/");
+                NavManager.NavigateTo("..");
+                // NavManager.NavigateTo("/");
             }
             else
             {
@@ -192,7 +192,9 @@
                 this.StateHasChanged();
 
                 await App.Current.MainPage.DisplayAlert("Contact Added", "Contact Added Successfully", "OK");
-                NavManager.NavigateTo("/");
+               // NavManager.NavigateTo("/");
+                NavManager.NavigateTo("..");
+                //Shell.Current.GoToAsync("..");
             }
             else
             {

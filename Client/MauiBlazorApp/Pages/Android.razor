@@ -10,8 +10,8 @@
     @* <link rel="stylesheet" href="_content/Blazorise/blazorise.css" />
     <link rel="stylesheet" href="_content/Blazorise.Bootstrap/blazorise.bootstrap.css" /> *@
 
-@*     font awsome
- *@    
+    @*     font awsome
+    *@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 
 
@@ -27,23 +27,26 @@
 
 
 </head>
+       <h1>person list</h1> 
+            <h1> Android </h1>
 
-<h1>Person List</h1>
-<h1> Android </h1>
+<div class="table-container">
+    <div class="input-group mb-3">
+      
 
-@* <iframe width="560" height="315" src="https://www.youtube.com/embed/m8e-FF8MsqU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
- *@
+        
+        @* <iframe width="560" height="315" src="https://www.youtube.com/embed/m8e-FF8MsqU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        *@
 
+        <input type="text" class="search-bar" placeholder="Search..." @bind="searchText" @oninput="HandleSearchTextChanged" />
 
-<div class="input-group mb-3">
-    <input type="text" class="search-bar" placeholder="Search..." @bind="searchText" @oninput="HandleSearchTextChanged" />
+        <button class="btn btn-clear" type="button" @onclick="ClearSearchText">
+            <i class="fa-regular fa-delete-left custom-icon"></i> X
+        </button>
 
-    <button class="btn btn-clear" type="button" @onclick="ClearSearchText">
-        <i class="fa-regular fa-delete-left"></i> X
-    </button>
-
-    <div class="input-group-append">
-        <button class="btn btn-Search" type="button" @onclick="BtnSearch_Clicked">Search</button>
+        <div class="input-group-append">
+            <button class="btn btn-Search" type="button" @onclick="BtnSearch_Clicked">Search</button>
+        </div>
     </div>
 </div>
 
@@ -52,7 +55,7 @@
 
     .custom-icon {
         color: red;
-        block-size:auto;
+        block-size: auto;
     }
 
 
@@ -90,60 +93,6 @@
         outline: none;
     }
 
-    .table-container {
-        max-height: 600px; /* Adjust this value to set the maximum height of the container */
-        overflow-y: auto;
-    }
-
-
-    .person-name {
-        /* Adjust the value as needed */
-        margin-bottom: 5px;
-        margin-top: 5px;
-    }
-
-
-
-
-
-    .divider {
-        border-bottom: 1px solid black;
-        margin-bottom: 0,1px;
-        margin-top: 0px;
-    }
-
-
-    .person-name {
-        font-weight: bold;
-        font-size: 1.2em;
-        margin-bottom: 1px;
-        margin-top: 1px;
-    }
-
-    .person-vorname {
-        margin-right: 2px;
-        margin-bottom: 1px;
-        margin-top: 1px;
-    }
-
-    .person-telefonnummer {
-        color: black;
-        margin-top: 1px; /* Adjust the value as needed */
-        margin-bottom: 0px;
-        font-family: Britannic;
-        font: bold;
-    }
-
-
-    .person-list {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .person-item {
-        padding: 2px;
-        border-bottom: 1px solid #ccc;
-    }
 
 
 
@@ -172,7 +121,18 @@
         margin-right: 0.5rem;
     }
 
-
+    .input-group {
+       /*  position: fixed;
+        top: 50px; /* Adjust as needed */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: auto; /* Ensure the search bar is above the table */
+        background-color: white;
+        padding: 1px;
+        border-radius: 50px;
+        border-radius: 0 0 0 0;
+        margin-bottom:1px; */
+    }
 
     .btn-clear i {
         font-size: 1rem;
@@ -234,6 +194,54 @@
             background-color: green;
         }
 
+    .table-container {
+/*         max-height: calc(100vh - 120px); /* Subtract the height of the search bar and button container */
+/*         margin-top: 20px; /* Adjust as needed */
+
+        max-height: 600px; /* Adjust this value to set the maximum height of the container */
+        overflow-y: auto;
+     }
+
+
+
+    .person-name {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-bottom: 1px;
+        margin-top: 1px;
+    }
+
+    .person-vorname {
+        margin-right: 2px;
+        margin-bottom: 1px;
+        margin-top: 1px;
+    }
+
+    .person-telefonnummer {
+        color: black;
+        margin-top: 1px; /* Adjust the value as needed */
+        margin-bottom: 0px;
+        font-family: Britannic;
+        font: bold;
+    }
+
+
+    .person-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .person-item {
+        padding: 2px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .divider {
+        border-bottom: 1px solid black;
+        margin-bottom: 0,1px;
+        margin-top: 0px;
+    }
+
 </style>
 
 
@@ -253,32 +261,32 @@
 
 @if (searchResults != null)
 {
-    
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <td>Nachname</td>
-                        <th>Vorname</th>
-                        <!-- Add other table headers here -->
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var person in searchResults)
-                    {
-                        @*                     <tr @onclick="@( () => DisplayOption(person) )">
 
-                *@
-                        <tr @onclick="@( () => DisplayOption(person) )">
-                            <td>@person.Nachname</td>
-                            <td>@person.Vorname</td>
-                            <!-- Add other table data here -->
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>Nachname</td>
+                    <th>Vorname</th>
+                    <!-- Add other table headers here -->
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var person in searchResults)
+                {
+                    @*                     <tr @onclick="@( () => DisplayOption(person) )">
+
+            *@
+                    <tr @onclick="@( () => DisplayOption(person) )">
+                        <td>@person.Nachname</td>
+                        <td>@person.Vorname</td>
+                        <!-- Add other table data here -->
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
 
 }
 
@@ -290,24 +298,24 @@
 else
 {
 
-        <div class="table-responsive">
-            <table class="table">
-           
-                <tbody>
-                    @foreach (var person in _PersonList)
-                    {
+    <div class="table-responsive">
+        <table class="table">
+
+            <tbody>
+                @foreach (var person in _PersonList)
+                {
                     <div class="person-item" @onclick="@(() => DisplayOption(person))">
-                            <div class="person-name">
-                                <span class="person-vorname">@person.Vorname</span>
-                                <span class="person-nachname">@person.Nachname</span>
-                            </div>
-                            <div class="person-telefonnummer">@person.Telefonnummer</div>
-                            <div class="divider"></div>
+                        <div class="person-name">
+                            <span class="person-vorname">@person.Vorname</span>
+                            <span class="person-nachname">@person.Nachname</span>
                         </div>
-                    }
-                </tbody>
-            </table>
-        </div>
+                        <div class="person-telefonnummer">@person.Telefonnummer</div>
+                        <div class="divider"></div>
+                    </div>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
@@ -336,7 +344,7 @@ else
 
 @code {
 
-   
+
 
     private void ClearSearchText()
     {
@@ -446,20 +454,17 @@ else
 
         {
             NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+
         }
         else if (response == "Delete Contact")
 
         {
-            var deleteresponse = await PersonService.DeletePerson(new AddUpdatePersonRequest
-                {
-                    Id = personDetail.Id
-                });
 
-            if (deleteresponse.Success)
-            {
-                await OnInitializedAsync();
-                this.StateHasChanged();
-            }
+               DisplayDeleteConfirmation(personDetail.Id);
+
+
+           
+            
         }
     }
 
@@ -469,8 +474,7 @@ else
     {
         await OnConfirmation.InvokeAsync(true);
     }
-
-    }
+}
 
 
 
