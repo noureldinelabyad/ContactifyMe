@@ -1,6 +1,18 @@
 ﻿@page "/"
 @using MauiBlazorApp.Models
 @using MauiBlazorApp.Services
+@using System.Text
+@using System.IO;
+@using System;
+@using System.Collections.Generic;
+@using System.Linq;
+@using System.Text.RegularExpressions;
+@using Microsoft.JSInterop;
+@using Newtonsoft.Json;
+
+@using iTextSharp.text;
+@using iTextSharp.text.pdf;
+
 @inject IPersonService PersonService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager;
@@ -8,7 +20,7 @@
 
 
 <head>
-    <!-- for the deopdown update , delete  -->
+    <!-- for the deopdown update , delete    -->
     <link rel="stylesheet" href="_content/Blazorise/blazorise.css" />
     <link rel="stylesheet" href="_content/Blazorise.Bootstrap/blazorise.bootstrap.css" />
 
@@ -20,16 +32,15 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
-@*     <script src="exportPdf.js"></script>
- *@
-    
+    <script src="exportPdf.js"></script>
+
+
 </head>
 
 <h1>Person List</h1>
 
 @* <iframe width="560" height="315" src="https://www.youtube.com/embed/m8e-FF8MsqU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
  *@
-
 <div class="input-group mb-3">
 
     <input type="text" class="form-control" placeholder="Search..." @bind="searchText" @oninput="HandleSearchTextChanged" />
@@ -39,7 +50,16 @@
     <div class="input-group-append">
         <button class="btn btn-outline-secondary" type="button" @onclick="BtnSearch_Clicked">Search</button>
     </div>
-    @* <button class="btn btn-primary" @onclick="btnExportData">Export as PDF</button> *@
+
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Exportieren als
+        </button>
+        <div class="dropdown-menu">
+            <button class="dropdown-item" @onclick="DownloadAsJson">JSON</button>
+            <button class="dropdown-item" @onclick="DownloadAsPdf">PDF</button>
+        </div>
+    </div>
 
 </div>
 
@@ -120,8 +140,7 @@
         font-weight: normal;
     }
 
-        .btn-secondary:hover
-         {
+        .btn-secondary:hover {
             background-color: none;
             border-color: None;
             color: lightblue;
@@ -135,23 +154,23 @@
             border-color: None;
             color: lightblue;
             font-weight: normal;
-            border:none
+            border: none
         }
 
-    .dropdown-toggle.btn-secondary:
-    {
+    .dropdown-toggle.btn-secondary: {
         background-color: white;
         border-color: None;
         color: lightblue;
         font-weight: normal;
         border: none
     }
-    .dropdown-toggle.btn-secondary:not([disabled]):not(.disabled).active:focus {
-        box-shadow: none;
-    }
 
-    .dropdown-toggle.btn-secondary:focus {
-        box-shadow: none;
+        .dropdown-toggle.btn-secondary:not([disabled]):not(.disabled).active:focus {
+            box-shadow: none;
+        }
+
+        .dropdown-toggle.btn-secondary:focus {
+            box-shadow: none;
             background-color: green;
         }
 </style>
@@ -165,9 +184,32 @@
                 <li class="dropdown-item">@person.Nachname</li>
             }
         }
-        
+
     </ul>
 </div>
+
+
+
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this person?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" @onclick="ConfirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @if (searchResults != null)
 {
@@ -230,21 +272,21 @@ else
                 {
                     <tr @onclick="@(() => DisplayOption(person))">
 
-                    @* <tr> *@
-                       @*  <td>
-                            <div class="position-relative">
-                                @person.Vorname
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Options
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <button class="btn btn-primary mx-1 mr-3" @onclick="@(() => DisplayUpdate(person.Id))">Update</button>
-                                        <button class="btn btn-danger mx-1 mr-3 " @onclick="@(() => DisplayDeleteConfirmation(person.Id))">Delete</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </td> *@
+                        @* <tr> *@
+                        @*  <td>
+                <div class="position-relative">
+                @person.Vorname
+                <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Options
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <button class="btn btn-primary mx-1 mr-3" @onclick="@(() => DisplayUpdate(person.Id))">Update</button>
+                <button class="btn btn-danger mx-1 mr-3 " @onclick="@(() => DisplayDeleteConfirmation(person.Id))">Delete</button>
+                </div>
+                </div>
+                </div>
+                </td> *@
                         <td>@person.Vorname</td>
                         <td>@person.Nachname</td>
                         <td>@person.Zwischenname</td>
@@ -268,9 +310,150 @@ else
 }
 
 
+<script>
+    window.BlazorDownloadFile = (fileName, data) => {
+        const blob = new Blob([new Uint8Array(data)], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+</script>
 
 
 @code {
+
+    private async Task DownloadAsPdf()
+    {
+        var pgSize = new iTextSharp.text.Rectangle(141.732f, 141.732f);
+        Document doc = new Document(pgSize);
+        try
+        {
+            // Create a new PDF document
+            Document document = new Document(PageSize.A4, 26, 36, 15, 0);
+
+            MemoryStream memoryStream = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+
+            document.Open();
+
+            // Add content to the PDF
+            PdfPTable table = new PdfPTable(11); // Adjust the number of columns as per your data
+
+            table.WidthPercentage = 90;
+
+            //leave a gap before and after the table
+            table.SpacingBefore = 20f;
+            table.SpacingAfter = 30f;
+
+            BaseFont bfHelvetica = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+            Font smallFont = new Font(bfHelvetica, 5, Font.NORMAL, BaseColor.BLACK); // Changed font size to 4 and set color to black
+            Font boldFont = new Font(bfHelvetica, 5, Font.BOLD, BaseColor.WHITE); // Added bold font for header row
+
+            // Add headers with bold and white font color
+            table.AddCell(new PdfPCell(new Phrase("Vorname", boldFont)) { BackgroundColor = new BaseColor(66, 139, 202) });
+            table.AddCell(new PdfPCell(new Phrase("Nachname", boldFont)) { BackgroundColor = new BaseColor(66, 139, 202) });
+            table.AddCell(new PdfPCell(new Phrase("Zwischenname", boldFont)) { BackgroundColor = new BaseColor(66, 139, 202) });
+            table.AddCell(new PdfPCell(new Phrase("Email", boldFont)) { BackgroundColor = new BaseColor(66, 139, 202) });
+            table.AddCell(new PdfPCell(new Phrase("Telefonnummer", boldFont)) { BackgroundColor = new BaseColor(66, 139, 202) });
+            table.AddCell(new PdfPCell(new Phrase("Strasse", boldFont)) { BackgroundColor = new BaseColor(66, 139, 202) });
+            table.AddCell(new PdfPCell(new Phrase("Hausnummer", boldFont)) { BackgroundColor = new BaseColor(66, 139, 202) });
+            table.AddCell(new PdfPCell(new Phrase("PLZ", boldFont)) { BackgroundColor = new BaseColor(66, 139, 202) });
+            table.AddCell(new PdfPCell(new Phrase("Stadt", boldFont)) { BackgroundColor = new BaseColor(66, 139, 202) });
+            table.AddCell(new PdfPCell(new Phrase("Land", boldFont)) { BackgroundColor = new BaseColor(66, 139, 202) });
+            table.AddCell(new PdfPCell(new Phrase("Gender", boldFont)) { BackgroundColor = new BaseColor(66, 139, 202) });
+
+            // Add data with small font size and alternating row background colors
+            BaseColor evenBgColor = new BaseColor(255, 255, 255); // White background for even rows
+            BaseColor oddBgColor = new BaseColor(238, 238, 238); // Light gray background for odd rows
+            for (int i = 0; i < _PersonList.Count; i++)
+            {
+                var person = _PersonList[i];
+
+                table.AddCell(new PdfPCell(new Phrase(person.Vorname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Nachname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Zwischenname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Email, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Telefonnummer, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Strasse, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Hausnummer, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.PLZ.ToString(), smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Stadt, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Land, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Gender, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+
+                // Set padding to wrap text
+                foreach (PdfPCell cell in table.Rows[table.Rows.Count - 1].GetCells())
+                {
+                    cell.Padding = 5;
+                }
+            }
+
+            document.Add(table);
+
+            document.Close();
+
+            // Trigger the download
+            byte[] data = memoryStream.ToArray();
+            await JSRuntime.InvokeVoidAsync("downloadPdf", Convert.ToBase64String(data), "person_data.pdf");
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+
+
+    private async Task DownloadAsJson()
+    {
+        try
+        {
+            var transformedList = _PersonList.Select(person => new
+            {
+                id = person.Id,
+                nachname = person.Nachname,
+                vorname = person.Vorname,
+                zwischenname = person.Zwischenname,
+                telefonnummer = person.Telefonnummer,
+                eMail = person.Email,
+                strasse = ReplaceUnicodeEscapeSequences(person.Strasse), // Replace Unicode escape sequences
+                hausnummer = person.Hausnummer,
+                plz = person.PLZ,
+                stadt = person.Stadt,
+                land = person.Land,
+                gender = person.Gender
+            }).ToList();
+
+            var jsonContent = JsonConvert.SerializeObject(transformedList, Formatting.Indented);
+
+            var fileName = "person_data.json";
+
+            // Create a byte array from the JSON content
+            byte[] data = Encoding.UTF8.GetBytes(jsonContent);
+
+            // Trigger the download
+            await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", fileName, data);
+
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+
+    private string ReplaceUnicodeEscapeSequences(string input)
+    {
+        return Regex.Replace(input, @"\\u(?<Value>[a-zA-Z0-9]{4})", m =>
+        {
+            return ((char)int.Parse(m.Groups["Value"].Value, System.Globalization.NumberStyles.HexNumber)).ToString();
+        });
+    }
+
+
 
 
     private void ClearSearchText()
@@ -398,41 +581,16 @@ else
         }
     }
 
-
-}
-
-
-        @code {
     [Parameter] public EventCallback<bool> OnConfirmation { get; set; }
-}
 
-<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete this person?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" @onclick="ConfirmDelete">Delete</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-@code {
     private async Task ConfirmDelete()
     {
         await OnConfirmation.InvokeAsync(true);
     }
 }
+
+
+
 
 
 
