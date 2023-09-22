@@ -1,6 +1,8 @@
 ﻿using MauiBlazorApp.Services;
 using Microsoft.Extensions.Logging;
 using MauiBlazorApp.Pages;
+using CommunityToolkit.Maui;
+
 
 
 
@@ -13,9 +15,16 @@ namespace MauiBlazorApp
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+
+                // Initialize the .NET MAUI Community Toolkit by adding the below line of code
+
+                .UseMauiCommunityToolkit()
+
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+
                 });
 
             builder.Services.AddMauiBlazorWebView();

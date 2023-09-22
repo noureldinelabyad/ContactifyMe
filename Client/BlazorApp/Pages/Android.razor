@@ -124,6 +124,7 @@
     .input-group {
        /*  position: fixed;
         top: 50px; /* Adjust as needed */
+
         left: 50%;
         transform: translateX(-50%);
         z-index: auto; /* Ensure the search bar is above the table */
@@ -131,7 +132,7 @@
         padding: 1px;
         border-radius: 50px;
         border-radius: 0 0 0 0;
-        margin-bottom:1px; */
+        margin-bottom:1px; 
     }
 
     .btn-clear i {
@@ -177,7 +178,7 @@
             border: none
         }
 
-    .dropdown-toggle.btn-secondary: {
+    .dropdown-toggle.btn-secondary{
         background-color: white;
         border-color: None;
         color: lightblue;
@@ -445,27 +446,28 @@ else
         }
     }
 
-    private async void DisplayOption(PersonModel personDetail)
-    {
+     private async void DisplayOption(PersonModel personDetail)
+     {
 
-        // var response = await App.Current.MainPage.DisplayActionSheet("Select Option", "Ok", null, "Update Contact", "Delete Contact");
+    //     // var response = await App.Current.MainPage.DisplayActionSheet("Select Option", "Ok", null, "Update Contact", "Delete Contact");
 
-        // if (response == "Update Contact")
+    //     // if (response == "Update Contact")
 
-        // {
-        //     NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+    //     // {
+    //     //     NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
 
-        // }
-        // else if (response == "Delete Contact")
+    //     // }
+    //     // else if (response == "Delete Contact")
 
-        // {
+    //     // {
 
-        //        DisplayDeleteConfirmation(personDetail.Id);
+    //     //        DisplayDeleteConfirmation(personDetail.Id);
 
 
            
             
-        }
+      }
+
 
     [Parameter] public EventCallback<bool> OnConfirmation { get; set; }
 
@@ -474,8 +476,7 @@ else
         await OnConfirmation.InvokeAsync(true);
     }
 
-    }
-
+ }
 
 
 

@@ -65,7 +65,7 @@ namespace PersonalContactInformation.Api.Controllers
         {
             if(person == null)
             {
-                return BadRequest("Bad request");
+              //  return BadRequest("Bad request");
             }
 
             var result = await personService.AddPersonAsync(person);

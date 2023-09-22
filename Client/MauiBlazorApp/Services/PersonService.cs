@@ -35,6 +35,8 @@ namespace MauiBlazorApp.Services
 
         // private string _baseUrl = "https://10.0.2.2:7078"; // tried this form chat gpt to show it on android but ..
 
+
+
         public async Task<MainResponseModel> AddPerson(AddUpdatePersonRequest personRequest)
         {
             var returnResponse = new MainResponseModel();
@@ -283,31 +285,6 @@ namespace MauiBlazorApp.Services
 
 
 
-        public async Task<List<PersonModel>> SearchPersonsByName(string searchText)
-        {
-            List<PersonModel> returnResponse = new List<PersonModel>();
-            try
-            {
-                using (var client = new HttpClient())
-                {
-                    string url = $"{_baseUrl}/api/Persons/SearchByName?searchText={searchText}"; // Assuming you have an API endpoint for searching by name
-                    var apiResponse = await client.GetAsync(url);
-
-                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        var response = await apiResponse.Content.ReadAsStringAsync();
-                        returnResponse = JsonConvert.DeserializeObject<List<PersonModel>>(response);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log or handle the exception gracefully.
-                string Msg = ex.Message;
-                // You might also consider rethrowing the exception if you want to propagate it further.
-            }
-            return returnResponse;
-        }
 
     }
 

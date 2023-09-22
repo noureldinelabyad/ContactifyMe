@@ -7,3 +7,4 @@
     downloadLink.download = fileNameWithExtension;
     downloadLink.click();
 };
+

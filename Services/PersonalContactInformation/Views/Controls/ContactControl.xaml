@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:Toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
-    
+
     <!--  // every Auto for (lable , component, name , phonenumber , Email )  -->
     <Grid
         Margin="10"
@@ -18,6 +18,7 @@
             FontSize="18"
             Text="Nachname"
               HorizontalOptions="Start"/>
+
         <Entry x:Name="Entry_Name" Grid.Row="1" HorizontalOptions="Start">
             <Entry.Behaviors>
                 <Toolkit:TextValidationBehavior
@@ -48,13 +49,13 @@
 
             </Entry.Behaviors>
         </Entry>
-        
+
         <Label
      Grid.Row="2"
      FontSize="18"
      Text="Zwischenname" />
         <Entry x:Name="Entry_Zwischenname" Grid.Row="3" >
-           
+
         </Entry>
 
         <Label
@@ -65,12 +66,12 @@
             <Entry.Behaviors>
                 <Toolkit:MultiValidationBehavior x:Name="emailValidator"
                    Flags="ValidateOnAttaching,ValidateOnValueChanged">
-                   <Toolkit:TextValidationBehavior
+                    <Toolkit:TextValidationBehavior
                      MinimumLength="1"
                     Flags="ValidateOnAttaching,ValidateOnValueChanged"
                     Toolkit:MultiValidationBehavior.Error="Email is required" 
                        />
-                    
+
                     <Toolkit:EmailValidationBehavior
                          Flags="ValidateOnAttaching,ValidateOnValueChanged"
                            Toolkit:MultiValidationBehavior.Error="Email format is invalid"
@@ -81,10 +82,10 @@
                 </Toolkit:MultiValidationBehavior>
             </Entry.Behaviors>
         </Entry>
-        
 
-           
-        
+
+
+
 
         <Label
             Grid.Row="6"
@@ -92,9 +93,9 @@
             Text="Telefonnummer" />
         <Entry x:Name="Entry_PhoneNumber" Grid.Row="7" />
 
-       
 
-           <Label
+
+        <Label
             Grid.Row="8"
             FontSize="18"
             Text="Straße"  HorizontalOptions="Center"/>
@@ -106,7 +107,7 @@
             Text="Hausnummer"   HorizontalOptions="Start"/>
         <Entry x:Name="Entry_Hausnummer" Grid.Row="9"  HorizontalOptions="Start"/>
 
-       <Label
+        <Label
             Grid.Row="8"
             FontSize="18"
             Text="PLZ"   HorizontalOptions="End"/>
@@ -124,10 +125,10 @@
             Text="Land"   HorizontalOptions="Start"/>
         <Entry x:Name="Entry_Land" Grid.Row="11"  HorizontalOptions="Start"/>
 
-       
-        
-        
-        
+
+
+
+
         <Button
             x:Name="BtnContactSave"
             Grid.Row="12"
