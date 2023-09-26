@@ -35,6 +35,7 @@ namespace PersonalContactInformation.Api.Controllers
             }
 
         }
+
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<ServiceResponse>> DeletePersonAsync(int id)
         {
@@ -99,6 +100,43 @@ namespace PersonalContactInformation.Api.Controllers
             {
                 return BadRequest(result);
             }
+        }
+
+        [HttpPost("AddTel")]
+        public async Task<ActionResult<ServiceResponse>> AddTelefonnummerAsync(Person person, string newNumber)
+        {
+            if (person == null)
+            {
+                return BadRequest("Bad request");
+            }
+            else if (newNumber == null)
+            {
+                return BadRequest("No number found");
+            }
+
+            var result = await personService.AddTelefonnummerAsync(person, newNumber);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [HttpPut("UpdateTel")]
+        public async Task<ActionResult<ServiceResponse>> UpdateTelefonnummerAsync(Person person, string oldNumber, string newNumber)
+        {
+            var response = await personService.UpdatePersonAsync(person);
+            return Ok(response);
+        }
+
+        [HttpDelete("DeleteTel")]
+        public async Task<ActionResult<ServiceResponse>> DeleteTelefonnummerAsync(Person person, string deleteNumber)
+        {
+            var response = await personService.DeletePersonAsync(person.Id);
+            return Ok(response);
         }
     }
 }

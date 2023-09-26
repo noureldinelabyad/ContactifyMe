@@ -70,6 +70,7 @@ namespace PersonalContactInformation.Api.Services
             {
                 Telefonnummer helperTel = await GetTelefonnummerByIdAsync(id.Id);
                 await UpdateTelefonnummerAsync(result, helperTel.TelNummer, person.PersonNummern[index].TelNummer); // how to get Telefonnummer from Person JSON list thingy
+                index++;
             }
             result.EMail = person.EMail;
             result.Strasse = person.Strasse;
@@ -105,7 +106,7 @@ namespace PersonalContactInformation.Api.Services
                             dbItem.Land = person.Land;
                             foreach(var nummer in toBeInsertedTel)
                             {
-                                await AddTelefonnummerAsync(dbItem, nummer.TelNummer); // this doesn't work, ask reza about this on monday, i might get it to work, i will ask him anyways :]
+                                await AddTelefonnummerAsync(dbItem, nummer.TelNummer); // testing this tomorrow
                             }
                             // dbItem.Telefonnummer = person.Telefonnummer;
                             dbItem.Hausnummer = person.Hausnummer;
@@ -168,7 +169,7 @@ namespace PersonalContactInformation.Api.Services
 
         public async Task<Telefonnummer> GetTelefonnummerByIdAsync(int id)
         {
-            var telefonnummer = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.Id == id);
+            var telefonnummer = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.Id == id);  //does this even work?
             return telefonnummer!;
         }
 
@@ -189,7 +190,6 @@ namespace PersonalContactInformation.Api.Services
         {
             // should take a person object or just personId, a already existing phone number and a new phone number
             // should fetch the table entry which matches both the personId and the old phone number, then replace it
-            // have to figure a way out, how to replace the old numbers, i could just straight delete the number, then add the new one, though that wouldn't work for wanting to update one specific one
             var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == person.Id && p.TelNummer == oldNumber);
             if (dbItem == null)
             {
@@ -197,7 +197,7 @@ namespace PersonalContactInformation.Api.Services
             }
             else if (oldNumber == newNumber)
             {
-                return new ServiceResponse() { Message = "Number not changed", Success = true };
+                return new ServiceResponse() { Message = "New and old number identical", Success = false };
             }
             dbItem.TelNummer = newNumber;
             await appDbContext.SaveChangesAsync();
