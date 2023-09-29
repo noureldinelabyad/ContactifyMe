@@ -65,3 +65,6 @@ For some reason the database migration did not create the Personnummer column in
 	the column might just not be shown, but still exist? i will try out if it just works
 		i might have been massively overthinking and wasting time for a while since i was mostly looking for a way to make my updatetelefonnummer function work
 		but i can just pass the personId, old number and new number and go with that, i don't actually need a cell in people with all the telIds
+
+The Personnummern list stays empty and doesn't get displayed in the table, i don't care about the displaying but it needs to be readable for at least the program + actually output
+	it does show in the preview of the api in swagger ui
