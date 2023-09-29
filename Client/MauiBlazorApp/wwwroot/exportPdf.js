@@ -7,7 +7,20 @@
     downloadLink.download = fileNameWithExtension;
     downloadLink.click();
 
-    alert(`File ${fileNameWithExtension} downloaded successfully in your device`);
+   // alert(`File ${fileNameWithExtension} downloaded successfully in your device`);
+
+
+    Swal.fire({
+        icon: 'success',
+        text: `${fileName} downloaded successfully in your device`,
+        //width: 600,
+        //padding: '3em',
+        color: 'white',
+        background: '#1E314B ',
+
+
+    })
+
 
 };
 
@@ -24,5 +37,18 @@ window.BlazorDownloadFile = (fileName, data) => {
     document.body.removeChild(link);
 
     // Display a success message after download
-    alert(`File ${fileName} downloaded successfully in your device`);
+   // alert(`File ${fileName} downloaded successfully in your device`);
+
+    Swal.fire({
+        icon: 'success',
+        text: `${fileName} downloaded successfully in your device`,
+        //width: 600,
+       //padding: '3em',
+        color: 'white',
+        background: '#1E314B ',
+      
+  
+    })
+    
 };
+

@@ -1,17 +1,20 @@
 ﻿using MauiBlazorApp.Services;
 using Microsoft.Extensions.Logging;
+using CurrieTechnologies.Razor.SweetAlert2;
 using MauiBlazorApp.Pages;
 using CommunityToolkit.Maui;
 
 
 
-
 namespace MauiBlazorApp
 {
+
     public static class MauiProgram
     {
+
         public static MauiApp CreateMauiApp()
         {
+
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
@@ -28,6 +31,7 @@ namespace MauiBlazorApp
                 });
 
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.AddSweetAlert2();
 
 
 

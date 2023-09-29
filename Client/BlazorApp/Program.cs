@@ -1,6 +1,7 @@
 using BlazorApp.Data;
 using BlazorApp.Pages;
 using CommonCode.Services;
+using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using static BlazorApp.Pages.Index;
@@ -10,8 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
 builder.Services.AddSingleton<WeatherForecastService>();
+
 builder.Services.AddSingleton<IPersonService, PersonService>();
+
+builder.Services.AddScoped<Radzen.DialogService>();
+
+builder.Services.AddSweetAlert2();
 
 
 
