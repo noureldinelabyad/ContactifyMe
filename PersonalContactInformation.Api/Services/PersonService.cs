@@ -52,7 +52,14 @@ namespace PersonalContactInformation.Api.Services
             return person!;
         }
 
-        public async Task<List<Person>> GetPersonsAsync() => await appDbContext.People.ToListAsync();
+        public async Task<List<Person>> GetPersonsAsync()
+        {
+            //List<Person> toBeOutput = new List<Person>();
+            //toBeOutput = 
+            //Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(jsonContent)
+            return await appDbContext.People.Include("TelNr").ToListAsync();
+            //Newtonsoft.Json.JsonConvert.SerializeObject<List<Person>>(toBeOutput);
+        }
 
         public async Task<ServiceResponse> UpdatePersonAsync(Person person)
         {
@@ -65,6 +72,7 @@ namespace PersonalContactInformation.Api.Services
             result.Nachname = person.Nachname;
             result.Vorname = person.Vorname;
             result.Zwischenname = person.Zwischenname;
+            
             int index = 0;
             foreach (var id in person.PersonNummern) // y u no work
             {
@@ -72,12 +80,14 @@ namespace PersonalContactInformation.Api.Services
                 await UpdateTelefonnummerAsync(result, helperTel.TelNummer, person.PersonNummern[index].TelNummer); // how to get Telefonnummer from Person JSON list thingy
                 index++;
             }
+
             result.EMail = person.EMail;
             result.Strasse = person.Strasse;
             result.Hausnummer = person.Hausnummer;
             result.PLZ = person.PLZ;
             result.Stadt = person.Stadt;
             result.Land = person.Land;
+            
             await appDbContext.SaveChangesAsync();
             return new ServiceResponse() { Message = "Contact updated", Success = true };
         }
@@ -99,6 +109,7 @@ namespace PersonalContactInformation.Api.Services
                     {
                         case UpdateStrategy.Skip:                                                                        // skipping over elements which are duplicates
                             break;
+
                         case UpdateStrategy.Merge:                                                                       // merginig "old" data of duplicate elements with "new" data from JSON file excluding names, since they are technically the identifier
                             // TODO merge info in multivalue case
                             dbItem.PLZ = person.PLZ;
@@ -115,6 +126,7 @@ namespace PersonalContactInformation.Api.Services
                             await this.appDbContext.SaveChangesAsync();
 
                             break;
+
                         case UpdateStrategy.Replace:                                                                     // updating data in table with new data from JSON file excluding names, since they are technically the identifier
                             dbItem.PLZ = person.PLZ;
                             dbItem.Stadt = person.Stadt;    
@@ -129,6 +141,7 @@ namespace PersonalContactInformation.Api.Services
                             await this.appDbContext.SaveChangesAsync();
 
                             break;
+
                         default:
                             throw new InvalidOperationException();                                                       // since this case should not actually happen, something went wrong and we throw an exception instead of letting the progam run wild
                     }
@@ -199,6 +212,7 @@ namespace PersonalContactInformation.Api.Services
             {
                 return new ServiceResponse() { Message = "New and old number identical", Success = false };
             }
+
             dbItem.TelNummer = newNumber;
             await appDbContext.SaveChangesAsync();
             return new ServiceResponse() { Message = "Number updated", Success = true };
