@@ -106,7 +106,7 @@ namespace PersonalContactInformation.Api.Services
                 if (dbItem != null)
                 {
                     switch (strategy)                                                                                    // switch case depending on what the user wants to do with the JSON File in case of duplicates
-                    {
+                    {                                                                                                    // choice is based on passed in "update strategy" property
                         case UpdateStrategy.Skip:                                                                        // skipping over elements which are duplicates
                             break;
 
@@ -182,7 +182,7 @@ namespace PersonalContactInformation.Api.Services
 
         public async Task<Telefonnummer> GetTelefonnummerByIdAsync(int id)
         {
-            var telefonnummer = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.Id == id);  //does this even work?
+            var telefonnummer = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.Id == id);  //does this even work? it would if the list in person worked
             return telefonnummer!;
         }
 
@@ -203,6 +203,7 @@ namespace PersonalContactInformation.Api.Services
         {
             // should take a person object or just personId, a already existing phone number and a new phone number
             // should fetch the table entry which matches both the personId and the old phone number, then replace it
+            // one of the update strategies
             var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == person.Id && p.TelNummer == oldNumber);
             if (dbItem == null)
             {
@@ -221,6 +222,8 @@ namespace PersonalContactInformation.Api.Services
         public async Task<ServiceResponse> ReplaceTelefonnummerAsync(Person person, List<Telefonnummer> newTelefonnummern)
         {
             // deletes all existing numbers related to a specific person object, then inputs from list
+            // or adds numbers which do not exist yet
+            // one of the update strategies
             int index = 0;
             foreach ( var telNr in appDbContext.TelNr)
             {

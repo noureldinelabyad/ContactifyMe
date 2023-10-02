@@ -128,14 +128,14 @@ namespace PersonalContactInformation.Api.Controllers
         [HttpPut("UpdateTel")]
         public async Task<ActionResult<ServiceResponse>> UpdateTelefonnummerAsync(Person person, string oldNumber, string newNumber)
         {
-            var response = await personService.UpdatePersonAsync(person);
+            var response = await personService.UpdateTelefonnummerAsync(person, oldNumber, newNumber);
             return Ok(response);
         }
 
         [HttpDelete("DeleteTel")]
         public async Task<ActionResult<ServiceResponse>> DeleteTelefonnummerAsync(Person person, string deleteNumber)
         {
-            var response = await personService.DeletePersonAsync(person.Id);
+            var response = await personService.DeleteTelefonnummerAsync(person, deleteNumber); 
             return Ok(response);
         }
     }
