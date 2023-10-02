@@ -68,3 +68,4 @@ For some reason the database migration did not create the Personnummer column in
 
 The Personnummern list stays empty and doesn't get displayed in the table, i don't care about the displaying but it needs to be readable for at least the program + actually output
 	it does show in the preview of the api in swagger ui
+	at this point i'm assuming i have to somehow seed the data?
