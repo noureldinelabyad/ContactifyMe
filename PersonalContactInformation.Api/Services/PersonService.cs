@@ -54,11 +54,7 @@ namespace PersonalContactInformation.Api.Services
 
         public async Task<List<Person>> GetPersonsAsync()
         {
-            //List<Person> toBeOutput = new List<Person>();
-            //toBeOutput = 
-            //Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(jsonContent)
-            return await appDbContext.People.Include("TelNr").ToListAsync();
-            //Newtonsoft.Json.JsonConvert.SerializeObject<List<Person>>(toBeOutput);
+            return await appDbContext.People.Include(appDbContext.TelNr, ""/*‾\_('-' )__/‾*/).ToListAsync();
         }
 
         public async Task<ServiceResponse> UpdatePersonAsync(Person person)
