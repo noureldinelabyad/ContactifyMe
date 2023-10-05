@@ -75,3 +75,5 @@ When inputting a new person with a phone number it correctly assigns personId an
 	"Unable to find navigation 'TelNr' specified in string based include path 'TelNr'."
 	dbcontext.telnr also doesn't work
 	i cannot get the include to work properly, will ask chris about it tomorrow, might be something wrong at a different part of the programm and i'm not seeing it
+
+get all persons now properly works, i had to include PersonNummern as the related data table, i don't quiet understand why it works but it does, which is good i suppose

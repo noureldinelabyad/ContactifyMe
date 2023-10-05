@@ -54,7 +54,7 @@ namespace PersonalContactInformation.Api.Services
 
         public async Task<List<Person>> GetPersonsAsync()
         {
-            return await appDbContext.People.Include(appDbContext.TelNr, ""/*‾\_('-' )__/‾*/).ToListAsync();
+            return await appDbContext.People.Include(p => p.PersonNummern/*‾\_('-' )__/‾*/).ToListAsync();
         }
 
         public async Task<ServiceResponse> UpdatePersonAsync(Person person)
@@ -106,33 +106,58 @@ namespace PersonalContactInformation.Api.Services
                         case UpdateStrategy.Skip:                                                                        // skipping over elements which are duplicates
                             break;
 
-                        case UpdateStrategy.Merge:                                                                       // merginig "old" data of duplicate elements with "new" data from JSON file excluding names, since they are technically the identifier
+                        case UpdateStrategy.MergeSkip:
+                            foreach (var nummer in person.PersonNummern)                                                 // merginig "old" data of duplicate elements with "new" data from JSON file, skipping over old data and numbers which already exist
+                            {
+                                await AddTelefonnummerAsync(dbItem, nummer.TelNummer);
+                            }
+
+                            await this.appDbContext.SaveChangesAsync();
+
+                            break;
+                        
+                        case UpdateStrategy.MergeReplace:                                                                // merginig "old" data of duplicate elements with "new" data from JSON file, overriding the old data in case there were changes
                             // TODO merge info in multivalue case
+                            dbItem.Nachname = person.Nachname;
+                            dbItem.Vorname = person.Vorname;
+                            if (person.Zwischenname != null)
+                            {
+                                dbItem.Zwischenname = person.Zwischenname;
+                            }
+                            dbItem.EMail = person.EMail;
+                            dbItem.Strasse = person.Strasse;
+                            dbItem.Hausnummer = person.Hausnummer;
                             dbItem.PLZ = person.PLZ;
                             dbItem.Stadt = person.Stadt;
                             dbItem.Land = person.Land;
-                            foreach(var nummer in toBeInsertedTel)
+                            dbItem.Gender = person.Gender;
+                            foreach (var nummer in person.PersonNummern)
                             {
-                                await AddTelefonnummerAsync(dbItem, nummer.TelNummer); // testing this tomorrow
+                                await AddTelefonnummerAsync(dbItem, nummer.TelNummer);
                             }
-                            // dbItem.Telefonnummer = person.Telefonnummer;
-                            dbItem.Hausnummer = person.Hausnummer;
-                            dbItem.EMail = person.EMail;
 
                             await this.appDbContext.SaveChangesAsync();
 
                             break;
 
                         case UpdateStrategy.Replace:                                                                     // updating data in table with new data from JSON file excluding names, since they are technically the identifier
+                            dbItem.Nachname = person.Nachname;
+                            dbItem.Vorname = person.Vorname;
+                            if(person.Zwischenname != null)
+                            {
+                                dbItem.Zwischenname = person.Zwischenname;
+                            }
+                            dbItem.EMail = person.EMail;
+                            dbItem.Strasse = person.Strasse;
+                            dbItem.Hausnummer   = person.Hausnummer;
                             dbItem.PLZ = person.PLZ;
                             dbItem.Stadt = person.Stadt;    
                             dbItem.Land = person.Land;
-                            foreach (var nummer in toBeInsertedTel)
+                            dbItem.Gender = person.Gender;
+                            foreach (var nummer in person.PersonNummern)
                             {
                                 await ReplaceTelefonnummerAsync(dbItem, toBeInsertedTel);
                             }
-                            dbItem.Hausnummer   = person.Hausnummer;
-                            dbItem.EMail = person.EMail;
 
                             await this.appDbContext.SaveChangesAsync();
 
