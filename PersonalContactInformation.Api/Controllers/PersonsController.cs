@@ -18,10 +18,10 @@ namespace PersonalContactInformation.Api.Controllers
             this.personService = personService;
         }
 
-        [HttpGet]
+        [HttpGet("All")]
         public async Task<ActionResult<List<Person>>> GetPersonsAsync() => Ok(await personService.GetPersonsAsync());
 
-        [HttpGet("{id:int}")]
+        [HttpGet("PersonById")]
         public async Task<ActionResult<Person>> GetPersonByIdAsync(int id)
         {
             var person = await personService.GetPersonByIdAsync(id);
@@ -36,7 +36,7 @@ namespace PersonalContactInformation.Api.Controllers
 
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("DeletePerson")]
         public async Task<ActionResult<ServiceResponse>> DeletePersonAsync(int id)
         {
             var person = await personService.GetPersonByIdAsync(id);
@@ -49,7 +49,7 @@ namespace PersonalContactInformation.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPut]
+        [HttpPut("UpdatePerson")]
         public async Task<ActionResult<ServiceResponse>> UpdatePersonAsync(Person person)
         {
             var result = await personService.GetPersonByIdAsync(person.Id);
@@ -62,7 +62,7 @@ namespace PersonalContactInformation.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpPost("AddPerson")]
         public async Task<ActionResult<ServiceResponse>> AddPersonAsync(Person person)  // if used through json, leave all id spaces on value 0 or exclude them, the database will assign these values automaticly
         {
             if (person == null)
@@ -81,7 +81,7 @@ namespace PersonalContactInformation.Api.Controllers
             }
         }
 
-        [HttpPost("json")]
+        [HttpPost("AddJson")]
         public async Task<ActionResult<ServiceResponse>> AddPersonJSONAsync(IFormFile jsonFile, UpdateStrategy updateStrategy)
         {
             if (jsonFile == null)
