@@ -77,3 +77,7 @@ When inputting a new person with a phone number it correctly assigns personId an
 	i cannot get the include to work properly, will ask chris about it tomorrow, might be something wrong at a different part of the programm and i'm not seeing it
 
 get all persons now properly works, i had to include PersonNummern as the related data table, i don't quiet understand why it works but it does, which is good i suppose
+
+tested everything i could think of, API now has to be connected to frontend, have to wait on that one, since that is nours work and i don't quiet comprehend it
+	also have to merge into the main branch and see if the process will destroy anything (data structure changed shortly after i created my branch)
+	ask why Interface, why can't API direcly grab functions out of PersonService? also ask how the include for dbase functions works (i think i now why it works but i am not sure)(line 51  PersonService.cs)
