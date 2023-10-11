@@ -63,7 +63,7 @@ namespace PersonalContactInformation.Api.Controllers
         }
 
         [HttpPost("AddPerson")]
-        public async Task<ActionResult<ServiceResponse>> AddPersonAsync(Person person)  // if used through json, leave all id spaces on value 0 or exclude them, the database will assign these values automaticly
+        public async Task<ActionResult<ServiceResponse>> AddPersonAsync(Person person)
         {
             if (person == null)
             {

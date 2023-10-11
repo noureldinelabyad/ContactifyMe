@@ -22,15 +22,9 @@ namespace PersonalContactInformation.Api.Services
                 return new ServiceResponse() { Message = "Bad Request", Success = false };
             }
 
-            // var chk = await appDbContext.People.Where(p => p.Nachname.ToLower().Equals(person.Nachname.ToLower())).FirstOrDefaultAsync();
-            // 
-            // if (chk is null)
-            // {
             appDbContext.People.Add(person);
             await appDbContext.SaveChangesAsync();
             return new ServiceResponse() { Message = "Contact added", Success = true };
-            // }
-            // return new ServiceResponse() { Message = "Contact already added", Success = false };
         }
 
         public async Task<ServiceResponse> DeletePersonAsync(int id)
@@ -70,10 +64,10 @@ namespace PersonalContactInformation.Api.Services
             result.Zwischenname = person.Zwischenname;
             
             int index = 0;
-            foreach (var id in person.PersonNummern) // y u no work
+            foreach (var id in person.PersonNummern)
             {
                 Telefonnummer helperTel = await GetTelefonnummerByIdAsync(id.Id);
-                await UpdateTelefonnummerAsync(result, helperTel.TelNummer, person.PersonNummern[index].TelNummer); // how to get Telefonnummer from Person JSON list thingy
+                await UpdateTelefonnummerAsync(result, helperTel.TelNummer, person.PersonNummern[index].TelNummer);
                 index++;
             }
 
@@ -91,18 +85,18 @@ namespace PersonalContactInformation.Api.Services
         public async Task<ServiceResponse> AddPersonJSONAsync(string jsonContent, UpdateStrategy strategy)
         {
             List<Person> toBeInserted = new List<Person>();                                                              // helper for converting and input
-            toBeInserted = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(jsonContent);                     // formating "raw JSON string"         Can i extract 2 classes out of this?
+            toBeInserted = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(jsonContent);                     // formating "raw JSON string"
             List<Telefonnummer> toBeInsertedTel = new List<Telefonnummer>();
             bool isAnyDuplicates = false;
-            foreach (var person in toBeInserted)                                                                         // going until we went through the whole list
+            foreach (var person in toBeInserted)
             {
-                var dbItem = await appDbContext.People.FirstOrDefaultAsync(p => p.Nachname == person.Nachname && p.Vorname == person.Vorname); // checking if first and last name already exists in db
-                isAnyDuplicates = isAnyDuplicates || dbItem != null;                                                     // if the flag is true and/or dbitem is not null, set flag to true
+                var dbItem = await appDbContext.People.FirstOrDefaultAsync(p => p.Nachname == person.Nachname && p.Vorname == person.Vorname); // check for duplicates
+                isAnyDuplicates = isAnyDuplicates || dbItem != null;                                                     // flag for duplicates
                 
                 if (dbItem != null)
                 {
                     switch (strategy)                                                                                    // switch case depending on what the user wants to do with the JSON File in case of duplicates
-                    {                                                                                                    // choice is based on passed in "update strategy" property
+                    {                                                                                                    // choice is based on passed-in "update strategy" property
                         case UpdateStrategy.Skip:                                                                        // skipping over elements which are duplicates
                             break;
 
@@ -117,7 +111,6 @@ namespace PersonalContactInformation.Api.Services
                             break;
                         
                         case UpdateStrategy.MergeReplace:                                                                // merginig "old" data of duplicate elements with "new" data from JSON file, overriding the old data in case there were changes
-                            // TODO merge info in multivalue case
                             dbItem.Nachname = person.Nachname;
                             dbItem.Vorname = person.Vorname;
                             if (person.Zwischenname != null)
@@ -140,7 +133,7 @@ namespace PersonalContactInformation.Api.Services
 
                             break;
 
-                        case UpdateStrategy.Replace:                                                                     // updating data in table with new data from JSON file excluding names, since they are technically the identifier
+                        case UpdateStrategy.Replace:                                                                     // updating data in table with new data from JSON file
                             dbItem.Nachname = person.Nachname;
                             dbItem.Vorname = person.Vorname;
                             if(person.Zwischenname != null)
@@ -169,14 +162,14 @@ namespace PersonalContactInformation.Api.Services
                 }
                 else
                 {
-                    person.Id = 0;                                                                                       // setting id to 0 will make sql assign a new id (working around id being used in input)
+                    person.Id = 0;                                                                                       // setting id to 0 will make sql assign a new id (which is required especially if there already are db entries)
                     await AddPersonAsync(person);
                 }
 
             }
-            if (isAnyDuplicates == true)                                                                                       
+            if (isAnyDuplicates == true)                                                                                 // not completely necessary but sending a msg if the duplicate flag got set to true
             {
-                return new ServiceResponse() { Message = "Done, there were one or more duplicate contacts", Success = true };// not completely necessary but sending a msg if we had duplicates for completions sake
+                return new ServiceResponse() { Message = "Done, there were one or more duplicate contacts", Success = true };
             }
             else
             {
@@ -203,13 +196,13 @@ namespace PersonalContactInformation.Api.Services
 
         public async Task<Telefonnummer> GetTelefonnummerByIdAsync(int id)
         {
-            var telefonnummer = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.Id == id);  //does this even work? it would if the list in person worked
+            var telefonnummer = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.Id == id);
             return telefonnummer!;
         }
 
         public async Task<ServiceResponse> DeleteTelefonnummerAsync(Person person, string deleteNumber)
         {
-            var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == person.Id && p.TelNummer == deleteNumber);   // i need this but it returns a item instead
+            var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == person.Id && p.TelNummer == deleteNumber);
             if (dbItem == null)
             {
                 return new ServiceResponse() { Message = "Number does not exist", Success = false };
@@ -222,9 +215,6 @@ namespace PersonalContactInformation.Api.Services
 
         public async Task<ServiceResponse> UpdateTelefonnummerAsync(Person person, string oldNumber, string newNumber)
         {
-            // should take a person object or just personId, a already existing phone number and a new phone number
-            // should fetch the table entry which matches both the personId and the old phone number, then replace it
-            // one of the update strategies
             var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(p => p.PersonId == person.Id && p.TelNummer == oldNumber);
             if (dbItem == null)
             {
@@ -242,9 +232,6 @@ namespace PersonalContactInformation.Api.Services
 
         public async Task<ServiceResponse> ReplaceTelefonnummerAsync(Person person, List<Telefonnummer> newTelefonnummern)
         {
-            // deletes all existing numbers related to a specific person object, then inputs from list
-            // or adds numbers which do not exist yet
-            // one of the update strategies
             int index = 0;
             foreach ( var telNr in appDbContext.TelNr)
             {

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace PersonalContactInformation.Library.Models
 {
-    public enum UpdateStrategy  //This is for the JSON input function, in case of duplicates
+    public enum UpdateStrategy  // If there are duplicates from JSON-input, defines how they are handled
     {
         Skip = 0,
-        MergeSkip = 1,      // when choosing this, old data will be preserved, additional numbers will be added
-        MergeReplace = 2,   // when choosing this, old data will be overridden, numbers work the same way as above
+        MergeSkip = 1,
+        MergeReplace = 2,
         Replace = 3
     }
 }
