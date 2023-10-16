@@ -167,7 +167,7 @@ namespace PersonalContactInformation.Api.Services
                 }
 
             }
-            if (isAnyDuplicates == true)                                                                                 // not completely necessary but sending a msg if the duplicate flag got set to true
+            if (isAnyDuplicates == true)                                                                                 // not completely necessary but sending a msg if there is duplicate data (option for frontend)
             {
                 return new ServiceResponse() { Message = "Done, there were one or more duplicate contacts", Success = true };
             }
