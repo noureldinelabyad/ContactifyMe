@@ -18,6 +18,9 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager;
 
+@* @inject IFileService FileService
+ *@
+
 <head>
     <!-- for the deopdown update , delete    -->
     <link rel="stylesheet" href="_content/Blazorise/blazorise.css" />
@@ -111,7 +114,7 @@
                         <!-- Add other table headers here -->
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-body">
                     @foreach (var person in searchResults)
                     {
 
@@ -130,7 +133,7 @@
 
 <style>
 
-
+   
     .header {
         background-color: white;
         width: 100%;
@@ -401,7 +404,9 @@ else
                 @foreach (var person in personList)
                 {
                     <tr @onclick="@(() => DisplayOption(person))">
-                        <td>@person.Vorname</td>
+                        <td>@person.Vorname
+                            <button @onclick="(() => DisplayDetails(person.Id))">Show Details</button>
+                        </td>
                         <td>@person.Nachname</td>
                         <td>@person.Zwischenname</td>
                         <td>@person.Email</td>
@@ -422,6 +427,11 @@ else
 
 
 @code {
+
+    private void DisplayDetails(int id)
+    {
+        NavManager.NavigateTo($"/personDisplay/{id}");
+    }
 
     List<PersonModel> personList;
     private string searchText = string.Empty;
@@ -578,10 +588,17 @@ else
 
             var fileName = "person_data.json";
 
+            // var fileService = DependencyService.Get<IFileService>();
+
+            // if (fileService != null)
+            // {
+            //     await fileService.SaveFileAsync(fileName, Encoding.UTF8.GetBytes(jsonContent));
+            // }
+
             // Create a byte array from the JSON content
             byte[] data = Encoding.UTF8.GetBytes(jsonContent);
 
-            // Trigger the download
+            // Trigger the download using JavaScript
             await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", fileName, data);
 
         }
@@ -647,67 +664,179 @@ else
 
         if (!string.IsNullOrEmpty(searchText))
         {
-            bool addContact = await JSRuntime.InvokeAsync<bool>(
-                "confirm", 
-                $"Contact with name '{searchText}' does not exist. Do you want to add it?");
+            var result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = $"Contact with name '{searchText}' does not exist.",
+                    Text = "Do you want to add it?",
+                    //Icon = SweetAlertIcon.Warning,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "yes",
+                    CancelButtonText = "No",
 
-            if (addContact)
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Title = "my-custom-title-class",
+                        Icon = "Icon-popup",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                        CancelButton = "my-custom-cancel-button-class"
+                    }
+
+
+                });
+
+            var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
+
+            if (confrim)
             {
                 NavManager.NavigateTo($"addPerson?name={searchText}");
             }
-        }
-        else
-        {
-            await OnInitializedAsync();
+
+            //     bool addContact = await JSRuntime.InvokeAsync<bool>(
+            //         "confirm", 
+            //         $"Contact with name '{searchText}' does not exist. Do you want to add it?");
+
+            //     if (addContact)
+            //     {
+            //         NavManager.NavigateTo($"addPerson?name={searchText}");
+            //     }
+            // }
+            else
+            {
+              //  await oninitializedasync();
+            }
         }
     }
+
 
     private async void DisplayOption(PersonModel personDetail)
     {
+        var result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "options",
+                ShowCancelButton = true,
+                ShowDenyButton = true,
+                ConfirmButtonText = "Update",
+                DenyButtonText = "Delete",
 
-        var response = await App.Current.MainPage.DisplayActionSheet(
-            "Select Option", 
-            "Ok", 
-            null, 
-            "Update Contact", 
-            "Delete Contact");
+                CustomClass = new SweetAlertCustomClass
+                {
+                    Popup = "my-custom-popup-class",
+                    Title = "my-custom-title-class",
+                    Icon = "Icon-popup",
+                    Content = "my-custom-content-class",
+                    ConfirmButton = "my-custom-confirm-button-class",
+                    CancelButton = "my-custom-cancel-button-class"
+                },
 
-        if (response == "Update Contact")
+            });
+
+        if (result.IsConfirmed)
         {
             NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+
+            // if (result.Value == "Update")
+            // {
+            //     // Handle Update button click
+            //     NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+            // }
         }
-        else if (response == "Delete Contact")
+        if (result.IsDenied)
         {
             DisplayDeleteConfirmation(personDetail.Id);
+        }
 
+        else
+        {
+            // Handle Cancel button click or outside click
 
         }
+
+
+        //     var response = await App.Current.MainPage.DisplayActionSheet(
+        //         "Select Option",
+        //         "Ok",
+        //         null,
+        //         "Update Contact",
+        //         "Delete Contact");
+
+        //     if (response == "Update Contact")
+        //     {
+        //         NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+        //     }
+        //     else if (response == "Delete Contact")
+        //     {
+        //         DisplayDeleteConfirmation(personDetail.Id);
+
+
+        //     }
     }
+
 
     private async void DisplayDeleteConfirmation(int personId)
     {
-        bool confirmed = await JSRuntime.InvokeAsync<bool>(
-            "confirm", 
-            "Are you sure you want to delete this person?");
 
-        if (confirmed)
+        var result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmation",
+                Text = "you sure you want to delete?",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "yes",
+                CancelButtonText = "No",
+
+                CustomClass = new SweetAlertCustomClass
+                {
+                    Popup = "my-custom-popup-class",
+                    Title = "my-custom-title-class",
+                    Icon = "Icon-popup",
+                    Content = "my-custom-content-class",
+                    ConfirmButton = "my-custom-confirm-button-class",
+                    CancelButton = "my-custom-cancel-button-class"
+                }
+
+
+            });
+
+        var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
+
+        //  bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this person?");
+        if (confrim)
         {
-            var deleteresponse = await PersonService.DeletePerson(
-                new AddUpdatePersonRequest
+            var deleteresponse = await PersonService.DeletePerson(new AddUpdatePersonRequest
                 {
                     Id = personId
                 });
 
             if (deleteresponse.Success)
             {
+                //await ShowDeleteDialog();
+
                 await OnInitializedAsync();
+
                 StateHasChanged();
 
-                await App.Current.MainPage.DisplayActionSheet("Success", "Ok", null, "Contact Deleted ");
+                if (!string.IsNullOrEmpty(result.Value))
+                {
+                    await Swal.FireAsync(new SweetAlertOptions
+                    {
+                            Icon = SweetAlertIcon.Success,
+                            Text = "Contact deleted",
+
+                            CustomClass = new SweetAlertCustomClass
+                            {
+
+                                Content = "my-custom-content-class",
+                                ConfirmButton = "my-custom-confirm-button-class",
+                            }
+
+                    });
+                }
+
             }
         }
     }
-
 
 }
 

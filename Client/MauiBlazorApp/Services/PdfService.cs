@@ -4,9 +4,22 @@ using System.IO;
 using System.Threading.Tasks;
 using MauiBlazorApp.Models;
 
+//public interface IFileService
+//{
+//    Task SaveFileAsync(string fileName, byte[] content);
+//}
 
 namespace MauiBlazorApp.Services
 {
+
+    //public class FileService : IFileService
+    //{
+    //    public async Task SaveFileAsync(string fileName, byte[] content)
+    //    {
+    //        // Implement file saving logic for Android here
+    //    }
+    //}
+
     public class PdfService
     {
         private readonly IConverter _converter;

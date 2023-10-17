@@ -3,8 +3,7 @@ using Microsoft.Extensions.Logging;
 using CurrieTechnologies.Razor.SweetAlert2;
 using MauiBlazorApp.Pages;
 using CommunityToolkit.Maui;
-
-
+using CommunityToolkit.Maui.Storage;
 
 namespace MauiBlazorApp
 {
@@ -18,6 +17,7 @@ namespace MauiBlazorApp
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+
 
                 // Initialize the .NET MAUI Community Toolkit by adding the below line of code
 
@@ -33,6 +33,10 @@ namespace MauiBlazorApp
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddSweetAlert2();
 
+            //DependencyService.Register<IFileService, FileService>();
+            
+            //builder.Services.AddSingleton<IFileSaver>(FileSaver.Default);
+            //builder.Services.AddTransient<MainPage>();
 
 
 

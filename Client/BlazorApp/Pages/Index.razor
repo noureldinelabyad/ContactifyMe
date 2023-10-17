@@ -101,35 +101,19 @@
     {
         <div class="table-responsive">
             <table class="table">
-                <thead>
+                <thead class=" table-head">
                     <tr>
-                        <td>
-                        </td>
+                        <th>Nachname</th>
                         <th>Vorname</th>
                         <!-- Add other table headers here -->
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-body">
                     @foreach (var person in searchResults)
                     {
-                        @*                     <tr @onclick="@( () => DisplayOption(person) )">
 
-                *@
-                        <tr>
-                            <td>
-                                <div class="position-relative">
-                                    @person.Vorname
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Actions
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <button class="btn btn-primary mx-1 mr-3" @onclick="@(() => DisplayUpdate(person.Id))">Update</button>
-                                            <button class="btn btn-danger mx-1 mr-3 " @onclick="@(() => DisplayDeleteConfirmation(person.Id))">Delete</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
+                        <tr @onclick="@( () => DisplayOption(person) )">
+                            <td>@person.Nachname</td>
                             <td>@person.Vorname</td>
                             <!-- Add other table data here -->
                         </tr>
@@ -458,10 +442,8 @@
 }
 else
 {
-
-    <div class="table-conntainer">
+    <div class="table-container">
         <table class="table">
-
             <thead class="table-head">
                 <tr>
                     <th>Vorname</th>
@@ -477,32 +459,20 @@ else
                     <th>Gender</th>
                 </tr>
             </thead>
-
             <tbody class="table-body">
                 @foreach (var person in _PersonList)
                 {
-                    @* <tr @onclick="@(() => DisplayOption(person))"> *@
-
-                    <tr>
+                    <tr @onclick="@(() => DisplayOption(person))">
                         <td>
                             <div class="position-relative">
                                 @person.Vorname
-                                @*  <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        option
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <button class="btn btn-primary mx-1 mr-3" @onclick="@(() => DisplayUpdate(person.Id))">Update</button>
-                        <button class="btn btn-danger mx-1 mr-3 " @onclick="@(() => DisplayDeleteConfirmation(person.Id))">Delete</button>
-                        </div>
-                        </div> *@
-                                <div class="dropdown">
+                                @* <div class="dropdown">
                                     <button class="dropbtn">+ </button>
                                     <div class="dropdown-content">
                                         <button class="btn btn-primary mx-1 mr-3" @onclick="@(() => DisplayUpdate(person.Id))">Update</button>
-                                        <button class="btn btn-danger mx-1 mr-3 " @onclick="@(() => DisplayDeleteConfirmation(person.Id))">Delete</button>
+                                        <button class="btn btn-danger mx-1 mr-3" @onclick="@(() => DisplayDeleteConfirmation(person.Id))">Delete</button>
                                     </div>
-                                </div>
+                                </div> *@
                             </div>
                         </td>
                         <td>@person.Nachname</td>
@@ -515,12 +485,10 @@ else
                         <td>@person.Stadt</td>
                         <td>@person.Land</td>
                         <td>@person.Gender</td>
-
                     </tr>
                 }
             </tbody>
         </table>
-
     </div>
 }
 
@@ -713,33 +681,119 @@ else
 
         if (!string.IsNullOrEmpty(searchText))
         {
-            // var results = await PersonService.SearchPersonsByName(searchText);
-
-            // if (results.Count > 0)
-            // {
-            //     searchResults = results;
-            // }
-            // else
-            {
-                bool addContact = await JSRuntime.InvokeAsync<bool>("confirm", $"Contact with name '{searchText}' does not exist. Do you want to add it?");
-
-                if (addContact)
+            var result = await Swal.FireAsync(new SweetAlertOptions
                 {
-                    NavManager.NavigateTo($"addPerson?name={searchText}");
-                }
+                    Title = $"Contact with name '{searchText}' does not exist.",
+                    Text = "Do you want to add it?",
+                    //Icon = SweetAlertIcon.Warning,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "yes",
+                    CancelButtonText = "No",
+
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Title = "my-custom-title-class",
+                        Icon = "Icon-popup",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                        CancelButton = "my-custom-cancel-button-class"
+                    }
+
+
+                });
+
+            var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
+
+            if (confrim)
+            {
+                NavManager.NavigateTo($"addPerson?name={searchText}");
             }
-        }
-        else
-        {
-            await OnInitializedAsync();
+
+            //     bool addContact = await JSRuntime.InvokeAsync<bool>(
+            //         "confirm",
+            //         $"Contact with name '{searchText}' does not exist. Do you want to add it?");
+
+            //     if (addContact)
+            //     {
+            //         NavManager.NavigateTo($"addPerson?name={searchText}");
+            //     }
+            // }
+            else
+            {
+                //  await oninitializedasync();
+            }
         }
     }
 
     private void DisplayUpdate(int personId)
     {
         NavManager.NavigateTo($"updatePerson/{personId}");
-      // NavManager.NavigateTo($"viewPerson/{personId}");
+        // NavManager.NavigateTo($"viewPerson/{personId}");
 
+    }
+
+    private async void DisplayOption(PersonModel personDetail)
+    {
+        var result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "options",
+                ShowCancelButton = true,
+                ShowDenyButton= true,
+                ConfirmButtonText = "Update",
+                DenyButtonText = "Delete",
+
+                CustomClass = new SweetAlertCustomClass
+                {
+                    Popup = "my-custom-popup-class",
+                    Title = "my-custom-title-class",
+                    Icon = "Icon-popup",
+                    Content = "my-custom-content-class",
+                    ConfirmButton = "my-custom-confirm-button-class",
+                    CancelButton = "my-custom-cancel-button-class"
+                },
+
+            });
+
+        if (result.IsConfirmed)
+        {
+            NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+
+            // if (result.Value == "Update")
+            // {
+            //     // Handle Update button click
+            //     NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+            // }
+        }
+        if(result.IsDenied)
+        {
+            DisplayDeleteConfirmation(personDetail.Id);
+        }
+
+        else
+        {
+            // Handle Cancel button click or outside click
+           
+        }
+
+
+        //     var response = await App.Current.MainPage.DisplayActionSheet(
+        //         "Select Option",
+        //         "Ok",
+        //         null,
+        //         "Update Contact",
+        //         "Delete Contact");
+
+        //     if (response == "Update Contact")
+        //     {
+        //         NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+        //     }
+        //     else if (response == "Delete Contact")
+        //     {
+        //         DisplayDeleteConfirmation(personDetail.Id);
+
+
+        //     }
     }
 
     private async void DisplayDeleteConfirmation(int personId)
@@ -799,15 +853,13 @@ else
                                 ConfirmButton = "my-custom-confirm-button-class",
                             }
 
-                    
+
                     });
                 }
 
             }
         }
     }
-
-    
 
 }
 
