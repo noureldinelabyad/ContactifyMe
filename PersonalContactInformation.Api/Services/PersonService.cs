@@ -59,11 +59,11 @@ namespace PersonalContactInformation.Api.Services
                 return new ServiceResponse() { Message = "Contact not found", Success = false };
             }
 
+            int index = 0;
             result.Nachname = person.Nachname;
             result.Vorname = person.Vorname;
             result.Zwischenname = person.Zwischenname;
             
-            int index = 0;
             foreach (var id in person.PersonNummern)
             {
                 Telefonnummer helperTel = await GetTelefonnummerByIdAsync(id.Id);
@@ -77,6 +77,7 @@ namespace PersonalContactInformation.Api.Services
             result.PLZ = person.PLZ;
             result.Stadt = person.Stadt;
             result.Land = person.Land;
+            result.Gender = person.Gender;
             
             await appDbContext.SaveChangesAsync();
             return new ServiceResponse() { Message = "Contact updated", Success = true };
