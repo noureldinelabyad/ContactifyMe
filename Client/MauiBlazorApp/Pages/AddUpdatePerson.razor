@@ -1,0 +1,408 @@
+﻿@page "/addperson"
+@page "/UpdatePerson/{Id:int}"
+@using MauiBlazorApp.Models;
+@using MauiBlazorApp.Services
+@using System.ComponentModel.DataAnnotations
+@using System.Text.RegularExpressions
+@using CurrieTechnologies.Razor.SweetAlert2;
+
+@inject SweetAlertService Swal    // sweet alert call it Swal
+@inject IPersonService PersonService;
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
+@inject NavigationManager NavigationManager
+
+
+<h3>AddUpdatePerson</h3>
+
+<div class=" form">
+    <div class="form-group d-flex">
+        <div class=" form-group mx-2 ">
+            <label for="Entry_Name">Nachname</label>
+            <input id="Entry_Name" @bind="Nachname" class="form-control" />
+            @if (string.IsNullOrEmpty(Nachname) || !Regex.IsMatch(Nachname, ".{2,}"))
+            {
+                <div class="text-danger"> Nachname is required!</div>
+            }
+        </div>
+
+        <div class=" form-group mx-2 ">
+            <label for="Entry_Vorname">Vorname</label>
+            <input id="Entry_Vorname" @bind="Vorname" class="form-control" />
+            @if (string.IsNullOrEmpty(Vorname) || !Regex.IsMatch(Vorname, ".{2,}"))
+            {
+                <div class="text-danger"> Vorname is required!</div>
+            }
+        </div>
+
+        <div class=" form-group mx-2 ">
+            <label for="Entry_Zwischenname">Zwischenname</label>
+            <input id="Entry_Zwischenname" @bind="Zwischenname" class="form-control" />
+
+        </div>
+    </div>
+
+    <div class="mt-3 form-group mx-2">
+        <label>Gender</label>
+        <div class="d-flex flex-row">
+            <div class="form-check mr-3 mx-3">
+                <input checked="@(gender == "Male")" @onchange="@(()=>SetGender("Male"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                <label class="form-check-label" for="flexRadioDefault1">
+                    Male
+                </label>
+            </div>
+            <div class="form-check mr-3 mx-3">
+                <input checked="@(gender == "Female")" @onchange="@(()=>SetGender("Female"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                <label class="form-check-label" for="flexRadioDefault2">
+                    Female
+                </label>
+            </div>
+            <div class="form-check mx-3">
+                <input checked="@(gender == "Divers")" @onchange="@(()=>SetGender("Divers"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
+                <label class="form-check-label" for="flexRadioDefault3">
+                    Divers
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class=" mt-2 form-group mx-2 ">
+        <label for="Entry_Email">Email</label>
+        <input id="Entry_Email" @bind="Email" type="email" class="form-control" />
+        @if (!IsValidEmail(Email))
+        {
+            <div class="text-danger">Please enter a valid email address.</div>
+        }
+    </div>
+
+    <div class="mt-2 form-group mx-2">
+        <label for="Entry_PhoneNumber">Telefonnummer</label>
+        <input id="Entry_PhoneNumber" @bind="Telefonnummer" class="form-control" />
+        @if (string.IsNullOrEmpty(Telefonnummer) || !Regex.IsMatch(Telefonnummer, ".{8,}"))
+        {
+            <div class="text-danger"> Telefonnummer is required!</div>
+        }
+    </div>
+
+
+    <div class=" mt-2 form-group d-flex">
+        <div class="form-group mx-2">
+            <label for="Entry_Strasse">Strasse</label>
+            <input id="Entry_Strasse" @bind="Strasse" class="form-control" />
+            @if (string.IsNullOrEmpty(Strasse) || !Regex.IsMatch(Strasse, ".{2,}"))
+            {
+                <div class="text-danger"> Strasse is required!</div>
+            }
+        </div>
+        <div class="col-md-4 mx-2">
+            <label for="Entry_Hausnummer">Hausnummer</label>
+            <input id="Entry_Hausnummer" @bind="Hausnummer" class="form-control" />
+            @if (string.IsNullOrEmpty(Hausnummer) || !Regex.IsMatch(Hausnummer, ".{1,}"))
+            {
+                <div class="text-danger"> Hausnummer is required!</div>
+            }
+        </div>
+        <div class="col-md-4 mx-2">
+            <label for="Entry_PLZ">PLZ</label>
+            <input id="Entry_PLZ" @bind="PLZ" class="form-control" />
+            @if (string.IsNullOrEmpty(PLZ) || !Regex.IsMatch(PLZ, ".{5,}") || Regex.IsMatch(PLZ, ".{6,}"))
+            {
+                <div class="text-danger"> PLZ is required!</div>
+            }
+        </div>
+    </div>
+
+    <div class=" mt-2 form-group d-flex">
+        <div class="col-md-4 mx-2">
+            <label for="Entry_Stadt">Stadt</label>
+            <input id="Entry_Stadt" @bind="Stadt" class="form-control" />
+            @if (string.IsNullOrEmpty(Stadt) || !Regex.IsMatch(Stadt, ".{2,}"))
+            {
+                <div class="text-danger"> Stadt is required!</div>
+            }
+        </div>
+        <div class="form-group mx-2">
+            <label for="Entry_Land">Land</label>
+            <input id="Entry_Land" @bind="Land" class="form-control" />
+            @if (string.IsNullOrEmpty(Land) || !Regex.IsMatch(Land, ".{2,}"))
+            {
+                <div class="text-danger"> Land is required!</div>
+            }
+        </div>
+    </div>
+
+
+    <button @onclick="AddUpdatePersonDetails" class="mt-3 btn btn-primary mx-1">Save</button>
+
+</div>
+
+<style>
+
+    .my-custom-popup-class {
+        background-color: #1E314B !important;
+        border-radius: 20px !important;
+        border-block: 20px white solid;
+        padding-bottom: 10px;
+        box-shadow: initial;
+        color: white !important; /* White text color */
+        font-size: 20px !important;
+        font-weight: bold !important;
+    }
+
+    .my-custom-title-class {
+        color: #fff !important; /* White text color */
+    }
+
+    .my-custom-content-class {
+    }
+
+    .my-custom-confirm-button-class {
+        background-color: blue !important; /* Blue button color */
+        font-size: 20px !important;
+        padding: 1px,1px,1px,1px !important;
+        font-weight: bold;
+    }
+
+    .my-custom-cancel-button-class {
+        background-color: red !important; /* Red button color */
+        font-size: 20px !important;
+        padding: 1px,1px,1px,1px !important;
+        font-weight: bold;
+    }
+
+    .Icon-popup {
+        color: red !important;
+    }
+</style>
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+    private string Nachname;
+    private string Vorname;
+    private string Zwischenname;
+    private string Email;
+    private string Telefonnummer;
+    private string Strasse;
+    private string Hausnummer;
+    private string PLZ;
+    private string Stadt;
+    private string Land;
+    private string gender;
+
+    private void SetGender(string gender)
+    {
+        this.gender = gender;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id > 0)
+        {
+            var existingPersonDetail = await PersonService.GetPersonDetailById(Id);
+            if (existingPersonDetail?.Id > 0)
+            {
+                Nachname = existingPersonDetail.Nachname;
+                Vorname = existingPersonDetail.Vorname;
+                Zwischenname = existingPersonDetail.Zwischenname;
+                Email = existingPersonDetail.Email;
+                Telefonnummer = existingPersonDetail.Telefonnummer;
+                Strasse = existingPersonDetail.Strasse;
+                Hausnummer = existingPersonDetail.Hausnummer;
+                PLZ = existingPersonDetail.PLZ.ToString();
+                Stadt = existingPersonDetail.Stadt;
+                Land = existingPersonDetail.Land;
+                gender = existingPersonDetail.Gender;
+            }
+        }
+    }
+
+   
+    private async void AddUpdatePersonDetails()
+    {
+        if (!IsValidInput(Nachname, false) || !IsValidInput(Vorname, false) ||
+       !IsValidInput(Telefonnummer, false) || !IsValidInput(Strasse, false) || !IsValidInput(Hausnummer, false) ||
+       !IsValidInput(PLZ, true) || !IsValidInput(Stadt, false) || !IsValidInput(Land, false))
+        {
+            //await App.Current.MainPage.DisplayAlert("Validation Error", "All fields are required.", "OK");
+
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Input.",
+
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+
+                });
+            return;
+        }
+
+        if (!IsValidEmail(Email))
+        {
+
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Email has to be valid",
+
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+
+
+
+                });
+            return;
+        }
+
+        var addUpdateRequest = new AddUpdatePersonRequest
+            {
+                Id = Id,
+                Nachname = Nachname,
+                Vorname = Vorname,
+                Zwischenname = Zwischenname,
+                Email = Email,
+                Telefonnummer = Telefonnummer,
+                Strasse = Strasse,
+                Hausnummer = Hausnummer,
+                PLZ = PLZ,
+                Stadt = Stadt,
+                Land = Land,
+                Gender = gender,
+            };
+
+        if (Id > 0)
+        {
+            // Existing person, perform update
+            var response = await PersonService.UpdatePerson(addUpdateRequest);
+            if (response.Success)
+            {
+                NavManager.NavigateTo("/"); // Redirect to the list page after update
+                //NavManager.NavigateTo("..");
+               
+                //NavigationManager.NavigateTo(NavigationManager.Uri.Substring(0, NavigationManager.Uri.LastIndexOf("/")));
+
+
+                await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Icon = SweetAlertIcon.Success,
+                        Text = "Contact Updated",
+
+                        CustomClass = new SweetAlertCustomClass
+                        {
+                            Popup = "my-custom-popup-class",
+
+                            Content = "my-custom-content-class",
+                            ConfirmButton = "my-custom-confirm-button-class",
+                        }
+
+                    });
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", response.ErrorMessage);
+            }
+        }
+        else
+        {
+
+            if (!IsValidEmail(Email))
+            {
+                // await App.Current.MainPage.DisplayAlert("Email have to be valid ", response.ErrorMessage, "OK");
+
+
+
+                await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Icon = SweetAlertIcon.Error,
+                        Text = "Email have to be valid",
+
+                        CustomClass = new SweetAlertCustomClass
+                        {
+                            Popup = "my-custom-popup-class",
+
+                            Content = "my-custom-content-class",
+                            ConfirmButton = "my-custom-confirm-button-class",
+                        }
+
+                    });
+                return;
+            }
+
+            var response = await PersonService.AddPerson(addUpdateRequest);
+            if (response.Success)
+            {
+                Nachname = Vorname = Zwischenname = Email = Telefonnummer = Strasse = Hausnummer = PLZ = Stadt = Land = gender = string.Empty;
+
+                this.StateHasChanged();
+
+                //NavManager.NavigateTo("/"); // Redirect to the list page after add
+                NavManager.NavigateTo("..");
+
+                // await App.Current.MainPage.DisplayAlert("Contact Added", "Contact Added Successfully", "OK");
+
+                await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Icon = SweetAlertIcon.Success,
+                        Text = "Contact Added Successfully",
+
+                        CustomClass = new SweetAlertCustomClass
+                        {
+                            Popup = "my-custom-popup-class",
+
+                            Content = "my-custom-content-class",
+                            ConfirmButton = "my-custom-confirm-button-class",
+                        }
+
+                    });
+
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", response.ErrorMessage);
+            }
+        }
+    }
+
+    private bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+        {
+            return false;
+        }
+
+        // Regex pattern for a simple email validation
+        string emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+        return Regex.IsMatch(email, emailPattern);
+    }
+
+    private bool IsValidInput(string value, bool IsPLZ, bool isEmail = false)
+    {
+        if (IsPLZ == false)
+        {
+            return !string.IsNullOrWhiteSpace(value) && value.Length >= 1;
+
+        }
+        else
+        {
+            return value.Length == 5;
+        }
+    }
+
+
+
+
+}
+

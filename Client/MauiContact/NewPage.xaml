@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="MauiContact.NewPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="NewPage">
+    <Grid
+        Margin="10"
+        Padding="10"
+        ColumnSpacing="5"
+        RowSpacing="10">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="7*" />
+            <ColumnDefinition Width="3*" />
+
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions Height="Auto">
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="100*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+
+
+
+
+        <Button
+            x:Name="BtnSearch"
+            Grid.Row="0"
+            Grid.Column="1"
+            BackgroundColor="Purple"
+            BorderWidth="1"
+            CharacterSpacing="0.2"
+            Clicked="BtnSearch_Clicked"
+            HorizontalOptions="End"
+            Text="Search"
+            VerticalOptions="Center"
+            WidthRequest="80" />
+
+
+
+
+        <Button
+            x:Name="BtnAddContact"
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            BackgroundColor="DarkGreen"
+            BorderWidth="0"
+            CharacterSpacing="0.3"
+            Clicked="BtnAddContact_Clicked"
+            FontSize="Medium"
+            HorizontalOptions="End"
+            Text="Add Contact"
+            TextColor="White"
+            VerticalOptions="Start" />
+
+        <SearchBar
+            x:Name="searchBar"
+            Grid.Row="0"
+            Grid.Column="0"
+            CharacterSpacing="1"
+            FontAttributes="Bold"
+            FontSize="Medium"
+            HorizontalOptions="FillAndExpand"
+            HorizontalTextAlignment="Start"
+            Placeholder="Search..."
+            TextChanged="searchBar_TextChanged" />
+
+
+        <ListView
+            x:Name="xmalContactList"
+            Grid.Row="1"
+            Grid.Column="0"
+            BackgroundColor="Transparent"
+            HorizontalOptions="FillAndExpand"
+            ItemSelected="xmalContactList_ItemSelected"
+            ItemTapped="xmalContactList_ItemTapped"
+            RowHeight="50"
+            SeparatorColor="Purple">
+
+            <ListView.ItemTemplate>
+
+                <DataTemplate>
+
+                    <TextCell Detail="{Binding Email}" Text="{Binding Nachname}">
+
+                        <TextCell.ContextActions>
+                            <MenuItem
+                                x:Name="MenueItemDelete"
+                                Clicked="MenueItemDelete_Clicked"
+                                CommandParameter="{Binding .}"
+                                IsDestructive="True"
+                                Text="Delete" />
+
+                            <MenuItem
+                                x:Name="MenuItemEdit"
+                                Clicked="MenuItemEdit_Clicked"
+                                CommandParameter="{Binding .}"
+                                Text="Edit" />
+
+                        </TextCell.ContextActions>
+
+                    </TextCell>
+
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+
+
+        </ListView>
+
+    </Grid>
+
+</ContentPage>
