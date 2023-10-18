@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PersonalContactInformation.Api.Data;
 
@@ -10,9 +11,11 @@ using PersonalContactInformation.Api.Data;
 namespace PersonalContactInformation.Api.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230906124246_PersonTypeChange")]
+    partial class PersonTypeChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,10 +33,6 @@ namespace PersonalContactInformation.Api.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("EMail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -60,6 +59,10 @@ namespace PersonalContactInformation.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Telefonnummer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Vorname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -70,42 +73,6 @@ namespace PersonalContactInformation.Api.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("People");
-                });
-
-            modelBuilder.Entity("PersonalContactInformation.Library.Models.Telefonnummer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PersonId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TelNummer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("TelNr");
-                });
-
-            modelBuilder.Entity("PersonalContactInformation.Library.Models.Telefonnummer", b =>
-                {
-                    b.HasOne("PersonalContactInformation.Library.Models.Person", null)
-                        .WithMany("PersonNummern")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PersonalContactInformation.Library.Models.Person", b =>
-                {
-                    b.Navigation("PersonNummern");
                 });
 #pragma warning restore 612, 618
         }

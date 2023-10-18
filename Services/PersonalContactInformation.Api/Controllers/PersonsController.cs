@@ -18,27 +18,29 @@ namespace PersonalContactInformation.Api.Controllers
             this.personService = personService;
         }
 
-        [HttpGet]
+        [HttpGet("All")]
         public async Task<ActionResult<List<Person>>> GetPersonsAsync() => Ok(await personService.GetPersonsAsync());
 
-        [HttpGet("{id}")]
+        [HttpGet("PersonById")]
         public async Task<ActionResult<Person>> GetPersonByIdAsync(int id)
         {
             var person = await personService.GetPersonByIdAsync(id);
-            if(person == null)
+            if (person == null)
             {
                 return NotFound("Contact not found");
-            } else
+            }
+            else
             {
                 return Ok(person);
             }
 
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("DeletePerson")]
         public async Task<ActionResult<ServiceResponse>> DeletePersonAsync(int id)
         {
             var person = await personService.GetPersonByIdAsync(id);
-            if(person == null)
+            if (person == null)
             {
                 return NotFound("Contact not found");
             }
@@ -47,7 +49,7 @@ namespace PersonalContactInformation.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdatePerson")]
         public async Task<ActionResult<ServiceResponse>> UpdatePersonAsync(Person person)
         {
             var result = await personService.GetPersonByIdAsync(person.Id);
@@ -60,22 +62,81 @@ namespace PersonalContactInformation.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPost("Add")]
+        [HttpPost("AddPerson")]
         public async Task<ActionResult<ServiceResponse>> AddPersonAsync(Person person)
         {
-            if(person == null)
+            if (person == null)
             {
               //  return BadRequest("Bad request");
             }
 
             var result = await personService.AddPersonAsync(person);
-            if(result.Success)
+            if (result.Success)
             {
                 return Ok(result);
-            } else
+            }
+            else
             {
                 return BadRequest(result);
             }
+        }
+
+        [HttpPost("AddJson")]
+        public async Task<ActionResult<ServiceResponse>> AddPersonJSONAsync(IFormFile jsonFile, UpdateStrategy updateStrategy)
+        {
+            if (jsonFile == null)
+            {
+                return BadRequest("Bad request");
+            }
+            var sr = new StreamReader(jsonFile.OpenReadStream());
+            var jsonContent = sr.ReadToEnd();
+
+            var result = await personService.AddPersonJSONAsync(jsonContent, updateStrategy);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [HttpPost("AddTel")]
+        public async Task<ActionResult<ServiceResponse>> AddTelefonnummerAsync(Person person, string newNumber)
+        {
+            if (person == null)
+            {
+                return BadRequest("Bad request");
+            }
+            else if (newNumber == null)
+            {
+                return BadRequest("No number found");
+            }
+
+            var result = await personService.AddTelefonnummerAsync(person, newNumber);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [HttpPut("UpdateTel")]
+        public async Task<ActionResult<ServiceResponse>> UpdateTelefonnummerAsync(Person person, string oldNumber, string newNumber)
+        {
+            var response = await personService.UpdateTelefonnummerAsync(person, oldNumber, newNumber);
+            return Ok(response);
+        }
+
+        [HttpDelete("DeleteTel")]
+        public async Task<ActionResult<ServiceResponse>> DeleteTelefonnummerAsync(Person person, string deleteNumber)
+        {
+            var response = await personService.DeleteTelefonnummerAsync(person, deleteNumber); 
+            return Ok(response);
         }
     }
 }
