@@ -3,3 +3,4 @@ Microsoft.EntityFrameworkCore.Tools
 Microsoft.EntityFrameworkCore.Design
 Microsoft.EntityFrameworkCore.SqlServer
 Microsoft.Extensions.Http
+Newtonsoft.Json
