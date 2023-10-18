@@ -32,14 +32,7 @@ namespace MauiBlazorApp
 
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddSweetAlert2();
-
-            //DependencyService.Register<IFileService, FileService>();
-            
-            //builder.Services.AddSingleton<IFileSaver>(FileSaver.Default);
-            //builder.Services.AddTransient<MainPage>();
-
-
-
+         
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();

@@ -1,6 +1,10 @@
 ﻿@page "/android"
 @using MauiBlazorApp.Models
 @using MauiBlazorApp.Services
+@using CurrieTechnologies.Razor.SweetAlert2;
+
+
+@inject SweetAlertService Swal    // sweet alert call it Swal
 @inject IPersonService PersonService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager;
@@ -28,6 +32,7 @@
 
 
 </head>
+
 <h1>person list</h1>
 <h1> Android </h1>
 
@@ -306,7 +311,7 @@ else
             <tbody>
                 @foreach (var person in _PersonList)
                 {
-                    <div class="person-item" @onclick="@(() => DisplayOption(person))">
+                    <div class="person-item" @onclick="@(() => DisplayDetails(person.Id))">
                         <div class="person-name">
                             <span class="person-vorname">@person.Vorname</span>
                             <span class="person-nachname">@person.Nachname</span>
@@ -323,6 +328,11 @@ else
 
 
 @code {
+
+    private void DisplayDetails(int id)
+    {
+        NavManager.NavigateTo($"/personDisplay/{id}");
+    }
 
     private string searchText = string.Empty;
     List<PersonModel> _PersonList;
@@ -373,25 +383,48 @@ else
 
         if (!string.IsNullOrEmpty(searchText))
         {
-            // var results = await PersonService.SearchPersonsByName(searchText);
-
-            // if (results.Count > 0)
-            // {
-            //     searchResults = results;
-            // }
-            // else
-            {
-                bool addContact = await JSRuntime.InvokeAsync<bool>("confirm", $"Contact with name '{searchText}' does not exist. Do you want to add it?");
-
-                if (addContact)
+            var result = await Swal.FireAsync(new SweetAlertOptions
                 {
-                    NavManager.NavigateTo($"addPerson?name={searchText}");
-                }
+                    Title = $"Contact with name '{searchText}' does not exist.",
+                    Text = "Do you want to add it?",
+                    //Icon = SweetAlertIcon.Warning,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "yes",
+                    CancelButtonText = "No",
+
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Title = "my-custom-title-class",
+                        Icon = "Icon-popup",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                        CancelButton = "my-custom-cancel-button-class"
+                    }
+
+
+                });
+
+            var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
+
+            if (confrim)
+            {
+                NavManager.NavigateTo($"addPerson?name={searchText}");
             }
-        }
-        else
-        {
-            await OnInitializedAsync();
+
+            //     bool addContact = await JSRuntime.InvokeAsync<bool>(
+            //         "confirm",
+            //         $"Contact with name '{searchText}' does not exist. Do you want to add it?");
+
+            //     if (addContact)
+            //     {
+            //         NavManager.NavigateTo($"addPerson?name={searchText}");
+            //     }
+            // }
+            else
+            {
+                //  await oninitializedasync();
+            }
         }
     }
 

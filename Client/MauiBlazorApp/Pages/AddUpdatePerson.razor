@@ -219,7 +219,6 @@
         }
     }
 
-   
     private async void AddUpdatePersonDetails()
     {
         if (!IsValidInput(Nachname, false) || !IsValidInput(Vorname, false) ||
@@ -289,9 +288,19 @@
             var response = await PersonService.UpdatePerson(addUpdateRequest);
             if (response.Success)
             {
-                NavManager.NavigateTo("/"); // Redirect to the list page after update
-                //NavManager.NavigateTo("..");
-               
+
+                if (DeviceInfo.Platform == DevicePlatform.Android)
+                {
+                    NavManager.NavigateTo("/android");
+                }
+                else
+                {
+                   // NavManager.NavigateTo("..");
+
+                    NavManager.NavigateTo("/"); // Redirect to the list page after update
+                }
+                                            
+
                 //NavigationManager.NavigateTo(NavigationManager.Uri.Substring(0, NavigationManager.Uri.LastIndexOf("/")));
 
 
@@ -349,7 +358,17 @@
                 this.StateHasChanged();
 
                 //NavManager.NavigateTo("/"); // Redirect to the list page after add
-                NavManager.NavigateTo("..");
+
+                if (DeviceInfo.Platform == DevicePlatform.Android)
+                {
+                    NavManager.NavigateTo("/android");
+                }
+                else
+                {
+                    NavManager.NavigateTo("..");
+                }
+
+
 
                 // await App.Current.MainPage.DisplayAlert("Contact Added", "Contact Added Successfully", "OK");
 
@@ -400,8 +419,6 @@
             return value.Length == 5;
         }
     }
-
-
 
 
 }
