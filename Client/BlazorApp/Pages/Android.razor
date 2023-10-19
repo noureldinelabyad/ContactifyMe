@@ -301,16 +301,21 @@ else
 
     <div class="table-responsive">
         <table class="table">
-
             <tbody>
                 @foreach (var person in _PersonList)
                 {
-                    <div class="person-item" @onclick="@(() => DisplayOption(person))">
+                    <div class="person-item" @onclick="@(() => DisplayDetails(person.Id))">
+
                         <div class="person-name">
                             <span class="person-vorname">@person.Vorname</span>
                             <span class="person-nachname">@person.Nachname</span>
                         </div>
-                        <div class="person-telefonnummer">@person.Telefonnummer</div>
+
+                        @foreach (var telefonnummer in person.PersonNummern)
+                        {
+                            <div>@telefonnummer.TelNummer</div>
+                        }
+
                         <div class="divider"></div>
                     </div>
                 }
@@ -345,6 +350,10 @@ else
 
 @code {
 
+    private void DisplayDetails(int id)
+    {
+        NavManager.NavigateTo($"/personDisplay/{id}");
+    }
 
 
     private void ClearSearchText()

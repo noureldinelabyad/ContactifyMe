@@ -410,8 +410,14 @@ else
                         <td>@person.Nachname</td>
                         <td>@person.Zwischenname</td>
                         <td>@person.Email</td>
-                        <td>@person.Telefonnummer</td>
-                        <td>@person.Strasse</td>
+                        <td>
+                            @foreach (var telefonnummer in person.PersonNummern)
+                            {
+                                <div>@telefonnummer.TelNummer</div>
+                            }
+                        </td>
+@*                         <td>@person.TelNummer</td>
+ *@                        <td>@person.Strasse</td>
                         <td>@person.Hausnummer</td>
                         <td>@person.PLZ</td>
                         <td>@person.Stadt</td>
@@ -534,7 +540,7 @@ else
                 table.AddCell(new PdfPCell(new Phrase(person.Nachname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.Zwischenname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.Email, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
-                table.AddCell(new PdfPCell(new Phrase(person.Telefonnummer, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.TelNummer, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.Strasse, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.Hausnummer, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.PLZ.ToString(), smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
@@ -574,7 +580,7 @@ else
                 nachname = person.Nachname,
                 vorname = person.Vorname,
                 zwischenname = person.Zwischenname,
-                telefonnummer = person.Telefonnummer,
+                telefonnummer = person.TelNummer,
                 eMail = person.Email,
                 strasse = ReplaceUnicodeEscapeSequences(person.Strasse), // Replace Unicode escape sequences
                 hausnummer = person.Hausnummer,

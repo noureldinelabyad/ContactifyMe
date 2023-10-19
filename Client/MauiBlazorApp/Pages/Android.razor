@@ -307,7 +307,6 @@ else
 
     <div class="table-responsive">
         <table class="table">
-
             <tbody>
                 @foreach (var person in _PersonList)
                 {
@@ -316,7 +315,7 @@ else
                             <span class="person-vorname">@person.Vorname</span>
                             <span class="person-nachname">@person.Nachname</span>
                         </div>
-                        <div class="person-telefonnummer">@person.Telefonnummer</div>
+                        <div class="person-telefonnummer">@person.TelNummer</div>
                         <div class="divider"></div>
                     </div>
                 }

@@ -78,8 +78,8 @@
 
     <div class="mt-2 form-group mx-2">
         <label for="Entry_PhoneNumber">Telefonnummer</label>
-        <input id="Entry_PhoneNumber" @bind="Telefonnummer" class="form-control" />
-        @if (string.IsNullOrEmpty(Telefonnummer) || !Regex.IsMatch(Telefonnummer, ".{8,}"))
+        <input id="Entry_PhoneNumber" @bind="TelNummer" class="form-control" />
+        @if (string.IsNullOrEmpty(TelNummer) || !Regex.IsMatch(TelNummer, ".{8,}"))
         {
             <div class="text-danger"> Telefonnummer is required!</div>
         }
@@ -185,7 +185,7 @@
     private string Vorname;
     private string Zwischenname;
     private string Email;
-    private string Telefonnummer;
+    private string TelNummer;
     private string Strasse;
     private string Hausnummer;
     private string PLZ;
@@ -209,7 +209,7 @@
                 Vorname = existingPersonDetail.Vorname;
                 Zwischenname = existingPersonDetail.Zwischenname;
                 Email = existingPersonDetail.Email;
-                Telefonnummer = existingPersonDetail.Telefonnummer;
+                TelNummer = existingPersonDetail.TelNummer;
                 Strasse = existingPersonDetail.Strasse;
                 Hausnummer = existingPersonDetail.Hausnummer;
                 PLZ = existingPersonDetail.PLZ.ToString();
@@ -223,7 +223,7 @@
     private async void AddUpdatePersonDetails()
     {
         if (!IsValidInput(Nachname, false) || !IsValidInput(Vorname, false) ||
-       !IsValidInput(Telefonnummer, false) || !IsValidInput(Strasse, false) || !IsValidInput(Hausnummer, false) ||
+       !IsValidInput(TelNummer, false) || !IsValidInput(Strasse, false) || !IsValidInput(Hausnummer, false) ||
        !IsValidInput(PLZ, true) || !IsValidInput(Stadt, false) || !IsValidInput(Land, false))
         {
             //await App.Current.MainPage.DisplayAlert("Validation Error", "All fields are required.", "OK");
@@ -274,7 +274,7 @@
                 Vorname = Vorname,
                 Zwischenname = Zwischenname,
                 Email = Email,
-                Telefonnummer = Telefonnummer,
+                Telefonnummer = TelNummer,
                 Strasse = Strasse,
                 Hausnummer = Hausnummer,
                 PLZ = PLZ,
@@ -342,7 +342,7 @@
             var response = await PersonService.AddPerson(addUpdateRequest);
             if (response.Success)
             {
-                Nachname = Vorname = Zwischenname = Email = Telefonnummer = Strasse = Hausnummer = PLZ = Stadt = Land = gender = string.Empty;
+                Nachname = Vorname = Zwischenname = Email = TelNummer = Strasse = Hausnummer = PLZ = Stadt = Land = gender = string.Empty;
 
                 this.StateHasChanged();
 
@@ -397,8 +397,6 @@
             return value.Length == 5;
         }
     }
-
-
 
 
 }

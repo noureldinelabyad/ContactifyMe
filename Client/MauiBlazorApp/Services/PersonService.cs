@@ -17,8 +17,9 @@ namespace MauiBlazorApp.Services
 
     public class PersonService : IPersonService
     {
-        private string _baseUrl = "";
+        private string _baseUrl = "https://localhost:7078"; // URL of the API database
 
+        //private string _baseUrl = "";
         public PersonService()
         {
             if (Device.RuntimePlatform == Device.Android)
@@ -34,8 +35,6 @@ namespace MauiBlazorApp.Services
         // private string _baseUrl = "https://localhost:7078"; // URL of the API database
 
         // private string _baseUrl = "https://10.0.2.2:7078"; // tried this form chat gpt to show it on android but ..
-
-
 
         public async Task<MainResponseModel> AddPerson(AddUpdatePersonRequest personRequest)
         {
@@ -54,7 +53,8 @@ namespace MauiBlazorApp.Services
 
                 using (var client = new HttpClient(handler))
                 {
-                    string url = $"{_baseUrl}/api/Persons/Add";
+                    //string url = $"{_baseUrl}/api/Persons/Add";
+                     string url = $"{_baseUrl}/api/Persons/AddPerson";
                     
                     var seralizeContent = JsonConvert.SerializeObject(personRequest);
 
@@ -67,6 +67,7 @@ namespace MauiBlazorApp.Services
                         returnResponse = JsonConvert.DeserializeObject<MainResponseModel>(response);
                     }
                 }
+                
             }
             catch (WebException ex)
             {
@@ -86,13 +87,11 @@ namespace MauiBlazorApp.Services
             return returnResponse;
         }
 
-
         public async Task<List<PersonModel>> GetAllPersonsList()
         {
             var returnResponse = new List<PersonModel>();
             try
             {
-
                 //using (var client = new HttpClient())
                 var handler = new HttpClientHandler()
                 {
@@ -102,40 +101,30 @@ namespace MauiBlazorApp.Services
 
                 using (var client = new HttpClient(handler))
                 {
-                    string url = $"{_baseUrl}/api/Persons";
+                   // string url = $"{_baseUrl}/api/Persons";     
+                    string url = $"{_baseUrl}/api/Persons/All";
                     var apiResponse = await client.GetAsync(url);
 
                     if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         var response = await apiResponse.Content.ReadAsStringAsync();
                         returnResponse = JsonConvert.DeserializeObject<List<PersonModel>>(response);
-
-
                     }
 
                     foreach (var person in returnResponse)
-
                     {
-
                         // var zwischennameHelper = await returnResponse.person.FirstOrDefaultAsync(p => p.Zwischenname == null);
-
 
                         // if (zwischennameHelper == null)
 
                         if (person.Zwischenname == null)
                         {
-
                             person.Zwischenname = " ";
-
                         }
-
                                             
-
                         if (person.Gender == null)
                         {
-
                             person.Gender = " ";
-
                         }
 
                     }
@@ -144,13 +133,10 @@ namespace MauiBlazorApp.Services
             }
             catch (Exception ex)
             {
-                // Log or handle the exception gracefully.
                 string Msg = ex.Message;
-                // You might also consider rethrowing the exception if you want to propagate it further.
             }
             return returnResponse;
         }
-
 
         public async Task<PersonModel> GetPersonDetailById(int Id)
         {
@@ -167,7 +153,9 @@ namespace MauiBlazorApp.Services
 
                 using (var client = new HttpClient(handler))
                 {
-                    string url = $"{_baseUrl}/api/Persons/{Id}";
+                    //string url = $"{_baseUrl}/api/Persons/{Id}";
+                    string url = $"{_baseUrl}/api/Persons/PersonById/{Id}";
+
                     var apiResponse = await client.GetAsync(url);
 
                     if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
@@ -177,10 +165,6 @@ namespace MauiBlazorApp.Services
 
 
                     }
-
-                    
-
-                    
 
                 }
             }
@@ -212,7 +196,8 @@ namespace MauiBlazorApp.Services
                 using (var client = new HttpClient(handler))
                 {
                     //string url = $"{_baseUrl}/api/Persons/Delete";
-                    string url = $"{_baseUrl}/api/Persons/{personRequest.Id}";
+                    //string url = $"{_baseUrl}/api/Persons/{personRequest.Id}";
+                     string url = $"{_baseUrl}/api/Persons/DeletePerson";
 
 
 
@@ -242,12 +227,10 @@ namespace MauiBlazorApp.Services
             return returnresponse;
         }
         
-
         public async Task<MainResponseModel> UpdatePerson(AddUpdatePersonRequest personRequest)
         {
             var returnresponse = new MainResponseModel();
 
-            
             try
             {
 
@@ -260,8 +243,8 @@ namespace MauiBlazorApp.Services
 
                 using (var client = new HttpClient(handler))
                 {
-                   // string url = $"{_baseUrl}/api/Persons/Update";
-                    string url = $"{_baseUrl}/api/Persons/{personRequest.Id}";
+                   string url = $"{_baseUrl}/api/Persons/UpdatePerson";
+                   // string url = $"{_baseUrl}/api/Persons/{personRequest.Id}";
 
 
                     var serializeContent = JsonConvert.SerializeObject(personRequest);
@@ -281,9 +264,6 @@ namespace MauiBlazorApp.Services
             }
             return returnresponse;
         }
-
-
-
 
 
     }

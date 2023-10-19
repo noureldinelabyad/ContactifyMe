@@ -11,8 +11,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-
-
+using System.Web.Http;
 
 namespace CommonCode.Services
 {
@@ -28,8 +27,8 @@ namespace CommonCode.Services
             {
                 using (var client = new HttpClient())
                 {
-                    string url = $"{_baseUrl}/api/Persons/Add";
-                    
+                    string url = $"{_baseUrl}/api/Persons/AddPerson";
+
                     var seralizeContent = JsonConvert.SerializeObject(personRequest);
 
                     // var apiResponse = await client.PostAsync(url, new StringContent(seralizeContent, Encoding.UTF8, "application/json"));
@@ -60,15 +59,21 @@ namespace CommonCode.Services
             return returnResponse;
         }
 
-
         public async Task<List<PersonModel>> GetAllPersonsList()
         {
             var returnResponse = new List<PersonModel>();
             try
             {
-                using (var client = new HttpClient())
+                // using (var client = new HttpClient())
+                var handler = new HttpClientHandler()
                 {
-                    string url = $"{_baseUrl}/api/Persons";
+                    ClientCertificateOptions = ClientCertificateOption.Manual,
+                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
+                };
+
+                using (var client = new HttpClient(handler))
+                {
+                    string url = $"{_baseUrl}/api/Persons/All";
                     var apiResponse = await client.GetAsync(url);
 
                     if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
@@ -117,15 +122,22 @@ namespace CommonCode.Services
             return returnResponse;
         }
 
-
         public async Task<PersonModel> GetPersonDetailById(int Id)
         {
             var returnResponse = new PersonModel();
             try
             {
-                using (var client = new HttpClient())
+                //using (var client = new HttpClient())
+                var handler = new HttpClientHandler()
                 {
-                    string url = $"{_baseUrl}/api/Persons/{Id}";
+                    ClientCertificateOptions = ClientCertificateOption.Manual,
+                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
+                };
+
+                using (var client = new HttpClient(handler))
+                {
+                    //string url = $"{_baseUrl}/api/Persons/PersonById";  with it didnt se the id that called to get it from the APi
+                    string url = $"{_baseUrl}/api/Persons/PersonById?id={Id}";
                     var apiResponse = await client.GetAsync(url);
 
                     if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
@@ -135,10 +147,6 @@ namespace CommonCode.Services
 
 
                     }
-
-                    
-
-                    
 
                 }
             }
@@ -160,9 +168,7 @@ namespace CommonCode.Services
 
                 using (var client = new HttpClient())
                 {
-                    //string url = $"{_baseUrl}/api/Persons/Delete";
-                    string url = $"{_baseUrl}/api/Persons/{personRequest.Id}";
-
+                    string url = $"{_baseUrl}/api/Persons/DeletePerson";
 
 
                     var serializeContent = JsonConvert.SerializeObject(personRequest);
@@ -191,7 +197,6 @@ namespace CommonCode.Services
             return returnresponse;
         }
         
-
         public async Task<MainResponseModel> UpdatePerson(AddUpdatePersonRequest personRequest)
         {
             var returnresponse = new MainResponseModel();
@@ -202,8 +207,8 @@ namespace CommonCode.Services
 
                 using (var client = new HttpClient())
                 {
-                   // string url = $"{_baseUrl}/api/Persons/Update";
-                    string url = $"{_baseUrl}/api/Persons/{personRequest.Id}";
+                    // string url = $"{_baseUrl}/api/Persons/Update";
+                    string url = $"{_baseUrl}/api/Persons/UpdatePerson";
 
 
                     var serializeContent = JsonConvert.SerializeObject(personRequest);
@@ -224,7 +229,9 @@ namespace CommonCode.Services
             return returnresponse;
         }
 
-        
+
+
+
     }
-    
+
 }

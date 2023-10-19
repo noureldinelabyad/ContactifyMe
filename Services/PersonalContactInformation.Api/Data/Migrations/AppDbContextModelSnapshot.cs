@@ -49,8 +49,9 @@ namespace PersonalContactInformation.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PLZ")
-                        .HasColumnType("int");
+                    b.Property<string>("PLZ")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Stadt")
                         .IsRequired()

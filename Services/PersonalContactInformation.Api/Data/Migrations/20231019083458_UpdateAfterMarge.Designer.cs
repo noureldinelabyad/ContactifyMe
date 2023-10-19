@@ -11,8 +11,8 @@ using PersonalContactInformation.Api.Data;
 namespace PersonalContactInformation.Api.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230907074122_PersonGender")]
-    partial class PersonGender
+    [Migration("20231019083458_UpdateAfterMarge")]
+    partial class UpdateAfterMarge
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,18 +52,15 @@ namespace PersonalContactInformation.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PLZ")
-                        .HasColumnType("int");
+                    b.Property<string>("PLZ")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Stadt")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Strasse")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Telefonnummer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -77,6 +74,42 @@ namespace PersonalContactInformation.Api.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("People");
+                });
+
+            modelBuilder.Entity("PersonalContactInformation.Library.Models.Telefonnummer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PersonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TelNummer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("TelNr");
+                });
+
+            modelBuilder.Entity("PersonalContactInformation.Library.Models.Telefonnummer", b =>
+                {
+                    b.HasOne("PersonalContactInformation.Library.Models.Person", null)
+                        .WithMany("PersonNummern")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PersonalContactInformation.Library.Models.Person", b =>
+                {
+                    b.Navigation("PersonNummern");
                 });
 #pragma warning restore 612, 618
         }

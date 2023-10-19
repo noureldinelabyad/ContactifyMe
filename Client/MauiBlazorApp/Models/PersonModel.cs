@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MauiBlazorApp.Models
 {
-    public  class PersonModel
+    public class PersonModel
     {
         public int Id { get; set; }
 
@@ -24,7 +24,7 @@ namespace MauiBlazorApp.Models
         public string Email { get; set; }
         [Required(ErrorMessage = "Nachname is required.")]
 
-        public string Telefonnummer { get; set; }
+        public string TelNummer { get; set; }
         [Required(ErrorMessage = "Nachname is required.")]
 
         public string Strasse { get; set; }
@@ -33,7 +33,7 @@ namespace MauiBlazorApp.Models
         public string Hausnummer { get; set; }
         [Required(ErrorMessage = "Nachname is required.")]
 
-        public int PLZ { get; set; }
+        public string PLZ { get; set; }
         [Required]
 
         public string Stadt { get; set; }
@@ -44,8 +44,15 @@ namespace MauiBlazorApp.Models
 
         public string Gender { get; set; }
 
+        public List<Telefonnummer> PersonNummern { get; set; }
 
+        public class Telefonnummer
+        {
+            public int Id { get; set; }
+            public int PersonId { get; set; }
+            public string TelNummer { get; set; }
+        }
     }
 
-   
+
 }
