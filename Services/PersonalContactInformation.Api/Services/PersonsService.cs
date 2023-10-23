@@ -190,6 +190,7 @@ namespace PersonalContactInformation.Api.Services
             }
 
             Telefonnummer newNumberWhoDis = new Telefonnummer();
+            newNumberWhoDis.Id = 0;
             newNumberWhoDis.PersonId = person.Id;
             newNumberWhoDis.TelNummer = newNumber;
 

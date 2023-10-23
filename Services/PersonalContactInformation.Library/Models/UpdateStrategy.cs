@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace PersonalContactInformation.Library.Models
 {
     /// <summary>
-    /// If there are duplicates from JSON-input, defines how they are handled
+    /// If there are duplicates from a JSON-inputfile, this defines how they are handled
     /// </summary>
     public enum UpdateStrategy
     {
