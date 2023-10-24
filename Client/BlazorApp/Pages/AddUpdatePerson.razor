@@ -12,7 +12,8 @@
 @inject NavigationManager NavManager;
 
 
-<script src="js/custom.js"></script>
+@* <script src="js/custom.js"></script>
+ *@
 
 <h3>AddUpdatePerson</h3>
 
@@ -76,14 +77,33 @@
         }
     </div>
 
+
     <div class="mt-2 form-group mx-2">
         <label for="Entry_PhoneNumber">Telefonnummer</label>
-        <input id="Entry_PhoneNumber" @bind="TelNummer" class="form-control" />
-        @if (string.IsNullOrEmpty(TelNummer) || !Regex.IsMatch(TelNummer, ".{8,}"))
+        @if (PersonNummern != null)
         {
-            <div class="text-danger"> Telefonnummer is required!</div>
+            var i = 0;
+            foreach (PersonModel.Telefonnummer TelNummer in PersonNummern)
+            {
+
+                <div class="input-group">
+                    <input @bind="TelNummer.TelNummer" class="form-control" id="Entry_PhoneNumber_@i" placeholder="Enter Telefonnummer" />
+@*                     <button @onclick="(() => RemovePhoneNumber(i))">remove</button>
+ *@
+                    <button @onclick="(() => RemovePhoneNumber(TelNummer))">remove</button>
+
+                </div>
+                @if (string.IsNullOrEmpty(TelNummer.TelNummer) || !Regex.IsMatch(TelNummer.TelNummer, ".{8,}"))
+                {
+                    <div class="text-danger"> Telefonnummer is required!</div>
+                }
+
+                i++;
+            }
         }
+        <button class="btn btn-primary" @onclick="AddPhoneNumber">Add Phone Number</button>
     </div>
+
 
 
     <div class=" mt-2 form-group d-flex">
@@ -139,6 +159,8 @@
 
 <style>
 
+
+
     .my-custom-popup-class {
         background-color: #1E314B !important;
         border-radius: 20px !important;
@@ -179,6 +201,35 @@
 
 @code {
 
+    private List<PersonModel.Telefonnummer> PersonNummern = new List<PersonModel.Telefonnummer>();
+
+    private void AddPhoneNumber()
+    {
+        PersonNummern.Add(new PersonModel.Telefonnummer());
+    }
+
+    private void RemovePhoneNumber(PersonModel.Telefonnummer phoneNumber)
+    {
+        if (PersonNummern.Contains(phoneNumber))
+        {
+            PersonNummern.Remove(phoneNumber);
+        }
+    
+
+        // Console.WriteLine(index);
+        // if (index >= 0 && index < PersonNummern.Count)
+        // {
+        //     PersonNummern.RemoveAt(index);
+        // }
+    }
+
+
+
+
+
+
+
+
     [Parameter]
     public int Id { get; set; }
     private string Nachname;
@@ -209,7 +260,9 @@
                 Vorname = existingPersonDetail.Vorname;
                 Zwischenname = existingPersonDetail.Zwischenname;
                 Email = existingPersonDetail.Email;
-                TelNummer = existingPersonDetail.TelNummer;
+
+                PersonNummern = existingPersonDetail.PersonNummern;
+
                 Strasse = existingPersonDetail.Strasse;
                 Hausnummer = existingPersonDetail.Hausnummer;
                 PLZ = existingPersonDetail.PLZ.ToString();
@@ -222,9 +275,11 @@
 
     private async void AddUpdatePersonDetails()
     {
+
         if (!IsValidInput(Nachname, false) || !IsValidInput(Vorname, false) ||
-       !IsValidInput(TelNummer, false) || !IsValidInput(Strasse, false) || !IsValidInput(Hausnummer, false) ||
-       !IsValidInput(PLZ, true) || !IsValidInput(Stadt, false) || !IsValidInput(Land, false))
+      !PersonNummern.All(t => IsValidInput(t.TelNummer, false)) || !IsValidInput(Strasse, false) ||
+      !IsValidInput(Hausnummer, false) || !IsValidInput(PLZ, true) ||
+      !IsValidInput(Stadt, false) || !IsValidInput(Land, false))
         {
             //await App.Current.MainPage.DisplayAlert("Validation Error", "All fields are required.", "OK");
 
@@ -274,7 +329,8 @@
                 Vorname = Vorname,
                 Zwischenname = Zwischenname,
                 Email = Email,
-                Telefonnummer = TelNummer,
+                PersonNummern = PersonNummern,
+                // .Select(t => new PersonModel.Telefonnummer { TelNummer = t.TelNummer }).ToList(),
                 Strasse = Strasse,
                 Hausnummer = Hausnummer,
                 PLZ = PLZ,
