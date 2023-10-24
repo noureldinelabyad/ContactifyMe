@@ -22,6 +22,11 @@ namespace PersonalContactInformation.Api.Services
                 return new ServiceResponse() { Message = "Bad Request", Success = false };
             }
 
+            foreach (var nummer in person.PersonNummern)
+            {
+                nummer.Id = 0;
+            }
+
             appDbContext.People.Add(person);
             await appDbContext.SaveChangesAsync();
             return new ServiceResponse() { Message = "Contact added", Success = true };
