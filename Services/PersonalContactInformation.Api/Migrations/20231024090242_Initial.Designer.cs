@@ -8,11 +8,11 @@ using PersonalContactInformation.Api.Data;
 
 #nullable disable
 
-namespace PersonalContactInformation.Api.Data.Migrations
+namespace PersonalContactInformation.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230901095544_Update")]
-    partial class Update
+    [Migration("20231024090242_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,8 +36,13 @@ namespace PersonalContactInformation.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Hausnummer")
-                        .HasColumnType("int");
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Hausnummer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Land")
                         .IsRequired()
@@ -47,19 +52,17 @@ namespace PersonalContactInformation.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PLZ")
-                        .HasColumnType("int");
+                    b.Property<string>("PLZ")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Stadt")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Straße")
+                    b.Property<string>("Strasse")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Telefonnummer")
-                        .HasColumnType("float");
 
                     b.Property<string>("Vorname")
                         .IsRequired()
@@ -71,6 +74,42 @@ namespace PersonalContactInformation.Api.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("People");
+                });
+
+            modelBuilder.Entity("PersonalContactInformation.Library.Models.Telefonnummer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PersonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TelNummer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("TelNr");
+                });
+
+            modelBuilder.Entity("PersonalContactInformation.Library.Models.Telefonnummer", b =>
+                {
+                    b.HasOne("PersonalContactInformation.Library.Models.Person", null)
+                        .WithMany("PersonNummern")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PersonalContactInformation.Library.Models.Person", b =>
+                {
+                    b.Navigation("PersonNummern");
                 });
 #pragma warning restore 612, 618
         }
