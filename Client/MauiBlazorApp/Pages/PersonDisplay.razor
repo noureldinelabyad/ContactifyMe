@@ -115,7 +115,8 @@ else
     private string Vorname;
     private string Zwischenname;
     private string Email;
-    private string Telefonnummer;
+   // private string Telefonnummer;
+    private string TelNummer;
     private string Strasse;
     private string Hausnummer;
     private string PLZ;
@@ -141,7 +142,11 @@ else
                 Vorname = existingPersonDetail.Vorname;
                 Zwischenname = existingPersonDetail.Zwischenname;
                 Email = existingPersonDetail.Email;
-                Telefonnummer = existingPersonDetail.TelNummer;
+                //Telefonnummer = existingPersonDetail.TelNummer;
+                @foreach (var telefonnummer in existingPersonDetail.PersonNummern)
+                {
+                    TelNummer = existingPersonDetail.TelNummer;
+                }
                 Hausnummer = existingPersonDetail.Hausnummer;
                 PLZ = existingPersonDetail.PLZ.ToString();
                 Stadt = existingPersonDetail.Stadt;

@@ -230,6 +230,119 @@ namespace CommonCode.Services
         }
 
 
+        public async Task<MainResponseModel> AddPhoneNumber(int personId, string newNumber)
+        {
+            var returnResponse = new MainResponseModel();
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    string url = $"{_baseUrl}/api/Persons/AddTel";
+
+                    var content = new
+                    {
+                        personId = personId,
+                        newNumber = newNumber
+                    };
+
+                    var serializeContent = JsonConvert.SerializeObject(content);
+                    var apiResponse = await client.PostAsync(url, new StringContent(serializeContent, Encoding.UTF8, "application/json"));
+
+                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var response = await apiResponse.Content.ReadAsStringAsync();
+                        returnResponse = JsonConvert.DeserializeObject<MainResponseModel>(response);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception gracefully.
+                string Msg = ex.Message;
+                // You might also consider rethrowing the exception if you want to propagate it further.
+            }
+
+            return returnResponse;
+        }
+
+        public async Task<MainResponseModel> UpdatePhoneNumber(int personId, string oldNumber, string newNumber)
+        {
+            var returnResponse = new MainResponseModel();
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    string url = $"{_baseUrl}/api/Persons/UpdateTel";
+
+                    var content = new
+                    {
+                        personId = personId,
+                        oldNumber = oldNumber,
+                        newNumber = newNumber
+                    };
+
+                    var serializeContent = JsonConvert.SerializeObject(content);
+                    var apiResponse = await client.PutAsync(url, new StringContent(serializeContent, Encoding.UTF8, "application/json"));
+
+                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var response = await apiResponse.Content.ReadAsStringAsync();
+                        returnResponse = JsonConvert.DeserializeObject<MainResponseModel>(response);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception gracefully.
+                string Msg = ex.Message;
+                // You might also consider rethrowing the exception if you want to propagate it further.
+            }
+
+            return returnResponse;
+        }
+
+        public async Task<MainResponseModel> DeletePhoneNumber(int personId, string deleteNumber)
+        {
+            var returnResponse = new MainResponseModel();
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    string url = $"{_baseUrl}/api/Persons/DeleteTel";
+
+                    var content = new
+                    {
+                        personId = personId,
+                        deleteNumber = deleteNumber
+                    };
+
+                    var serializeContent = JsonConvert.SerializeObject(content);
+                    var request = new HttpRequestMessage(HttpMethod.Delete, url)
+                    {
+                        Content = new StringContent(serializeContent, Encoding.UTF8, "application/json")
+                    };
+
+                    var apiResponse = await client.SendAsync(request);
+
+                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var response = await apiResponse.Content.ReadAsStringAsync();
+                        returnResponse = JsonConvert.DeserializeObject<MainResponseModel>(response);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception gracefully.
+                string Msg = ex.Message;
+                // You might also consider rethrowing the exception if you want to propagate it further.
+            }
+
+            return returnResponse;
+        }
 
 
     }

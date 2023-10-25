@@ -26,8 +26,11 @@ namespace CommonCode.Models
         public string Email { get; set; }
         [Required(ErrorMessage = "Nachname is required.")]
 
-        public string TelNummer { get; set; }
-        [Required(ErrorMessage = "Nachname is required.")]
+        //public string PersonNummern { get; set; }
+        //[Required(ErrorMessage = "Nachname is required.")]
+
+       // public string Telefonnummern { get; set; }
+       // [Required(ErrorMessage = "Nachname is required.")]
 
         public string Strasse { get; set; }
         [Required(ErrorMessage = "Nachname is required.")]
@@ -46,7 +49,7 @@ namespace CommonCode.Models
 
         public string Gender { get; set; }
 
-        public List<Telefonnummer> PersonNummern { get; set; }
+        public List<Telefonnummer> PersonNummern { get; set; } = new List<Telefonnummer>();
 
         public class Telefonnummer
         {
