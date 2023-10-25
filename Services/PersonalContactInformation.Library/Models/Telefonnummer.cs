@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace PersonalContactInformation.Library.Models
 {
+    /// <summary>
+    /// Stores the Phonenumbers of People with a pointer back at a person
+    /// </summary>
     public class Telefonnummer
     {
         public int Id { get; set; }

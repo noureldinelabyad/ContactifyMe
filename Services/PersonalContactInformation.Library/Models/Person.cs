@@ -8,6 +8,9 @@ namespace PersonalContactInformation.Library.Models
 {
     public class Person
     {
+        /// <summary>
+        /// Stores contact information of a person, phone numbers are stored in a seperate table
+        /// </summary>
         public int Id { get; set; }
         public string Nachname { get; set; }
         public string Vorname { get; set; }
