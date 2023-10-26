@@ -15,7 +15,6 @@ using System.Web.Http;
 
 namespace CommonCode.Services
 {
-
     public class PersonService : IPersonService
     {
         private string _baseUrl = "https://localhost:7078"; // URL of the API database
@@ -340,7 +339,6 @@ namespace CommonCode.Services
 
             return returnResponse;
         }
-
 
     }
 

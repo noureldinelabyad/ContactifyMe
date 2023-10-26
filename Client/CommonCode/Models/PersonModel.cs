@@ -13,39 +13,24 @@ namespace CommonCode.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Nachname is required.")]
         public string Nachname { get; set; }
 
-        [Required]
         public string Vorname { get; set; }
-        [Required]
 
         public string Zwischenname { get; set; }
-        [Required(ErrorMessage = "Nachname is required.")]
 
         public string Email { get; set; }
-        [Required(ErrorMessage = "Nachname is required.")]
-
-        //public string PersonNummern { get; set; }
-        //[Required(ErrorMessage = "Nachname is required.")]
-
-       // public string Telefonnummern { get; set; }
-       // [Required(ErrorMessage = "Nachname is required.")]
 
         public string Strasse { get; set; }
-        [Required(ErrorMessage = "Nachname is required.")]
 
         public string Hausnummer { get; set; }
-        [Required(ErrorMessage = "Nachname is required.")]
 
         public string PLZ { get; set; }
         [Required]
 
         public string Stadt { get; set; }
-        [Required(ErrorMessage = "Nachname is required.")]
 
         public string Land { get; set; }
-        [Required(ErrorMessage = "Nachname is required.")]
 
         public string Gender { get; set; }
 
@@ -58,7 +43,4 @@ namespace CommonCode.Models
             public string TelNummer { get; set; }
         }
     }
-
-
-
 }

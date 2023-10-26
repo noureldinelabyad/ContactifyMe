@@ -403,9 +403,10 @@ else
 
                 @foreach (var person in personList)
                 {
-                    <tr @onclick="@(() => DisplayOption(person))">
-                        <td>@person.Vorname
-                            <button @onclick="(() => DisplayDetails(person.Id))">Show Details</button>
+                    <tr @onclick="(() => DisplayDetails(person.Id))">
+                        <td>
+                            @person.Vorname
+                            @* <button @onclick="@(() => DisplayOption(person))">Show Details</button> *@
                         </td>
                         <td>@person.Nachname</td>
                         <td>@person.Zwischenname</td>
@@ -536,11 +537,12 @@ else
             {
                 var person = personList[i];
 
-                table.AddCell(MakeCell(person.Vorname, i));
+                table.AddCell(new PdfPCell(new Phrase(person.Vorname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.Nachname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.Zwischenname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.Email, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
-                table.AddCell(new PdfPCell(new Phrase(person.TelNummer, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                var telefonnummern = string.Join(", ", person.PersonNummern.Select(p => p.TelNummer));
+                table.AddCell(new PdfPCell(new Phrase(telefonnummern, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.Strasse, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.Hausnummer, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.PLZ.ToString(), smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
@@ -580,7 +582,7 @@ else
                 nachname = person.Nachname,
                 vorname = person.Vorname,
                 zwischenname = person.Zwischenname,
-                telefonnummer = person.TelNummer,
+                telefonnummer = person.PersonNummern,
                 eMail = person.Email,
                 strasse = ReplaceUnicodeEscapeSequences(person.Strasse), // Replace Unicode escape sequences
                 hausnummer = person.Hausnummer,
@@ -808,10 +810,11 @@ else
         //  bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this person?");
         if (confrim)
         {
-            var deleteresponse = await PersonService.DeletePerson(new AddUpdatePersonRequest
-                {
-                    Id = personId
-                });
+            var deleteresponse = await PersonService.DeletePerson(personId
+            // {
+            //     Id = personId
+            // }
+            );
 
             if (deleteresponse.Success)
             {
@@ -824,7 +827,7 @@ else
                 if (!string.IsNullOrEmpty(result.Value))
                 {
                     await Swal.FireAsync(new SweetAlertOptions
-                    {
+                        {
                             Icon = SweetAlertIcon.Success,
                             Text = "Contact deleted",
 
@@ -835,9 +838,27 @@ else
                                 ConfirmButton = "my-custom-confirm-button-class",
                             }
 
-                    });
+
+                        });
                 }
 
+            }
+            else
+            {
+                await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Icon = SweetAlertIcon.Error,
+                        Text = "something went wrong :(",
+
+                        CustomClass = new SweetAlertCustomClass
+                        {
+
+                            Content = "my-custom-content-class",
+                            ConfirmButton = "my-custom-confirm-button-class",
+                        }
+
+
+                    });
             }
         }
     }

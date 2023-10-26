@@ -45,24 +45,25 @@
     <div class="mt-3 form-group mx-2">
         <label>Gender</label>
         <div class="d-flex flex-row">
-            <div class="form-check mr-3 mx-3">
-                <input checked="@(gender == "Male")" @onchange="@(()=>SetGender("Male"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                <label class="form-check-label" for="flexRadioDefault1">
-                    Male
-                </label>
-            </div>
-            <div class="form-check mr-3 mx-3">
-                <input checked="@(gender == "Female")" @onchange="@(()=>SetGender("Female"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-                <label class="form-check-label" for="flexRadioDefault2">
-                    Female
-                </label>
-            </div>
-            <div class="form-check mx-3">
-                <input checked="@(gender == "Divers")" @onchange="@(()=>SetGender("Divers"))" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
-                <label class="form-check-label" for="flexRadioDefault3">
-                    Divers
-                </label>
-            </div>
+
+            @foreach (var g in genders)
+            {
+                <div class="form-check mr-3 mx-3">
+                    <input checked="@(gender == g)" @onchange="@(()=>SetGender(g))" class="form-check-input" type="radio" name="flexRadioDefault" id="@($"flexRadioDefault_{g}")">
+                    <label class="form-check-label" for="@($"flexRadioDefault_{g}")">
+                        @g
+                    </label>
+                </div>
+            }
+            @if (gender == null || !genders.Contains(gender))
+            {
+                <div class="form-check mr-3 mx-3">
+                    <input checked="@(gender == gender)" @onchange="@(()=>SetGender(gender))" class="form-check-input" type="radio" name="flexRadioDefault" id="@($"flexRadioDefault_{gender}")">
+                    <label class="form-check-label" for="@($"flexRadioDefault_{gender}")">
+                        @gender
+                    </label>
+                </div>
+            }
         </div>
     </div>
 
@@ -75,16 +76,6 @@
         }
     </div>
 
-    <div class="mt-2 form-group mx-2">
-        <label for="Entry_PhoneNumber">Telefonnummer</label>
-        <input id="Entry_PhoneNumber" @bind="Telefonnummer" class="form-control" />
-        @if (string.IsNullOrEmpty(Telefonnummer) || !Regex.IsMatch(Telefonnummer, ".{8,}"))
-        {
-            <div class="text-danger"> Telefonnummer is required!</div>
-        }
-    </div>
-
-
     <div class=" mt-2 form-group d-flex">
         <div class="form-group mx-2">
             <label for="Entry_Strasse">Strasse</label>
@@ -94,6 +85,7 @@
                 <div class="text-danger"> Strasse is required!</div>
             }
         </div>
+
         <div class="col-md-4 mx-2">
             <label for="Entry_Hausnummer">Hausnummer</label>
             <input id="Entry_Hausnummer" @bind="Hausnummer" class="form-control" />
@@ -102,6 +94,7 @@
                 <div class="text-danger"> Hausnummer is required!</div>
             }
         </div>
+
         <div class="col-md-4 mx-2">
             <label for="Entry_PLZ">PLZ</label>
             <input id="Entry_PLZ" @bind="PLZ" class="form-control" />
@@ -121,6 +114,7 @@
                 <div class="text-danger"> Stadt is required!</div>
             }
         </div>
+
         <div class="form-group mx-2">
             <label for="Entry_Land">Land</label>
             <input id="Entry_Land" @bind="Land" class="form-control" />
@@ -131,9 +125,29 @@
         </div>
     </div>
 
+    <div class="mt-2 form-group mx-2">
+        <label for="Entry_PhoneNumber">Telefonnummer</label>
 
-    <button @onclick="AddUpdatePersonDetails" class="mt-3 btn btn-primary mx-1">Save</button>
+        @foreach (var TelNummer in PersonNummern)
+        {
+            <div class="input-group">
+                <input @bind="TelNummer.TelNummer" class="form-control" placeholder="Enter Telefonnummer" />
+                @if (PersonNummern.Count > 1)
+                {
+                    <button @onclick="(() => RemovePhoneNumber(TelNummer))">remove</button>
+                }
+            </div>
 
+            @if (string.IsNullOrEmpty(TelNummer.TelNummer) || !Regex.IsMatch(TelNummer.TelNummer, ".{8,}"))
+            {
+                <div class="text-danger"> Telefonnummer is required!</div>
+            }
+        }
+
+        <button class="btn btn-primary" @onclick="AddPhoneNumber">Add Phone Number</button>
+    </div>
+
+    <button @onclick=" AddUpdatePersonDetails" class="mt-3 btn btn-primary mx-1">Save</button>
 </div>
 
 <style>
@@ -184,7 +198,7 @@
     private string Vorname;
     private string Zwischenname;
     private string Email;
-    private string Telefonnummer;
+    private string TelNummer;
     private string Strasse;
     private string Hausnummer;
     private string PLZ;
@@ -192,9 +206,39 @@
     private string Land;
     private string gender;
 
-    private void SetGender(string gender)
+    private List<PersonModel.Telefonnummer> PersonNummern = new List<PersonModel.Telefonnummer> { new PersonModel.Telefonnummer() };
+
+    private void AddPhoneNumber()
     {
-        this.gender = gender;
+        PersonNummern.Add(new PersonModel.Telefonnummer());
+    }
+
+    private void RemovePhoneNumber(PersonModel.Telefonnummer phoneNumber)
+    {
+        if (PersonNummern.Contains(phoneNumber))
+        {
+            PersonNummern.Remove(phoneNumber);
+        }
+
+    }
+
+    List<string> genders = new List<string> { "Male", "Female", "Divers" }; // Predefined genders
+
+    private void SetGender(string selectedGender)
+    {
+        if (genders.Contains(selectedGender) || selectedGender == gender)
+        {
+            gender = selectedGender;
+        }
+        else
+        {
+            // Reset gender or show an error message.
+        }
+    }
+
+    private bool IsGenderSelected()
+    {
+        return gender == "Male" || gender == "Female" || gender == "Divers";
     }
 
     protected override async Task OnInitializedAsync()
@@ -208,7 +252,7 @@
                 Vorname = existingPersonDetail.Vorname;
                 Zwischenname = existingPersonDetail.Zwischenname;
                 Email = existingPersonDetail.Email;
-                Telefonnummer = existingPersonDetail.TelNummer;
+                PersonNummern = existingPersonDetail.PersonNummern;
                 Strasse = existingPersonDetail.Strasse;
                 Hausnummer = existingPersonDetail.Hausnummer;
                 PLZ = existingPersonDetail.PLZ.ToString();
@@ -221,49 +265,175 @@
 
     private async void AddUpdatePersonDetails()
     {
-        if (!IsValidInput(Nachname, false) || !IsValidInput(Vorname, false) ||
-       !IsValidInput(Telefonnummer, false) || !IsValidInput(Strasse, false) || !IsValidInput(Hausnummer, false) ||
-       !IsValidInput(PLZ, true) || !IsValidInput(Stadt, false) || !IsValidInput(Land, false))
+        if (!IsValidNachname(Nachname))
         {
-            //await App.Current.MainPage.DisplayAlert("Validation Error", "All fields are required.", "OK");
-
             await Swal.FireAsync(new SweetAlertOptions
                 {
                     Icon = SweetAlertIcon.Error,
-                    Text = "Invalid Input.",
-
+                    Text = "Invalid Nachname.",
                     CustomClass = new SweetAlertCustomClass
                     {
                         Popup = "my-custom-popup-class",
-
                         Content = "my-custom-content-class",
                         ConfirmButton = "my-custom-confirm-button-class",
                     }
-
                 });
             return;
+
+        }
+
+        if (!IsValidVorname(Vorname))
+
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Nachname.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsGenderSelected())
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Please select a gender.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsValidStrasse(Strasse))
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Strasse.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsValidHausnummer(Hausnummer))
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Hausnummer.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsValidPLZ(PLZ))
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid PLZ.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsValidStadt(Stadt))
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Stadt.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsValidLand(Land))
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Land.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
         }
 
         if (!IsValidEmail(Email))
         {
-
             await Swal.FireAsync(new SweetAlertOptions
                 {
                     Icon = SweetAlertIcon.Error,
-                    Text = "Email has to be valid",
-
+                    Text = "Invalid Email.",
                     CustomClass = new SweetAlertCustomClass
                     {
                         Popup = "my-custom-popup-class",
-
                         Content = "my-custom-content-class",
                         ConfirmButton = "my-custom-confirm-button-class",
                     }
-
-
-
                 });
             return;
+
+        }
+
+        if (!AreAllTelefonnummernValid())
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Telefonnummern.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
         }
 
         var addUpdateRequest = new AddUpdatePersonRequest
@@ -273,7 +443,7 @@
                 Vorname = Vorname,
                 Zwischenname = Zwischenname,
                 Email = Email,
-                Telefonnummer = Telefonnummer,
+                PersonNummern = PersonNummern,
                 Strasse = Strasse,
                 Hausnummer = Hausnummer,
                 PLZ = PLZ,
@@ -288,21 +458,7 @@
             var response = await PersonService.UpdatePerson(addUpdateRequest);
             if (response.Success)
             {
-
-                if (DeviceInfo.Platform == DevicePlatform.Android)
-                {
-                    NavManager.NavigateTo("/android");
-                }
-                else
-                {
-                   // NavManager.NavigateTo("..");
-
-                    NavManager.NavigateTo("/"); // Redirect to the list page after update
-                }
-                                            
-
-                //NavigationManager.NavigateTo(NavigationManager.Uri.Substring(0, NavigationManager.Uri.LastIndexOf("/")));
-
+                NavManager.NavigateTo("/"); // Redirect to the list page after update
 
                 await Swal.FireAsync(new SweetAlertOptions
                     {
@@ -327,50 +483,14 @@
         else
         {
 
-            if (!IsValidEmail(Email))
-            {
-                // await App.Current.MainPage.DisplayAlert("Email have to be valid ", response.ErrorMessage, "OK");
-
-
-
-                await Swal.FireAsync(new SweetAlertOptions
-                    {
-                        Icon = SweetAlertIcon.Error,
-                        Text = "Email have to be valid",
-
-                        CustomClass = new SweetAlertCustomClass
-                        {
-                            Popup = "my-custom-popup-class",
-
-                            Content = "my-custom-content-class",
-                            ConfirmButton = "my-custom-confirm-button-class",
-                        }
-
-                    });
-                return;
-            }
-
             var response = await PersonService.AddPerson(addUpdateRequest);
             if (response.Success)
             {
-                Nachname = Vorname = Zwischenname = Email = Telefonnummer = Strasse = Hausnummer = PLZ = Stadt = Land = gender = string.Empty;
+                Nachname = Vorname = Zwischenname = Email = TelNummer = Strasse = Hausnummer = PLZ = Stadt = Land = gender = string.Empty;
 
                 this.StateHasChanged();
 
-                //NavManager.NavigateTo("/"); // Redirect to the list page after add
-
-                if (DeviceInfo.Platform == DevicePlatform.Android)
-                {
-                    NavManager.NavigateTo("/android");
-                }
-                else
-                {
-                    NavManager.NavigateTo("..");
-                }
-
-
-
-                // await App.Current.MainPage.DisplayAlert("Contact Added", "Contact Added Successfully", "OK");
+                NavManager.NavigateTo("/"); // Redirect to the list page after add
 
                 await Swal.FireAsync(new SweetAlertOptions
                     {
@@ -388,11 +508,19 @@
                     });
 
             }
-            else
-            {
-                await JSRuntime.InvokeVoidAsync("alert", response.ErrorMessage);
-            }
+
         }
+
+    }
+
+    private bool IsValidNachname(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
+    }
+
+    private bool IsValidVorname(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
     }
 
     private bool IsValidEmail(string email)
@@ -407,19 +535,35 @@
         return Regex.IsMatch(email, emailPattern);
     }
 
-    private bool IsValidInput(string value, bool IsPLZ, bool isEmail = false)
+    private bool IsValidStrasse(string value)
     {
-        if (IsPLZ == false)
-        {
-            return !string.IsNullOrWhiteSpace(value) && value.Length >= 1;
-
-        }
-        else
-        {
-            return value.Length == 5;
-        }
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
     }
 
+    private bool IsValidHausnummer(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 1;
+    }
+
+    private bool IsValidPLZ(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length == 5;
+    }
+
+    private bool IsValidStadt(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
+    }
+
+    private bool IsValidLand(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
+    }
+
+    private bool AreAllTelefonnummernValid()
+    {
+        return PersonNummern.All(t => !string.IsNullOrWhiteSpace(t.TelNummer) && t.TelNummer.Length >= 8);
+    }
 
 }
 
