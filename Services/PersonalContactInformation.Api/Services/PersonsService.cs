@@ -67,17 +67,11 @@ namespace PersonalContactInformation.Api.Services
                 return new ServiceResponse() { Message = "Contact not found", Success = false };
             }
 
-            int index = 0;
             result.Nachname = person.Nachname;
             result.Vorname = person.Vorname;
             result.Zwischenname = person.Zwischenname;
             
-            foreach (var id in person.PersonNummern)
-            {
-                Telefonnummer helperTel = await GetTelefonnummerByIdAsync(id.Id);
-                await UpdateTelefonnummerAsync(result, helperTel.TelNummer, person.PersonNummern[index].TelNummer);
-                index++;
-            }
+            await  ReplaceTelefonnummerAsync(person, person.PersonNummern);
 
             result.EMail = person.EMail;
             result.Strasse = person.Strasse;
@@ -242,24 +236,25 @@ namespace PersonalContactInformation.Api.Services
 
         public async Task<ServiceResponse> ReplaceTelefonnummerAsync(Person person, List<Telefonnummer> newTelefonnummern)
         {
-            int index = 0;
-            foreach ( var telNr in appDbContext.TelNr)
+            List<Telefonnummer> helperList = new List<Telefonnummer>();
+            helperList = appDbContext.TelNr.ToList();
+            
+            foreach (var telNr in helperList)
             {
                 if (telNr != null && telNr.PersonId == person.Id)
                 {
-                    var dbItem = await appDbContext.TelNr.FirstOrDefaultAsync(tn => tn.Id == telNr.Id);
-                    appDbContext.TelNr.Remove(dbItem);
+                    appDbContext.TelNr.Remove(telNr);
                     await appDbContext.SaveChangesAsync();
-                    Telefonnummer helperTel = newTelefonnummern[index];
-                    await AddTelefonnummerAsync(person, helperTel.TelNummer);
                 }
-                else
-                {
-                    Telefonnummer helperTel = newTelefonnummern[index];
-                    await AddTelefonnummerAsync(person, helperTel.TelNummer);
-                }
+            }
+
+            int index = 0;
+            foreach (var telNr in newTelefonnummern)
+            {
+                await AddTelefonnummerAsync(person, newTelefonnummern[index].TelNummer);
                 index++;
             }
+            
             return new ServiceResponse() { Message = "Numbers replaced", Success = true };
         }
     }
