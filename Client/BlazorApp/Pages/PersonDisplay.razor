@@ -29,13 +29,21 @@
         </div>
     </div>
 
-    <div class="card bg-light mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Contact Information</h5>
-            <div><strong>Email:</strong> @personDetail.Email</div>
-                <div><strong>Telefonnummer:</strong> @personDetail.PersonNummern</div>
+        <div class="card bg-light mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Contact Information</h5>
+                <div><strong>Email:</strong> @personDetail.Email</div>
+                <div>
+                    @if (PersonNummern != null)
+                    {
+                        foreach (var TelNummer in PersonNummern)
+                        {
+                            <div>@TelNummer</div>
+                        }
+                    }
+                </div>
+            </div>
         </div>
-    </div>
 
     <div class="card bg-light mb-4">
         <div class="card-body">
@@ -109,14 +117,20 @@ else
 
 @code {
 
+    //private List<PersonModel.Telefonnummer> PersonNummern = new List<PersonModel.Telefonnummer>();
+
+    private List<string> PersonNummern = new List<string>(); // Assuming phone numbers are strings
+
+    private PersonModel personDetail;
+
     [Parameter]
     public int Id { get; set; }
     private string Nachname;
     private string Vorname;
     private string Zwischenname;
     private string Email;
-    // private string Telefonnummer;
-    private string TelNummer; private string Strasse;
+    private string Telefonnummer;
+    private string Strasse;
     private string Hausnummer;
     private string PLZ;
     private string Stadt;
@@ -141,10 +155,9 @@ else
                 Vorname = existingPersonDetail.Vorname;
                 Zwischenname = existingPersonDetail.Zwischenname;
                 Email = existingPersonDetail.Email;
-                //Telefonnummer = existingPersonDetail.TelNummer;
-                @foreach (var telefonnummer in existingPersonDetail.PersonNummern)
+                if (personDetail?.PersonNummern != null && personDetail.PersonNummern.Any())
                 {
-                    TelNummer = telefonnummer.TelNummer;
+                    PersonNummern = personDetail.PersonNummern.Select(tn => tn.TelNummer).ToList();
                 }
                 Hausnummer = existingPersonDetail.Hausnummer;
                 PLZ = existingPersonDetail.PLZ.ToString();
@@ -155,13 +168,11 @@ else
         }
     }
 
-    private PersonModel personDetail;
-
     private void UpdatePersonDetails()
     {
         NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
     }
-    
+
     private async void DisplayDeleteConfirmation(int personId)
     {
 
@@ -192,22 +203,21 @@ else
         //  bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this person?");
         if (confrim)
         {
-            var deleteresponse = await PersonService.DeletePerson(new AddUpdatePersonRequest
-                {
-                    Id = personId
-                });
+            var deleteresponse = await PersonService.DeletePerson(personId
+            // {
+            //     Id = personId
+            // }
+            );
 
             if (deleteresponse.Success)
             {
-                //await ShowDeleteDialog();
-
                 await OnInitializedAsync();
 
                 StateHasChanged();
 
                 if (!string.IsNullOrEmpty(result.Value))
                 {
-                    NavManager.NavigateTo("/android");
+                    NavManager.NavigateTo("/");
 
                     await Swal.FireAsync(new SweetAlertOptions
                         {
@@ -222,6 +232,9 @@ else
                             }
 
                         });
+                }
+                else
+                {
                 }
 
             }

@@ -159,58 +159,56 @@ namespace CommonCode.Services
             return returnResponse;
         }
 
-        public async Task<MainResponseModel> DeletePerson (AddUpdatePersonRequest personRequest )
+        public async Task<MainResponseModel> DeletePerson(int Id )
         {
             var returnresponse = new MainResponseModel();
 
             try
             {
-
                 using (var client = new HttpClient())
                 {
-                    string url = $"{_baseUrl}/api/Persons/DeletePerson";
+                    string url = $"{_baseUrl}/api/Persons/DeletePerson?id={Id}";
+                    var apiResponse = await client.GetAsync(url);
 
-
-                    var serializeContent = JsonConvert.SerializeObject(personRequest);
-
+                    var serializeContent = JsonConvert.SerializeObject(Id);
                     var request = new HttpRequestMessage();
-
                     request.Method = HttpMethod.Delete;
                     request.RequestUri = new Uri(url);
                     request.Content = new StringContent(serializeContent, Encoding.UTF8, "application/json");
-                    var apiresponse = await client.SendAsync(request);
 
+
+                    var apiresponse = await client.SendAsync(request);
 
                     if (apiresponse.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         var response = await apiresponse.Content.ReadAsStringAsync();
                         returnresponse = JsonConvert.DeserializeObject<MainResponseModel>(response);
                     }
-
+                    else
+                    {
+                        // Handle non-OK status codes here.
+                    }
                 }
             }
-
             catch (Exception ex)
             {
                 string msg = ex.Message;
+                // Handle the exception here, log it, and possibly return an error response.
             }
+
             return returnresponse;
         }
-        
+
         public async Task<MainResponseModel> UpdatePerson(AddUpdatePersonRequest personRequest)
         {
             var returnresponse = new MainResponseModel();
-
             
             try
             {
-
                 using (var client = new HttpClient())
                 {
                     // string url = $"{_baseUrl}/api/Persons/Update";
                     string url = $"{_baseUrl}/api/Persons/UpdatePerson";
-
-
                     var serializeContent = JsonConvert.SerializeObject(personRequest);
                     var apiresponse = await client.PutAsync(url, new StringContent(serializeContent, Encoding.UTF8, "application/json"));
                     if (apiresponse.StatusCode == System.Net.HttpStatusCode.OK)
@@ -228,7 +226,6 @@ namespace CommonCode.Services
             }
             return returnresponse;
         }
-
 
         public async Task<MainResponseModel> AddPhoneNumber(int personId, string newNumber)
         {

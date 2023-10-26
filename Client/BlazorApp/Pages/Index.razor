@@ -22,14 +22,14 @@
 
 <head>
     <!-- for the deopdown update , delete    -->
-   @*  <link rel="stylesheet" href="_content/Blazorise/blazorise.css" />
+    @*  <link rel="stylesheet" href="_content/Blazorise/blazorise.css" />
     <link rel="stylesheet" href="_content/Blazorise.Bootstrap/blazorise.bootstrap.css" /> *@
 
-@*     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
- *@   @* <script src="_content/Blazorise/blazorise.js"></script>
+    @*     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
+    *@   @* <script src="_content/Blazorise/blazorise.js"></script>
 
-<script src="_content/Blazorise.Bootstrap/blazorise.bootstrap.js"></script> *@
- 
+    <script src="_content/Blazorise.Bootstrap/blazorise.bootstrap.js"></script> *@
+
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
@@ -402,9 +402,9 @@
     .my-custom-popup-class {
         background-color: #1E314B !important;
         border-radius: 20px !important;
-        border-block: 20px white solid ;
-        padding-bottom : 10px;
-        box-shadow:initial;
+        border-block: 20px white solid;
+        padding-bottom: 10px;
+        box-shadow: initial;
         color: white !important; /* White text color */
         font-size: 20px !important;
         font-weight: bold !important;
@@ -415,15 +415,13 @@
     }
 
     .my-custom-content-class {
-      
     }
 
     .my-custom-confirm-button-class {
         background-color: blue !important; /* Blue button color */
         font-size: 20px !important;
         padding: 1px,1px,1px,1px !important;
-        font-weight:bold;
-        
+        font-weight: bold;
     }
 
     .my-custom-cancel-button-class {
@@ -433,7 +431,7 @@
         font-weight: bold;
     }
 
-    .Icon-popup{
+    .Icon-popup {
         color: red !important;
     }
 </style>
@@ -464,33 +462,31 @@ else
             <tbody class="table-body">
                 @foreach (var person in _PersonList)
                 {
-                    <tr @onclick="@(() => DisplayOption(person))">
+                    <tr @onclick="(() => DisplayDetails(person.Id))">
                         <td>
                             <div class="position-relative">
                                 @person.Vorname
-                                @* <div class="dropdown">
-                                    <button class="dropbtn">+ </button>
-                                    <div class="dropdown-content">
-                                        <button class="btn btn-primary mx-1 mr-3" @onclick="@(() => DisplayUpdate(person.Id))">Update</button>
-                                        <button class="btn btn-danger mx-1 mr-3" @onclick="@(() => DisplayDeleteConfirmation(person.Id))">Delete</button>
-                                    </div>
-                                </div> *@
+
                             </div>
                         </td>
                         <td>
                             @person.Nachname
-                            <button @onclick="(() => DisplayDetails(person.Id))">Show Details</button>
+
+                            @* <button @onclick="@(() => DisplayOption(person))">Show Details</button> *@
+
                         </td>
+
                         <td>@person.Zwischenname</td>
                         <td>@person.Email</td>
+
                         <td>
-                        @foreach (var telefonnummer in person.PersonNummern)
-                        {
-                            <div>@telefonnummer.TelNummer</div>
-                        }
-                         </td>
-@*                        <td>@person.Telefonnummer</td>
- *@                       <td>@person.Strasse</td>
+                            @foreach (var telefonnummer in person.PersonNummern)
+                            {
+                                <div>@telefonnummer.TelNummer</div>
+                            }
+                        </td>
+                        
+                        <td>@person.Strasse</td>
                         <td>@person.Hausnummer</td>
                         <td>@person.PLZ</td>
                         <td>@person.Stadt</td>
@@ -756,7 +752,7 @@ else
             {
                 Title = "options",
                 ShowCancelButton = true,
-                ShowDenyButton= true,
+                ShowDenyButton = true,
                 ConfirmButtonText = "Update",
                 DenyButtonText = "Delete",
 
@@ -782,7 +778,7 @@ else
             //     NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
             // }
         }
-        if(result.IsDenied)
+        if (result.IsDenied)
         {
             DisplayDeleteConfirmation(personDetail.Id);
         }
@@ -790,7 +786,7 @@ else
         else
         {
             // Handle Cancel button click or outside click
-           
+
         }
 
 
@@ -836,17 +832,18 @@ else
                 }
 
 
-         });
+            });
 
         var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
 
         //  bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this person?");
         if (confrim)
         {
-            var deleteresponse = await PersonService.DeletePerson(new AddUpdatePersonRequest
-                {
-                    Id = personId
-                });
+            var deleteresponse = await PersonService.DeletePerson(personId
+            // {
+            //     Id = personId
+            // }
+            );
 
             if (deleteresponse.Success)
             {
@@ -859,7 +856,7 @@ else
                 if (!string.IsNullOrEmpty(result.Value))
                 {
                     await Swal.FireAsync(new SweetAlertOptions
-                    {
+                        {
                             Icon = SweetAlertIcon.Success,
                             Text = "Contact deleted",
 
@@ -871,9 +868,26 @@ else
                             }
 
 
-                    });
+                        });
                 }
 
+            }
+            else
+            {
+                await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Icon = SweetAlertIcon.Error,
+                        Text = "something went wrong :(",
+
+                        CustomClass = new SweetAlertCustomClass
+                        {
+
+                            Content = "my-custom-content-class",
+                            ConfirmButton = "my-custom-confirm-button-class",
+                        }
+
+
+                    });
             }
         }
     }

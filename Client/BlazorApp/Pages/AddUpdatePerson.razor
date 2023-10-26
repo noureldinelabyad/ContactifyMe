@@ -77,35 +77,6 @@
         }
     </div>
 
-
-    <div class="mt-2 form-group mx-2">
-        <label for="Entry_PhoneNumber">Telefonnummer</label>
-        @if (PersonNummern != null)
-        {
-            var i = 0;
-            foreach (PersonModel.Telefonnummer TelNummer in PersonNummern)
-            {
-
-                <div class="input-group">
-                    <input @bind="TelNummer.TelNummer" class="form-control" id="Entry_PhoneNumber_@i" placeholder="Enter Telefonnummer" />
-@*                     <button @onclick="(() => RemovePhoneNumber(i))">remove</button>
- *@
-                    <button @onclick="(() => RemovePhoneNumber(TelNummer))">remove</button>
-
-                </div>
-                @if (string.IsNullOrEmpty(TelNummer.TelNummer) || !Regex.IsMatch(TelNummer.TelNummer, ".{8,}"))
-                {
-                    <div class="text-danger"> Telefonnummer is required!</div>
-                }
-
-                i++;
-            }
-        }
-        <button class="btn btn-primary" @onclick="AddPhoneNumber">Add Phone Number</button>
-    </div>
-
-
-
     <div class=" mt-2 form-group d-flex">
         <div class="form-group mx-2">
             <label for="Entry_Strasse">Strasse</label>
@@ -150,6 +121,29 @@
                 <div class="text-danger"> Land is required!</div>
             }
         </div>
+    </div>
+
+
+    <div class="mt-2 form-group mx-2">
+        <label for="Entry_PhoneNumber">Telefonnummer</label>
+
+        @foreach (var TelNummer in PersonNummern)
+        {
+            <div class="input-group">
+                <input @bind="TelNummer.TelNummer" class="form-control" placeholder="Enter Telefonnummer" />
+                @if (PersonNummern.Count > 1)
+                {
+                    <button @onclick="(() => RemovePhoneNumber(TelNummer))">remove</button>
+                }
+            </div>
+
+            @if (string.IsNullOrEmpty(TelNummer.TelNummer) || !Regex.IsMatch(TelNummer.TelNummer, ".{8,}"))
+            {
+                <div class="text-danger"> Telefonnummer is required!</div>
+            }
+        }
+
+        <button class="btn btn-primary" @onclick="AddPhoneNumber">Add Phone Number</button>
     </div>
 
 
@@ -201,7 +195,13 @@
 
 @code {
 
-    private List<PersonModel.Telefonnummer> PersonNummern = new List<PersonModel.Telefonnummer>();
+   //private List<PersonModel.Telefonnummer> PersonNummern = new List<PersonModel.Telefonnummer>();
+
+    
+    private List<PersonModel.Telefonnummer> PersonNummern = new List<PersonModel.Telefonnummer> { new PersonModel.Telefonnummer() };
+       
+    
+
 
     private void AddPhoneNumber()
     {
@@ -214,21 +214,8 @@
         {
             PersonNummern.Remove(phoneNumber);
         }
-    
 
-        // Console.WriteLine(index);
-        // if (index >= 0 && index < PersonNummern.Count)
-        // {
-        //     PersonNummern.RemoveAt(index);
-        // }
     }
-
-
-
-
-
-
-
 
     [Parameter]
     public int Id { get; set; }
@@ -260,9 +247,7 @@
                 Vorname = existingPersonDetail.Vorname;
                 Zwischenname = existingPersonDetail.Zwischenname;
                 Email = existingPersonDetail.Email;
-
                 PersonNummern = existingPersonDetail.PersonNummern;
-
                 Strasse = existingPersonDetail.Strasse;
                 Hausnummer = existingPersonDetail.Hausnummer;
                 PLZ = existingPersonDetail.PLZ.ToString();
@@ -275,29 +260,158 @@
 
     private async void AddUpdatePersonDetails()
     {
-
-        if (!IsValidInput(Nachname, false) || !IsValidInput(Vorname, false) ||
-      !PersonNummern.All(t => IsValidInput(t.TelNummer, false)) || !IsValidInput(Strasse, false) ||
-      !IsValidInput(Hausnummer, false) || !IsValidInput(PLZ, true) ||
-      !IsValidInput(Stadt, false) || !IsValidInput(Land, false))
+        if (!IsValidNachname(Nachname))
         {
-            //await App.Current.MainPage.DisplayAlert("Validation Error", "All fields are required.", "OK");
-
             await Swal.FireAsync(new SweetAlertOptions
                 {
                     Icon = SweetAlertIcon.Error,
-                    Text = "Invalid Input.",
-
+                    Text = "Invalid Nachname.",
                     CustomClass = new SweetAlertCustomClass
                     {
                         Popup = "my-custom-popup-class",
-
                         Content = "my-custom-content-class",
                         ConfirmButton = "my-custom-confirm-button-class",
                     }
-
                 });
             return;
+
+        }
+
+        if (!IsValidVorname(Vorname))
+
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Nachname.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsValidStrasse(Strasse))
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Strasse.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsValidHausnummer(Hausnummer))
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Hausnummer.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsValidPLZ(PLZ))
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid PLZ.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsValidStadt(Stadt))
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Stadt.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsValidLand(Land))
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Land.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!IsValidEmail(Email))
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Email.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
+        }
+
+        if (!AreAllTelefonnummernValid())
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Icon = SweetAlertIcon.Error,
+                    Text = "Invalid Telefonnummern.",
+                    CustomClass = new SweetAlertCustomClass
+                    {
+                        Popup = "my-custom-popup-class",
+                        Content = "my-custom-content-class",
+                        ConfirmButton = "my-custom-confirm-button-class",
+                    }
+                });
+            return;
+
         }
 
         if (!IsValidEmail(Email))
@@ -370,31 +484,6 @@
         else
         {
 
-            if (!IsValidEmail(Email))
-            {
-                // await App.Current.MainPage.DisplayAlert("Email have to be valid ", response.ErrorMessage, "OK");
-
-
-
-                await Swal.FireAsync(new SweetAlertOptions
-                    {
-                        Icon = SweetAlertIcon.Error,
-                        Text = "Email have to be valid",
-
-                        CustomClass = new SweetAlertCustomClass
-                        {
-                            Popup = "my-custom-popup-class",
-
-                            Content = "my-custom-content-class",
-                            ConfirmButton = "my-custom-confirm-button-class",
-                        }
-
-
-
-                    });
-                return;
-            }
-
             var response = await PersonService.AddPerson(addUpdateRequest);
             if (response.Success)
             {
@@ -403,8 +492,6 @@
                 this.StateHasChanged();
 
                 NavManager.NavigateTo("/"); // Redirect to the list page after add
-
-                // await App.Current.MainPage.DisplayAlert("Contact Added", "Contact Added Successfully", "OK");
 
                 await Swal.FireAsync(new SweetAlertOptions
                     {
@@ -429,6 +516,16 @@
         }
     }
 
+    private bool IsValidNachname(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
+    }
+
+    private bool IsValidVorname(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
+    }
+
     private bool IsValidEmail(string email)
     {
         if (string.IsNullOrEmpty(email))
@@ -441,18 +538,34 @@
         return Regex.IsMatch(email, emailPattern);
     }
 
-    private bool IsValidInput(string value, bool IsPLZ, bool isEmail = false)
+    private bool IsValidStrasse(string value)
     {
-        if (IsPLZ == false)
-        {
-            return !string.IsNullOrWhiteSpace(value) && value.Length >= 1;
-
-        }
-        else
-        {
-            return value.Length == 5;
-        }
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
     }
 
+    private bool IsValidHausnummer(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 1;
+    }
+
+    private bool IsValidPLZ(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length == 5;
+    }
+
+    private bool IsValidStadt(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
+    }
+
+    private bool IsValidLand(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
+    }
+
+    private bool AreAllTelefonnummernValid()
+    {
+        return PersonNummern.All(t => !string.IsNullOrWhiteSpace(t.TelNummer) && t.TelNummer.Length >= 8);
+    }
 
 }

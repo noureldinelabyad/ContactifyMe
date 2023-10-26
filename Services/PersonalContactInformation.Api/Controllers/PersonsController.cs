@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client;
+﻿using Microsoft.AspNetCore.Mvc;
 using PersonalContactInformation.Api.Services;
 using PersonalContactInformation.Library.Models;
 using PersonalContactInformation.Library.Responses;
