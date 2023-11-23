@@ -90,9 +90,13 @@ namespace PersonalContactInformation.Api.Controllers
             var jsonContent = sr.ReadToEnd();
 
             var result = await personService.AddPersonJSONAsync(jsonContent, updateStrategy);
-            if (result.Success)
+            if (result.Success && result.Message == "Done, there were one or more duplicate contacts")
             {
-                return Ok(result);
+                return Accepted();
+            }
+            else if (result.Success && result.Message == "Done")
+            {
+                return Ok();
             }
             else
             {
