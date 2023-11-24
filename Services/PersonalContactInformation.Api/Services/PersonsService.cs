@@ -48,7 +48,6 @@ namespace PersonalContactInformation.Api.Services
 
         public async Task<Person> GetPersonByIdAsync(int id)
         {
-            // var person = await appDbContext.People.FirstOrDefaultAsync(p => p.Id == id); / i commnted this becouse it didnt inclode the PersonNummern ‾\_('-' )__/‾
             var person = await appDbContext.People
                                     .Include(p => p.PersonNummern)
                                     .FirstOrDefaultAsync(p => p.Id == id);  
