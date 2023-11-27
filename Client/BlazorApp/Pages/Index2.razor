@@ -1,0 +1,400 @@
+﻿@page "/contact2"
+@using BlazorApp.Data
+@using Blazorise.Bootstrap
+@using CommonCode.Models
+@using CommonCode.Services
+@using System.Text
+@using System.IO;
+@using System;
+@using System.Collections.Generic;
+@using System.Linq;
+@using System.Text.RegularExpressions;
+@using CurrieTechnologies.Razor.SweetAlert2
+
+@using Microsoft.JSInterop
+@using Newtonsoft.Json
+@using Microsoft.AspNetCore.Components
+@using iTextSharp.text
+@using iTextSharp.text.pdf
+@using UploadFilesLIbrary
+@using Microsoft.Extensions.Logging
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.AspNetCore.Mvc
+@using System.Net.Http.Json
+@inject IWebHostEnvironment Environment
+@inject SweetAlertService Swal    // sweet alert call it Swal
+@inject IPersonService PersonService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
+@inject IPersonService personService
+@inject IConfiguration config // injected this to configure the file path to store the files after storage
+@inject ISqlDataAccess sql // to get our connection to our SQL Server
+
+<head>
+    <!-- Your head content here -->
+</head>
+
+<div class="header">
+    <span class="personList">Personen Liste 2</span>
+    <div class="input-group">
+        @if (errors.Count > 0)
+        {
+            <h2>Errors</h2>
+            <u1 class="Text-danger">
+                @foreach (var error in errors)
+                {
+                    <li> @error </li>
+                }
+            </u1>
+        }
+    </div>
+
+</div>
+
+<div class="form">
+    <EditForm Model="newCustomer" OnInvalidSubmit="SubmitForm">
+        <div>
+            <label for="firstName">First Name:</label>
+            <InputText id="firstName" class="form-control" @bind-Value="newCustomer.FirstName"></InputText>
+        </div>
+        <div>
+            <label for="lastName">Last Name:</label>
+            <InputText id="lastName" class="form-control" @bind-Value="newCustomer.LastName"></InputText>
+        </div>
+        <div>
+            <label for="profilePicture"> Profile Picture:</label>
+            <InputFile OnChange="@LoadFiles" class="form-control" accept=".png, .jpg, .jpeg" />
+        </div>
+        <button Class="btn search-btn mt-3" onclick="@SubmitForm"> Create Customer</button>
+    </EditForm>
+</div>
+
+<div>
+    <!-- Button to open the popup -->
+    <button @onclick="OpenPopup">Open Popup</button>
+
+    <!-- Popup content -->
+    @if (showPopup)
+    {
+        @*         <div class="popup-container">
+    *@
+        <div class="container">
+
+            <div class="my-custom-popup-class">
+
+                <div class="my-custom-title-class">
+                    Json Import
+                </div>
+
+                <div >
+
+                    <div class="filecontainer">
+
+                        <!-- Input file and import button -->
+                        <InputFile OnChange="HandleFileSelected" class="filecontainer" />
+                    </div>
+
+                    <div class="my-custom-content-class">
+                        <!-- Add a dropdown to choose the update strategy -->
+                        <label for="updateStrategy">Choose Update Strategy:</label>
+                        <select @bind="selectedUpdateStrategy" id="updateStrategy">
+                            <option value="0">Skip</option>
+                            <option value="1">Merge Skip</option>
+                            <option value="2">Merge Replace</option>
+                            <option value="3">Replace</option>
+                        </select>
+
+                    </div>
+                    <button @onclick="ImportJson" class="my-custom-confirm-button-class">Import</button>
+                    <button @onclick="()=> showPopup = false" class="my-custom-cancel-button-class">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+    }
+
+</div>
+
+
+<style> @* json popup *@
+
+    .container {
+        padding: 10px;
+        margin: 10px;
+        z-index: 1000;
+    }
+
+    .filecontainer {
+        padding: 5px;
+        margin: 10px;
+        justify-content: center;
+        align-items: center;
+        background-color: #FFFFFF;
+        border-radius: 15px;
+        font-size: medium;
+        color: #17324D;
+    }
+
+    .popup-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .my-custom-popup-class {
+        background-color: #17324D;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        width: 300px; /* Adjust the width as needed */
+        text-align: center;
+        width: 40%;
+    }
+
+    .my-custom-title-class {
+        color: #FFFFFF;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .my-custom-content-class {
+        margin-bottom: 10px;
+        padding: 20px;
+        margin: 20px;
+        background-color: #D4DEE7;
+        color: #17324D;
+        border-radius: 15px;
+        font-size:medium;
+        
+    }
+
+    .my-custom-confirm-button-class,
+    .my-custom-cancel-button-class {
+        background-color: #00CC66; 
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        width: 120px; /* Adjust the width as needed */
+        border-radius: 15px;
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .my-custom-cancel-button-class {
+        background-color: red; /* Adjust the button colors as needed */
+
+        margin-left: 10px;
+        justify-content: right;
+        padding: 10px;
+        margin: 10px;
+    }
+</style>
+
+
+@code {
+
+    private bool showPopup = false;
+    private IBrowserFile jsonFile;
+    private string jsonContent;
+    private string selectedUpdateStrategy = "0"; // Default to "Skip"
+
+    private void OpenPopup()
+    {
+        showPopup = true;
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        jsonFile = e.File;
+
+        if (jsonFile != null)
+        {
+            var stream = jsonFile.OpenReadStream();
+            var reader = new StreamReader(stream);
+            jsonContent = await reader.ReadToEndAsync();
+        }
+    }
+
+    private async Task ImportJson()
+    {
+
+
+        var updateStrategy = (UpdateStrategy)Enum.Parse(typeof(UpdateStrategy), selectedUpdateStrategy);
+
+        if (!string.IsNullOrEmpty(jsonContent))
+        {
+            var result = await PersonService.ADDJsonAsync(jsonContent, updateStrategy);
+
+            if (result.Success)
+            {
+                // Import successful, handle UI updates or redirection
+                // You may want to show a success message or refresh the UI
+                // For example, redirect to the list page after import
+                NavManager.NavigateTo("/");
+            }
+            else
+            {
+                // Import failed, handle error
+                // You may want to show an error message to the user
+                // For example, display a modal or toast with the error message
+                await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Import Failed",
+                        Text = $"Error: {result.Message}",
+                        Icon = SweetAlertIcon.Error
+                    });
+            }
+        }
+        else
+        {
+            // JSON content is empty, show validation error
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Validation Error",
+                    Text = "Please select a file",
+                    Icon = SweetAlertIcon.Error
+                });
+        }
+    }
+
+
+
+
+
+
+    private long maxFileSize = 1024 * 1024 * 5; // size by 5 mg , bites *kilobite * 5 times = 5mb
+
+    // private int maxAllowededFiles = 3; // files only to upload (after adding sql commented this noneeded)
+
+    private List<string> errors = new(); // to see any error that i have any time
+
+    private CustomerModel newCustomer = new();
+
+    //private IBrowserFile? file;
+
+    private IBrowserFile file;
+
+
+    private async Task SubmitForm()
+    {
+        errors.Clear();
+        try
+        {
+            string relativePath = await CaptureFile();
+
+            // if (newCustomer == null)
+            // {
+            //     return;
+
+            // }
+            newCustomer.FileName = relativePath;
+
+            await sql.SaveData("dbo.spCustomer_Insert", "Default", newCustomer); // to save sql data to sql server
+
+            newCustomer = new(); // reset customermodel after uploading it
+            file = null; // our  (private IBrowserFile? file;)
+            errors.Clear(); // clear the rrrors whne submiting the form
+
+        }
+        catch (Exception ex)
+        {
+
+            errors.Add($"Error: {ex.Message}");
+        }
+    }
+
+    private void LoadFiles(InputFileChangeEventArgs e)
+    {
+        file = e.File;
+
+        // errors.Clear();
+        // if (e.FileCount > maxAllowededFiles )
+        // {
+        //     errors.Add($"Errors: Attempting to  Upload{e.FileCount} files, but only {maxAllowededFiles} files are allowed.");
+        //     return;
+        // }
+        // foreach(var file in e.GetMultipleFiles(maxAllowededFiles)) //dubelchecking for max allawed files
+        // {
+        //     try
+        //     {
+        //         string newFileName = Path.ChangeExtension(
+        //         Path.GetRandomFileName(),
+        //         Path.GetExtension(file.Name)); // ganrate random name , next half more extione if an other random name alrady ganrated from an other user like file 1 file 1
+
+        //         // capture the path where you want to store the files , and put the path on appsittning.json file storge storge test (FileStorage), ! means we know it exsists as file path from this node
+        //         string path = Path.Combine(
+        //             config.GetValue<string>("FileStorage")!,
+        //             "tcorey",
+        //             newFileName);
+
+        //         Directory.CreateDirectory(Path.Combine(
+        //           config.GetValue<string>("FileStorage")!,
+        //           "tcorey"));
+
+        //         await using FileStream fs = new(path, FileMode.Create);
+        //         await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+        //     }
+        //     catch (Exception ex) // made this try amdcath after to see if it didnt work it will thorw an exeption
+        //     {
+
+        //         errors.Add($"File:{file.Name} Error: {ex.Message}");
+        //     }
+        // }
+
+    }
+
+    private async Task<string> CaptureFile()
+    {
+        if (file is null)
+        {
+            return "";
+        }
+
+
+        try
+        {
+            string newFileName = Path.ChangeExtension(
+            Path.GetRandomFileName(),
+            Path.GetExtension(file.Name)); // ganrate random name , next half more extione if an other random name alrady ganrated from an other user like file 1 file 1
+
+            // capture the path where you want to store the files , and put the path on appsittning.json file storge storge test (filestorage), ! means we know it exsists as file path from this node
+            string path = Path.Combine(
+            config.GetValue<string>("FileStorage")!,
+            "Uploaded Data",
+            newFileName);
+
+            string relativepath = Path.Combine("Uploaded Data", newFileName);
+
+            Directory.CreateDirectory(Path.Combine(
+            config.GetValue<string>("FileStorage")!,
+            "Uploaded Data"));
+
+            await using FileStream fs = new(path, FileMode.Create);
+            await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+
+            return relativepath;
+        }
+        catch (Exception ex) // made this try amdcath after to see if it didnt work it will thorw an exeption
+        {
+
+            errors.Add($"File:{file.Name} Error: {ex.Message}");
+            throw;
+        }
+    }
+    }
+
+
+
+
+
+

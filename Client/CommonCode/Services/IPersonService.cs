@@ -1,5 +1,5 @@
 ﻿using CommonCode.Models;
-using CommonCode.Models.Models;
+using MauiBlazorApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +26,12 @@ namespace CommonCode.Services
         Task<MainResponseModel> UpdatePhoneNumber(int personId, string oldNumber, string newNumber);
 
         Task<MainResponseModel> DeletePhoneNumber(int personId, string deleteNumber);
+
+        Task<MainResponseModel> ADDJsonAsync(string jsonContent, UpdateStrategy updateStrategy );
+
+
+        //Task<MainResponseModel> ImportPersonsFromJsonAsync(string jsonContent, UpdateStrategy updateStrategy);
+
 
     }
 

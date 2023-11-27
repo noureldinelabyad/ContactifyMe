@@ -1,7 +1,11 @@
 ﻿using CommonCode.Models;
-using CommonCode.Models.Models;
+
+using MauiBlazorApp.Models;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,6 +13,7 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -18,6 +23,8 @@ namespace CommonCode.Services
     public class PersonService : IPersonService
     {
         private string _baseUrl = "https://localhost:7078"; // URL of the API database
+        private DbContext _appDbContext;
+
 
         public async Task<MainResponseModel> AddPerson(AddUpdatePersonRequest personRequest)
         {
@@ -99,7 +106,7 @@ namespace CommonCode.Services
 
                         }
 
-                                            
+
 
                         if (person.Gender == null)
                         {
@@ -158,7 +165,7 @@ namespace CommonCode.Services
             return returnResponse;
         }
 
-        public async Task<MainResponseModel> DeletePerson(int Id )
+        public async Task<MainResponseModel> DeletePerson(int Id)
         {
             var returnresponse = new MainResponseModel();
 
@@ -201,7 +208,7 @@ namespace CommonCode.Services
         public async Task<MainResponseModel> UpdatePerson(AddUpdatePersonRequest personRequest)
         {
             var returnresponse = new MainResponseModel();
-            
+
             try
             {
                 using (var client = new HttpClient())
@@ -220,7 +227,7 @@ namespace CommonCode.Services
             }
 
             catch (Exception ex)
-            { 
+            {
                 string msg = ex.Message;
             }
             return returnresponse;
@@ -340,6 +347,69 @@ namespace CommonCode.Services
             return returnResponse;
         }
 
-    }
 
+        public async Task<MainResponseModel> ADDJsonAsync(string jsonContent, UpdateStrategy updateStrategy)
+        {
+            // Ensure that updateStrategy is a string before parsing
+            var strategy = Enum.Parse(typeof(UpdateStrategy), updateStrategy.ToString()) as string;
+
+
+            var returnResponse = new MainResponseModel();
+            try
+            {
+                var multipart = new MultipartFormDataContent();
+
+                multipart.Add(new ByteArrayContent(System.Text.UTF8Encoding.UTF8.GetBytes(jsonContent)),  "jsonFile", "test.json");
+
+                using (var client = new HttpClient())
+                {
+                    string url = $"{_baseUrl}/api/Persons/AddJson";
+                
+                    var content = new MultipartFormDataContent
+                     {
+                         { new StringContent(jsonContent, Encoding.UTF8), "application/json"}
+                     };
+                    //StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                    Console.WriteLine(jsonContent);
+                    Console.WriteLine(content);
+
+
+                    multipart.Add(new StringContent(((int)updateStrategy).ToString()), "updateStrategy");
+
+                   // multipart.Add(new StringContent(updateStrategy.ToString()), "updateStrategy");
+
+                   // var apiResponse = await client.PostAsync(url, multipart);
+
+                    var apiResponse = await client.PostAsync($"{url}?updateStrategy={(int)updateStrategy}", multipart);
+
+
+                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var response = await apiResponse.Content.ReadAsStringAsync();
+                        return JsonConvert.DeserializeObject<MainResponseModel>(response);
+                    }
+                    else
+                    {
+                        // Handle non-OK status codes here.
+                        return new MainResponseModel() { Message = "Import failed", Success = false };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception gracefully.
+                Console.WriteLine($"Exception during JSON import: {ex.Message}");
+                return new MainResponseModel() { Message = "Import failed", Success = false };
+            }
+
+            // Add a default or error response here, as a fallback.
+            return new MainResponseModel() { Message = "Import failed", Success = false };
+        }
+
+       
+    }
 }
+
+
+

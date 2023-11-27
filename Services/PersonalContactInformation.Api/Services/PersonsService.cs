@@ -85,8 +85,9 @@ namespace PersonalContactInformation.Api.Services
             return new ServiceResponse() { Message = "Contact updated", Success = true };
         }
 
-        public async Task<ServiceResponse> AddPersonJSONAsync(string jsonContent, UpdateStrategy strategy)
+        public async Task<ServiceResponse> AddPersonJSONAsync(string jsonContent, UpdateStrategy strategy )
         {
+
             List<Person> toBeInserted = new List<Person>();                                                              // helper for converting and input
             toBeInserted = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(jsonContent);                     // formating "raw JSON string"
             List<Telefonnummer> toBeInsertedTel = new List<Telefonnummer>();

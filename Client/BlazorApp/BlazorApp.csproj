@@ -4,10 +4,15 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>40b63cdf-fc03-417c-8154-60fd62d55708</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Remove="wwwroot\exportPdf.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\index.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonCode\CommonCode.csproj" />
+    <ProjectReference Include="..\UploadFilesLIbrary\UploadFilesLIbrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>

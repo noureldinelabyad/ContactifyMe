@@ -4,7 +4,10 @@ using CommonCode.Services;
 using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using UploadFilesLibrary;
+using UploadFilesLIbrary;
 using static BlazorApp.Pages.Index;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,11 @@ builder.Services.AddScoped<Radzen.DialogService>();
 builder.Services.AddSweetAlert2();
 
 
+// new injections for sql from Dapper and after 
+
+builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
+
+//builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 
 var app = builder.Build();

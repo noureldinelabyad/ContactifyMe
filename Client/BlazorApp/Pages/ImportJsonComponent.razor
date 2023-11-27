@@ -1,0 +1,77 @@
+﻿@page "/ImportJsonComponent"
+
+@using CommonCode.Models
+@using CommonCode.Services
+@using System.ComponentModel.DataAnnotations
+@using System.Text.RegularExpressions
+@using CurrieTechnologies.Razor.SweetAlert2;
+
+@using Microsoft.Extensions.Logging
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.AspNetCore.Mvc
+@using System.Net.Http.Json
+
+@inject IWebHostEnvironment Environment
+@inject SweetAlertService Swal    // sweet alert call it Swal
+@inject IPersonService PersonService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager;
+
+<h3>Import JSON File</h3>
+
+<!-- Add a dropdown to choose the update strategy -->
+<label for="updateStrategy">Choose Update Strategy:</label>
+<select @bind="selectedUpdateStrategy" id="updateStrategy">
+    <option value="0">Skip</option>
+    <option value="1">Merge Skip</option>
+    <option value="2">Merge Replace</option>
+    <option value="3">Replace</option>
+</select>
+
+<!-- Input file and import button -->
+<InputFile OnChange="HandleFileSelected" />
+<button @onclick="ImportJson">Import</button>
+
+@code {
+    private IBrowserFile jsonFile;
+    private string jsonContent;
+    private string selectedUpdateStrategy = "0"; // Default to "Skip"
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        jsonFile = e.File;
+
+        if (jsonFile != null)
+        {
+            var stream = jsonFile.OpenReadStream();
+            var reader = new StreamReader(stream);
+            jsonContent = await reader.ReadToEndAsync();
+        }
+    }
+
+    private async Task ImportJson()
+    {
+        var updateStrategy = (UpdateStrategy)Enum.Parse(typeof(UpdateStrategy), selectedUpdateStrategy);
+
+        if (!string.IsNullOrEmpty(jsonContent))
+        {
+            var result = await PersonService.ADDJsonAsync(jsonContent, updateStrategy); 
+
+            if (result.Success)
+            {
+                // Import successful, handle UI updates or redirection
+                // You may want to show a success message or refresh the UI
+                // For example, redirect to the list page after import
+                NavManager.NavigateTo("/");
+            }
+            else
+            {
+                // Import failed, handle error
+                // You may want to show an error message to the user
+                // For example, display a modal or toast with the error message
+                Console.WriteLine($"Import failed: {result.Message}");
+            }
+        }
+    }
+}
+

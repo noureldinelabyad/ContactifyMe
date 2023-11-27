@@ -79,9 +79,10 @@ namespace PersonalContactInformation.Api.Controllers
             }
         }
 
-        [HttpPost("AddJson")]
-        public async Task<ActionResult<ServiceResponse>> AddPersonJSONAsync(IFormFile jsonFile, UpdateStrategy updateStrategy)
+       [HttpPost("AddJson")]
+        public async Task<ActionResult<ServiceResponse>> AddPersonJSONAsync(IFormFile jsonFile, [FromQuery] UpdateStrategy updateStrategy)
         {
+            var x = jsonFile;
             if (jsonFile == null)
             {
                 return BadRequest("Bad request");
@@ -98,7 +99,7 @@ namespace PersonalContactInformation.Api.Controllers
             {
                 return BadRequest(result);
             }
-        }
+       }
 
         [HttpPost("AddTel")]
         public async Task<ActionResult<ServiceResponse>> AddTelefonnummerAsync(Person person, string newNumber)

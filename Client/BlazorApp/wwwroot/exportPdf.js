@@ -48,3 +48,7 @@ window.BlazorDownloadFile = (fileName, data) => {
 
     })
 };
+
+
+
+

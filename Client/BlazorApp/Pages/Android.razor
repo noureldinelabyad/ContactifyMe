@@ -311,10 +311,24 @@ else
                             <span class="person-nachname">@person.Nachname</span>
                         </div>
 
-                        @foreach (var telefonnummer in person.PersonNummern)
-                        {
-                            <div>@telefonnummer.TelNummer</div>
-                        }
+                            @* @foreach (var telefonnummer in person.PersonNummern)
+            {
+            <div>@telefonnummer.TelNummer</div>
+            } *@
+
+                            @if (person.PersonNummern.Any())
+                            {
+                                var firstNumber = person.PersonNummern.First().TelNummer;
+                                if (person.PersonNummern.Count > 1)
+                                {
+                                    var secondNumber = person.PersonNummern[1].TelNummer.Substring(0, Math.Min(5, person.PersonNummern[1].TelNummer.Length));
+                            <div>@firstNumber<br />@secondNumber...</div>
+                                }
+                                else
+                                {
+                            <div>@firstNumber</div>
+                                }
+                            }
 
                         <div class="divider"></div>
                     </div>
