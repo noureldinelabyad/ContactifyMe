@@ -14,6 +14,7 @@ namespace PersonalContactInformation.Library.Models
         Skip = 0,
         MergeSkip = 1,
         MergeReplace = 2,
-        Replace = 3
+        Replace = 3,
+        Update = 4
     }
 }

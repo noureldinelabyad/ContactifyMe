@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using PersonalContactInformation.Api.Data;
 using PersonalContactInformation.Library.Models;
 using PersonalContactInformation.Library.Responses;
@@ -47,7 +48,6 @@ namespace PersonalContactInformation.Api.Services
 
         public async Task<Person> GetPersonByIdAsync(int id)
         {
-            // var person = await appDbContext.People.FirstOrDefaultAsync(p => p.Id == id); / i commnted this becouse it didnt inclode the PersonNummern ‾\_('-' )__/‾
             var person = await appDbContext.People
                                     .Include(p => p.PersonNummern)
                                     .FirstOrDefaultAsync(p => p.Id == id);  
@@ -160,6 +160,57 @@ namespace PersonalContactInformation.Api.Services
 
                             break;
 
+                        case UpdateStrategy.Update:
+                            
+                            if (dbItem.Zwischenname != person.Zwischenname)
+                            {
+                                dbItem.Zwischenname = person.Zwischenname;
+                            }
+
+                            if (dbItem.EMail != person.EMail)
+                            {
+                                dbItem.EMail = person.EMail;
+                            }
+
+                            if (dbItem.Strasse != person.Strasse)
+                            {
+                                dbItem.Strasse = person.Strasse;
+                            }
+
+                            if (dbItem.Hausnummer != person.Hausnummer)
+                            {
+                                dbItem.Hausnummer = person.Hausnummer;
+                            }
+
+                            if (dbItem.PLZ != person.PLZ)
+                            {
+                                dbItem.PLZ = person.PLZ;
+                            }
+
+                            if (dbItem.Stadt != person.Stadt)
+                            {
+                                dbItem.Stadt = person.Stadt;
+                            }
+
+                            if (dbItem.Land != person.Land)
+                            {
+                                dbItem.Land = person.Land;
+                            }
+
+                            if (dbItem.Gender != person.Gender)
+                            {
+                                dbItem.Gender = person.Gender;
+                            }
+
+                            foreach (var nummer in person.PersonNummern)
+                            {
+                                await AddTelefonnummerAsync(dbItem, nummer.TelNummer);
+                            }
+
+                            await this.appDbContext.SaveChangesAsync();
+                            
+                            break;
+
                         default:
                             throw new InvalidOperationException();                                                       // since this case should not actually happen, something went wrong and we throw an exception instead of letting the progam run wild
                     }
@@ -169,6 +220,7 @@ namespace PersonalContactInformation.Api.Services
                     person.Id = 0;                                                                                       // setting id to 0 will make sql assign a new id (which is required especially if there already are db entries)
                     await AddPersonAsync(person);
                 }
+
 
             }
             if (isAnyDuplicates == true)                                                                                 // not completely necessary but sending a msg if there is duplicate data (option for frontend)

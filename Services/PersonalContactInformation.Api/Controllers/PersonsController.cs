@@ -65,7 +65,7 @@ namespace PersonalContactInformation.Api.Controllers
         {
             if (person == null)
             {
-              //  return BadRequest("Bad request");
+                return BadRequest("Bad request");
             }
 
             var result = await personService.AddPersonAsync(person);
@@ -91,9 +91,13 @@ namespace PersonalContactInformation.Api.Controllers
             var jsonContent = sr.ReadToEnd();
 
             var result = await personService.AddPersonJSONAsync(jsonContent, updateStrategy);
-            if (result.Success)
+            if (result.Success && result.Message == "Done, there were one or more duplicate contacts")
             {
-                return Ok(result);
+                return Accepted();  // workaround since OK(result) didn't transfer result.message to the frontend
+            }
+            else if (result.Success && result.Message == "Done")
+            {
+                return Ok();
             }
             else
             {
