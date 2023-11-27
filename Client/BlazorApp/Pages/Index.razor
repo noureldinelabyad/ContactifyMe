@@ -127,6 +127,7 @@
                             <option value="1">Merge Skip</option>
                             <option value="2">Merge Replace</option>
                             <option value="3">Replace</option>
+                            <option value="4">Update</option>
                         </select>
 
                     </div>
@@ -191,7 +192,8 @@
                                     if (person.PersonNummern.Count > 1)
                                     {
                                         var secondNumber = person.PersonNummern[1].TelNummer.Substring(0, Math.Min(5, person.PersonNummern[1].TelNummer.Length));
-                                        <div>@firstNumber<br />@secondNumber...</div>
+                                        @* <div>@firstNumber<br />@secondNumber...</div> *@
+                                        <div>@firstNumber /***</div>
                                     }
                                     else
                                     {
@@ -271,7 +273,7 @@
                                     {
                                         var secondNumber = person.PersonNummern[1].TelNummer.Substring(0, Math.Min(5, person.PersonNummern[1].TelNummer.Length));
                                         @* <div>@firstNumber<br />@secondNumber...</div> *@
-                                        <div>@firstNumber/ ...</div>
+                                        <div>@firstNumber /***</div>
                                     }
                                     else
                                     {
@@ -501,7 +503,6 @@
 </style>
 
 <!-------------------------------------------------------------table Styles ---------------------------------------------------------------------->
-
 <style>
 
     .loading {
@@ -561,13 +562,15 @@
     }
 
     .table-body {
+        font-size: 20px;
         color: #17324D;
         position: static;
         width:100%;
        
     }
 
-        .table-body tr:hover {
+        .table-body
+        tr:hover {
             background-color: #748DA6;
         }
 
@@ -669,7 +672,6 @@
 
     private async Task ImportJson()
     {
-
         var updateStrategy = (UpdateStrategy)Enum.Parse(typeof(UpdateStrategy), selectedUpdateStrategy);
 
         if (!string.IsNullOrEmpty(jsonContent))
@@ -683,6 +685,14 @@
                 // For example, redirect to the list page after import
                 NavManager.NavigateTo("/");
                 showPopup = false;
+                // Reload or refresh the page
+                NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
+                await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Import Succesed",
+                        Text = $"{result.Message}",
+                        Icon = SweetAlertIcon.Success
+                    });
             }
             else
             {
@@ -709,7 +719,6 @@
         }
     }
 
-
     private void DisplayDetails(int id)
     {
         NavManager.NavigateTo($"/personDisplay/{id}");
@@ -719,7 +728,6 @@
     private string searchText = string.Empty;
     private List<PersonModel> allPersons;
     private List<PersonModel> searchResults;
-
 
     private async Task DownloadAsPdf()
     {
@@ -1089,6 +1097,7 @@
             }
         }
     }
+
 }
 
 

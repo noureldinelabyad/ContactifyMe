@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Results;
 
 namespace CommonCode.Services
 {
@@ -384,13 +385,18 @@ namespace CommonCode.Services
                     var apiResponse = await client.PostAsync($"{url}?updateStrategy={(int)updateStrategy}", multipart);
 
 
-                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.Accepted)
                     {
                         var response = await apiResponse.Content.ReadAsStringAsync();
+
                         return JsonConvert.DeserializeObject<MainResponseModel>(response);
+
                     }
                     else
                     {
+                        Console.WriteLine(apiResponse.RequestMessage);
+                        Console.WriteLine(jsonContent);
+
                         // Handle non-OK status codes here.
                         return new MainResponseModel() { Message = "Import failed", Success = false };
                     }
@@ -402,12 +408,7 @@ namespace CommonCode.Services
                 Console.WriteLine($"Exception during JSON import: {ex.Message}");
                 return new MainResponseModel() { Message = "Import failed", Success = false };
             }
-
-            // Add a default or error response here, as a fallback.
-            return new MainResponseModel() { Message = "Import failed", Success = false };
         }
-
-       
     }
 }
 
