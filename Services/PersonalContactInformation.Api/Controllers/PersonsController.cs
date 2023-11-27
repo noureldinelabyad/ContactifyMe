@@ -93,7 +93,7 @@ namespace PersonalContactInformation.Api.Controllers
             var result = await personService.AddPersonJSONAsync(jsonContent, updateStrategy);
             if (result.Success && result.Message == "Done, there were one or more duplicate contacts")
             {
-                return Accepted();  // workaround since OK(result) didn't transfer result.message to the frontend
+                return Accepted(result);  // workaround since OK(result) didn't transfer result.message to the frontend
             }
             else if (result.Success && result.Message == "Done")
             {
