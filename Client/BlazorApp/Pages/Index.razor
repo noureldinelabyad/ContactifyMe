@@ -165,15 +165,15 @@
                     <tr>
                         <th>Vorname</th>
                         <th>Nachname</th>
-                        <th>Zwischenname</th>
-                        <th>Email</th>
-                        <th>Telefonnummer</th>
-                        <th>Strasse</th>
-                        <th>Hausnummer</th>
-                        <th>PLZ</th>
-                        <th>Stadt</th>
-                        <th>Land</th>
+                        <th>Mittelname</th>
                         <th>Gender</th>
+                        <th>Email</th>
+                        <th>TelNummer</th>
+                        <th>Straße</th>
+                        <th>Nr.</th>
+                        <th>Stadt</th>
+                        <th>PLZ</th>
+                        <th>Land</th>
                     </tr>
                 </thead>
                 <tbody class="table-body-s">
@@ -184,6 +184,7 @@
                             <td>@person.Vorname </td>
                             <td> @person.Nachname </td>
                             <td>@person.Zwischenname</td>
+                            <td>@person.Gender</td>
                             <td>@person.Email</td>
                             <td>
                                 @if (person.PersonNummern.Any())
@@ -203,10 +204,9 @@
                             </td>
                             <td>@person.Strasse</td>
                             <td>@person.Hausnummer</td>
-                            <td>@person.PLZ</td>
                             <td>@person.Stadt</td>
+                            <td>@person.PLZ</td>
                             <td>@person.Land</td>
-                            <td>@person.Gender</td>
                         </tr>
                     }
                 </tbody>
@@ -247,8 +247,8 @@
                         <th>Mittelname</th>
                         <th>Gender</th>
                         <th>Email</th>
-                        <th>Telefonnummer</th>
-                        <th>Strasse</th>
+                        <th>TelNummer</th>
+                        <th>Straße</th>
                         <th>Nr.</th>
                         <th>Stadt</th>
                         <th>PLZ</th>
@@ -522,10 +522,13 @@
 
     .table {
         width: 100%;
+        table-layout:fixed;
+        word-wrap:break-word;
         text-align: center;
         background-color: #D4DEE7;
         border: hidden;
         flex: 1;
+
     }
 
         .table th,
