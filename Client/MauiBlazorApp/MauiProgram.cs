@@ -1,4 +1,4 @@
-﻿using MauiBlazorApp.Services;
+﻿using CommonCode.Services;
 using Microsoft.Extensions.Logging;
 using CurrieTechnologies.Razor.SweetAlert2;
 using MauiBlazorApp.Pages;

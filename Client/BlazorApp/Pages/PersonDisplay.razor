@@ -76,8 +76,6 @@
 
     .page {
         background-color: gray;
-        /*         background-color: #1E314B !important;
-     */
     }
 
     .card {
@@ -116,10 +114,7 @@
 
 @code {
 
-    //private List<PersonModel.Telefonnummer> PersonNummern = new List<PersonModel.Telefonnummer>();
-
-    private List<string> PersonNummern = new List<string>(); // Assuming phone numbers are strings
-
+    private List<string> PersonNummern = new List<string>(); 
     private PersonModel personDetail;
 
     [Parameter]
@@ -135,7 +130,6 @@
     private string Stadt;
     private string Land;
     private string gender;
-
 
     private void SetGender(string gender)
     {
@@ -193,8 +187,6 @@
                     ConfirmButton = "my-custom-confirm-button-class",
                     CancelButton = "my-custom-cancel-button-class"
                 }
-
-
             });
 
         var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
@@ -239,6 +231,5 @@
             }
         }
     }
-
 
 }

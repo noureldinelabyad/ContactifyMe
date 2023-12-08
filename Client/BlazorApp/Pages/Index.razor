@@ -13,7 +13,6 @@
 @using Microsoft.AspNetCore.Components;
 @using iTextSharp.text;
 @using iTextSharp.text.pdf;
-
 @using Microsoft.Extensions.Logging
 @using Microsoft.AspNetCore.Hosting
 @using Microsoft.AspNetCore.Mvc
@@ -23,25 +22,19 @@
 @inject IPersonService PersonService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
-@inject IPersonService personService
-
 
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-
     <script src="exportPdf.js"></script>
-
     <script src="_content/CurrieTechnologies.Razor.SweetAlert2/sweetAlert2.min.js"></script>
 
 </head>
-
 
 <div class="header">
 
@@ -123,11 +116,8 @@
                         <!-- Add a dropdown to choose the update strategy -->
                         <label for="updateStrategy">Choose Update Strategy:</label>
                         <select class="selector" @bind="selectedUpdateStrategy" id="updateStrategy">
-                            <option value="0">Skip</option>
-                            <option value="1">Merge Skip</option>
-                            <option value="2">Merge Replace</option>
-                            <option value="3">Replace</option>
-                            <option value="4">Update</option>
+                            <option class="option" value="0">Add</option>
+                            <option class="option" value="4">Update</option>
                         </select>
 
                     </div>
@@ -234,7 +224,6 @@
             </button>
 
         </div>
-
     }
     else
     {
@@ -259,7 +248,9 @@
                 <tbody class="table-body">
                     @foreach (var person in _PersonList)
                     {
-                        <tr @onclick="(() => DisplayDetails(person.Id))">
+                        <tr @onclick="(() => DisplayDetails(person.Id))"
+                            @oncontextmenu:preventDefault="true"
+                            @oncontextmenu="((e) => DisplayOption(e, person))">
                             <td>@person.Vorname </td>
                             <td> @person.Nachname </td>
                             <td>@person.Zwischenname</td>
@@ -272,7 +263,6 @@
                                     if (person.PersonNummern.Count > 1)
                                     {
                                         var secondNumber = person.PersonNummern[1].TelNummer.Substring(0, Math.Min(5, person.PersonNummern[1].TelNummer.Length));
-                                        @* <div>@firstNumber<br />@secondNumber...</div> *@
                                         <div>@firstNumber /***</div>
                                     }
                                     else
@@ -293,7 +283,6 @@
         </div>
     }
 </div>
-
 
 <!-------------------------------------------------------------Header Styles ---------------------------------------------------------------------->
 <style>
@@ -443,7 +432,7 @@
         text-align: center;
         z-index: 1000;
         position: fixed;
-        margin-top: 400px;
+        margin-top: 430px;
         margin-left: 150px;
     }
 
@@ -476,9 +465,20 @@
     .selector {
         background-color: #FFFFFF;
         color: #17324D;
-        width: 20%;
+        width: 35%;
         font-weight: bold;
         font-size: large;
+        padding: 2px;
+        border-radius: 1px;
+    }
+
+    .option{
+        background-color: #FFFFFF;
+        color: #17324D;
+        width: 25%;
+        font-size: large;
+        padding:2px;
+        border-radius: 1px;
     }
 
     .my-custom-confirm-button-class,
@@ -610,6 +610,7 @@
         color: white !important;
         font-size: 20px !important;
         font-weight: bold !important;
+
     }
 
     .my-custom-title-class {
@@ -646,8 +647,7 @@
     private bool showExport = false;
     private IBrowserFile jsonFile;
     private string jsonContent;
-    private string selectedUpdateStrategy = "0"; // Default to "Skip"
-
+    private string selectedUpdateStrategy = "4"; // Default to "update"
 
     private void OpenPopup()
     {
@@ -659,7 +659,6 @@
     {
         showExport = !showExport;
     }
-
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
@@ -684,8 +683,8 @@
             if (result.Success)
             {
                 // Import successful, handle UI updates or redirection
-                // You may want to show a success message or refresh the UI
-                // For example, redirect to the list page after import
+                //  show a success message or refresh the UI
+                // redirect to the list page after import
                 NavManager.NavigateTo("/");
                 showPopup = false;
                 // Reload or refresh the page
@@ -700,8 +699,8 @@
             else
             {
                 // Import failed, handle error
-                // You may want to show an error message to the user
-                // For example, display a modal or toast with the error message
+                //  show an error message to the user
+                // display a modal or toast with the error message
                 await Swal.FireAsync(new SweetAlertOptions
                     {
                         Title = "Import Failed",
@@ -724,7 +723,7 @@
 
     private void DisplayDetails(int id)
     {
-        NavManager.NavigateTo($"/personDisplay/{id}");
+        NavManager.NavigateTo($"/personDisplay/{id}");     //navigate to Person display
     }
 
     List<PersonModel> _PersonList;
@@ -862,8 +861,8 @@
 
     private void ClearSearchText()
     {
-        searchResults = null;
-        searchText = "";
+        searchResults = null;      //hide the search results
+        searchText = "";           //delete the search txt                          
     }
 
     protected override async Task OnInitializedAsync()
@@ -884,8 +883,6 @@
         if (!string.IsNullOrWhiteSpace(searchText))
         {
             searchResults = allPersons
-            // .Where(person => person.Nachname.Contains(searchText) || person.Vorname.Contains(searchText))
-            // .ToList();
             .Where(person =>
             person.Nachname.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0
             || person.Vorname.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
@@ -893,7 +890,7 @@
         }
         else
         {
-            searchResults = null; // Set it to null when search text is empty
+            searchResults = null; // Set it to null when search text is empty so the search results dissapear
         }
     }
 
@@ -921,8 +918,6 @@
                         ConfirmButton = "my-custom-confirm-button-class",
                         CancelButton = "my-custom-cancel-button-class"
                     }
-
-
                 });
 
             var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
@@ -951,20 +946,20 @@
     private void DisplayUpdate(int personId)
     {
         NavManager.NavigateTo($"updatePerson/{personId}");
-        // NavManager.NavigateTo($"viewPerson/{personId}");
 
     }
 
-    private async void DisplayOption(PersonModel personDetail)
+    private async Task DisplayOption(MouseEventArgs e, PersonModel personDetail)
     {
         var result = await Swal.FireAsync(new SweetAlertOptions
             {
-                Title = "options",
+                Title = $"Person ID:{personDetail.Id}, {personDetail.Vorname} {personDetail.Nachname} ",
                 ShowCancelButton = true,
                 ShowDenyButton = true,
                 ConfirmButtonText = "Update",
                 DenyButtonText = "Delete",
-
+                CancelButtonText = "Close",
+                
                 CustomClass = new SweetAlertCustomClass
                 {
                     Popup = "my-custom-popup-class",
@@ -972,59 +967,26 @@
                     Icon = "Icon-popup",
                     Content = "my-custom-content-class",
                     ConfirmButton = "my-custom-confirm-button-class",
-                    CancelButton = "my-custom-cancel-button-class"
+                    DenyButton = "my-custom-cancel-button-class"
                 },
-
             });
 
         if (result.IsConfirmed)
         {
             NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
-
-            // if (result.Value == "Update")
-            // {
-            //     // Handle Update button click
-            //     NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
-            // }
         }
         if (result.IsDenied)
         {
-            DisplayDeleteConfirmation(personDetail.Id);
+            DisplayDeleteConfirmation(personDetail.Id, personDetail);
         }
-
-        else
-        {
-            // Handle Cancel button click or outside click
-
-        }
-
-
-        //     var response = await App.Current.MainPage.DisplayActionSheet(
-        //         "Select Option",
-        //         "Ok",
-        //         null,
-        //         "Update Contact",
-        //         "Delete Contact");
-
-        //     if (response == "Update Contact")
-        //     {
-        //         NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
-        //     }
-        //     else if (response == "Delete Contact")
-        //     {
-        //         DisplayDeleteConfirmation(personDetail.Id);
-
-
-        //     }
     }
 
-    private async void DisplayDeleteConfirmation(int personId)
+    private async void DisplayDeleteConfirmation(int personId, PersonModel personDetail)
     {
-
         var result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Confirmation",
-                Text = "you sure you want to delete?",
+                Text = $"you sure you want to delete Person ID:{ personDetail.Id} { personDetail.Vorname} { personDetail.Nachname}? ",
                 Icon = SweetAlertIcon.Warning,
                 ShowCancelButton = true,
                 ConfirmButtonText = "yes",
@@ -1039,25 +1001,16 @@
                     ConfirmButton = "my-custom-confirm-button-class",
                     CancelButton = "my-custom-cancel-button-class"
                 }
-
-
             });
 
         var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
 
-        //  bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this person?");
         if (confrim)
         {
-            var deleteresponse = await PersonService.DeletePerson(personId
-            // {
-            //     Id = personId
-            // }
-            );
+            var deleteresponse = await PersonService.DeletePerson(personId);
 
             if (deleteresponse.Success)
             {
-                //await ShowDeleteDialog();
-
                 await OnInitializedAsync();
 
                 StateHasChanged();
@@ -1071,12 +1024,9 @@
 
                             CustomClass = new SweetAlertCustomClass
                             {
-
                                 Content = "my-custom-content-class",
                                 ConfirmButton = "my-custom-confirm-button-class",
                             }
-
-
                         });
                 }
 
@@ -1090,7 +1040,6 @@
 
                         CustomClass = new SweetAlertCustomClass
                         {
-
                             Content = "my-custom-content-class",
                             ConfirmButton = "my-custom-confirm-button-class",
                         }

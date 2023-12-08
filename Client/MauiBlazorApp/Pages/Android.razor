@@ -1,11 +1,11 @@
 ﻿@page "/android"
-@using MauiBlazorApp.Models
-@using MauiBlazorApp.Services
+@using CommonCode.Models
+@using CommonCode.Services
 @using CurrieTechnologies.Razor.SweetAlert2;
 
 
 @inject SweetAlertService Swal    // sweet alert call it Swal
-@inject IPersonService PersonService
+@inject CommonCode.Services.IPersonService PersonService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager;
 

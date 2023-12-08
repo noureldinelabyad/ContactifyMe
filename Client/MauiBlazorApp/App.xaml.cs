@@ -1,6 +1,6 @@
 ﻿using Microsoft.Maui;
 using Microsoft.Maui.Controls;
-using MauiBlazorApp.Services;
+using CommonCode.Services;
 using MauiBlazorApp.Pages;
 using Xamarin.Essentials;
 using Microsoft.AspNetCore.Components;

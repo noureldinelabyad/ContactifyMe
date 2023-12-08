@@ -1,10 +1,10 @@
 ﻿@page "/personDisplay/{id:int}"
-@using MauiBlazorApp.Models
-@using MauiBlazorApp.Services
+@using CommonCode.Models
+@using CommonCode.Services
 @using CurrieTechnologies.Razor.SweetAlert2;
 
 
-@inject IPersonService PersonService;
+@inject CommonCode.Services.IPersonService PersonService
 @inject NavigationManager NavManager
 @inject NavigationManager NavigationManager
 @inject SweetAlertService Swal    // sweet alert call it Swal
