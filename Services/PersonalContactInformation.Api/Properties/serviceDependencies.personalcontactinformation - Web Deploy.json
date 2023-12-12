@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/personalcontactinformation/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsDbConnection_4F0F6699B8",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/sqldb-azubi-dev/databases/AzubiDb",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:DbConnection",
+      "dynamicId": null
+    }
+  }
+}
