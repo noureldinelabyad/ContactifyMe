@@ -82,7 +82,6 @@ namespace PersonalContactInformation.Api.Controllers
        [HttpPost("AddJson")]
         public async Task<ActionResult<ServiceResponse>> AddPersonJSONAsync(IFormFile jsonFile, [FromQuery] UpdateStrategy updateStrategy)
         {
-            var x = jsonFile;
             if (jsonFile == null)
             {
                 return BadRequest("Bad request");

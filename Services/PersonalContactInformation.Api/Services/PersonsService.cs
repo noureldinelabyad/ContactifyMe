@@ -215,7 +215,7 @@ namespace PersonalContactInformation.Api.Services
                             throw new InvalidOperationException();                                                       // since this case should not actually happen, something went wrong and we throw an exception instead of letting the progam run wild
                     }
                 }
-                else
+                else if(strategy != UpdateStrategy.Update)
                 {
                     person.Id = 0;                                                                                       // setting id to 0 will make sql assign a new id (which is required especially if there already are db entries)
                     await AddPersonAsync(person);
