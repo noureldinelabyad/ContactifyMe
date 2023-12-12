@@ -23,9 +23,9 @@ namespace CommonCode.Services
 {
     public class PersonService : IPersonService
     {
-        private string _baseUrl = "https://localhost:7078"; // URL of the API database
+        //private string _baseUrl = "https://localhost:7078"; // URL of the API database
 
-        //private string _baseUrl = "https://personalcontactinformation.azurewebsites.net"; // URL of the Azure API
+        private string _baseUrl = "https://personalcontactinformation.azurewebsites.net"; // URL of the Azure API
 
         private DbContext _appDbContext;
 
