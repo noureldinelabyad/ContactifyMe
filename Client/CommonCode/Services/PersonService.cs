@@ -24,6 +24,9 @@ namespace CommonCode.Services
     public class PersonService : IPersonService
     {
         private string _baseUrl = "https://localhost:7078"; // URL of the API database
+
+        //private string _baseUrl = "https://personalcontactinformation.azurewebsites.net"; // URL of the Azure API
+
         private DbContext _appDbContext;
 
 
@@ -35,6 +38,7 @@ namespace CommonCode.Services
                 using (var client = new HttpClient())
                 {
                     string url = $"{_baseUrl}/api/Persons/AddPerson";
+                    
 
                     var seralizeContent = JsonConvert.SerializeObject(personRequest);
 
@@ -69,9 +73,9 @@ namespace CommonCode.Services
         public async Task<List<PersonModel>> GetAllPersonsList()
         {
             var returnResponse = new List<PersonModel>();
+            // Disable BCC4005
             try
             {
-                // using (var client = new HttpClient())
                 var handler = new HttpClientHandler()
                 {
                     ClientCertificateOptions = ClientCertificateOption.Manual,

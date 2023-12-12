@@ -1,0 +1,491 @@
+﻿@page "/android"
+@using CommonCode.Models
+@using CommonCode.Services
+@using CurrieTechnologies.Razor.SweetAlert2;
+
+
+@inject SweetAlertService Swal    // sweet alert call it Swal
+@inject CommonCode.Services.IPersonService PersonService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager;
+
+<head>
+    <!-- for the deopdown update , delete  -->
+    @* <link rel="stylesheet" href="_content/Blazorise/blazorise.css" />
+    <link rel="stylesheet" href="_content/Blazorise.Bootstrap/blazorise.bootstrap.css" /> *@
+
+    @*     font awsome
+    *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+
+
+    <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
+   @*  <script src="_content/Blazorise/blazorise.js"></script>
+    <script src="_content/Blazorise.Bootstrap/blazorise.bootstrap.js"></script>
+ *@
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+    <script src="exportPdf.js"></script>
+
+
+</head>
+
+<h1>person list</h1>
+<h1> Android </h1>
+
+<div class="table-container">
+    <div class="input-group mb-3">
+
+
+
+        @* <iframe width="560" height="315" src="https://www.youtube.com/embed/m8e-FF8MsqU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        *@
+
+        <input type="text" class="search-bar" placeholder="Search..." @bind="searchText" @oninput="HandleSearchTextChanged" />
+
+        <button class="btn btn-clear" type="button" @onclick="ClearSearchText">
+            <i class="fa-regular fa-delete-left custom-icon"></i> X
+        </button>
+
+        <div class="input-group-append">
+            <button class="btn btn-Search" type="button" @onclick="BtnSearch_Clicked">Search</button>
+        </div>
+    </div>
+</div>
+
+
+<style>
+
+    .custom-icon {
+        color: red;
+        block-size: auto;
+    }
+
+
+    .search-bar {
+        border: solid;
+        border-radius: 40px 0 0 40px;
+        font-size: 15px;
+    }
+
+    .btn-Search {
+        background: none;
+        color: black;
+        border-radius: 0 40px 40px 0;
+        /* font-size: 15px; */
+        border: solid;
+        font-size: 1.2rem;
+    }
+
+    .btn-outline-secondary {
+        background: none;
+        border: groove;
+        padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+    }
+
+    .btn-outline-secondary {
+        color: black;
+    }
+
+
+    .btn-Search:hover {
+        background-color: green;
+    }
+
+    .btn-outline-secondary:focus {
+        outline: none;
+    }
+
+
+
+
+    body {
+        min-height: 100vh;
+    }
+
+    .btn-clear {
+        background: none;
+        font-size: 15px;
+        border: solid;
+        padding: 0.5rem 0.9rem 0.5rem 1rem;
+    }
+
+        .btn-clear:hover {
+            color: red;
+        }
+
+        .btn-clear:focus {
+            outline: none;
+        }
+
+
+
+    .input-group-append button:first-child {
+        margin-right: 0.5rem;
+    }
+
+    .input-group {
+        /*  position: fixed;
+            top: 50px; /* Adjust as needed */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: auto; /* Ensure the search bar is above the table */
+        background-color: white;
+        padding: 1px;
+        border-radius: 50px;
+        border-radius: 0 0 0 0;
+        margin-bottom: 1px;
+        */
+    }
+
+    .btn-clear i {
+        font-size: 1rem;
+        border-radius: 80%;
+    }
+
+    .input-group-append button:first-child {
+        margin-right: 0.5rem;
+    }
+
+
+
+
+    .btn-primary.btn-sm,
+    .btn-danger.btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.30rem;
+    }
+
+
+    .btn-secondary {
+        background-color: Highlight;
+        border-color: green;
+        color: black;
+        font-weight: normal;
+    }
+
+        .btn-secondary:hover {
+            background-color: none;
+            border-color: None;
+            color: lightblue;
+            font-weight: normal;
+            border: none
+        }
+
+        .btn-secondary:active,
+        .btn-secondary.active {
+            background-color: white;
+            border-color: None;
+            color: lightblue;
+            font-weight: normal;
+            border: none
+        }
+
+    .dropdown-toggle.btn-secondary: {
+        background-color: white;
+        border-color: None;
+        color: lightblue;
+        font-weight: normal;
+        border: none
+    }
+
+        .dropdown-toggle.btn-secondary:not([disabled]):not(.disabled).active:focus {
+            box-shadow: none;
+        }
+
+        .dropdown-toggle.btn-secondary:focus {
+            box-shadow: none;
+            background-color: green;
+        }
+
+    .table-container {
+        /*         max-height: calc(100vh - 120px); /* Subtract the height of the search bar and button container */
+        /*         margin-top: 20px; /* Adjust as needed */
+
+        max-height: 600px; /* Adjust this value to set the maximum height of the container */
+        overflow-y: auto;
+    }
+
+
+
+    .person-name {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-bottom: 1px;
+        margin-top: 1px;
+    }
+
+    .person-vorname {
+        margin-right: 2px;
+        margin-bottom: 1px;
+        margin-top: 1px;
+    }
+
+    .person-telefonnummer {
+        color: black;
+        margin-top: 1px; /* Adjust the value as needed */
+        margin-bottom: 0px;
+        font-family: Britannic;
+        font: bold;
+    }
+
+
+    .person-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .person-item {
+        padding: 2px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .divider {
+        border-bottom: 1px solid black;
+        margin-bottom: 0,1px;
+        margin-top: 0px;
+    }
+
+</style>
+
+
+
+<div class="dropdown">
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        @if (searchResults != null)
+        {
+            @foreach (var person in searchResults)
+            {
+                <li class="dropdown-item">@person.Nachname</li>
+            }
+        }
+
+    </ul>
+</div>
+
+@if (searchResults != null)
+{
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>Nachname</td>
+                    <th>Vorname</th>
+                    <!-- Add other table headers here -->
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var person in searchResults)
+                {
+                    @*                     <tr @onclick="@( () => DisplayOption(person) )">
+
+            *@
+                    <tr @onclick="@( () => DisplayOption(person) )">
+                        <td>@person.Nachname</td>
+                        <td>@person.Vorname</td>
+                        <!-- Add other table data here -->
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+}
+
+
+@if (_PersonList == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+     <div class="table-responsive">
+        <table class="table">
+            <tbody>
+                @foreach (var person in _PersonList)
+                {
+                    <div class="person-item" @onclick="@(() => DisplayDetails(person.Id))">
+
+                        <div class="person-name">
+                            <span class="person-vorname">@person.Vorname</span>
+                            <span class="person-nachname">@person.Nachname</span>
+                        </div>
+
+                            @* @foreach (var telefonnummer in person.PersonNummern)
+            {
+            <div>@telefonnummer.TelNummer</div>
+            } *@
+
+                            @if (person.PersonNummern.Any())
+                            {
+                                var firstNumber = person.PersonNummern.First().TelNummer;
+                                if (person.PersonNummern.Count > 1)
+                                {
+                                    var secondNumber = person.PersonNummern[1].TelNummer.Substring(0, Math.Min(5, person.PersonNummern[1].TelNummer.Length));
+                            <div>@firstNumber<br />@secondNumber...</div>
+                                }
+                                else
+                                {
+                            <div>@firstNumber</div>
+                                }
+                            }
+
+
+                        <div class="divider"></div>
+                    </div>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+
+@code {
+
+    private void DisplayDetails(int id)
+    {
+        NavManager.NavigateTo($"/personDisplay/{id}");
+    }
+
+
+    private void ClearSearchText()
+    {
+
+        searchText = "";
+    }
+
+
+
+
+    List<PersonModel> _PersonList;
+
+    private string searchText = string.Empty;
+    private List<PersonModel> allPersons;
+    private List<PersonModel> searchResults;
+
+    protected override async Task OnInitializedAsync()
+    {
+        allPersons = await PersonService.GetAllPersonsList();
+
+        _PersonList = await PersonService.GetAllPersonsList();
+
+    }
+
+    private void HandleSearchTextChanged(ChangeEventArgs e)
+    {
+        searchText = e.Value.ToString();
+        HandleSearch();
+    }
+
+    private void HandleSearch()
+    {
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            searchResults = allPersons
+            // .Where(person => person.Nachname.Contains(searchText) || person.Vorname.Contains(searchText))
+            // .ToList();
+            .Where(person =>
+            person.Nachname.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0
+            || person.Vorname.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+            .ToList();
+        }
+        else
+        {
+            searchResults = null; // Set it to null when search text is empty
+        }
+    }
+
+    private async void BtnSearch_Clicked()
+    {
+        string searchText = this.searchText;
+
+        if (!string.IsNullOrEmpty(searchText))
+        {
+            // var results = await PersonService.SearchPersonsByName(searchText);
+
+            // if (results.Count > 0)
+            // {
+            //     searchResults = results;
+            // }
+            // else
+            {
+                bool addContact = await JSRuntime.InvokeAsync<bool>("confirm", $"Contact with name '{searchText}' does not exist. Do you want to add it?");
+
+                if (addContact)
+                {
+                    NavManager.NavigateTo($"addPerson?name={searchText}");
+                }
+            }
+        }
+        else
+        {
+            await OnInitializedAsync();
+        }
+    }
+
+
+    private void DisplayUpdate(int personId)
+    {
+        NavManager.NavigateTo($"updatePerson/{personId}");
+    }
+
+    private async void DisplayDeleteConfirmation(int personId)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this person?");
+        if (confirmed)
+        {
+            var deleteresponse = await PersonService.DeletePerson(personId
+                // {
+                //     Id = personId
+                // }
+                );
+
+            if (deleteresponse.Success)
+            {
+                await OnInitializedAsync();
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async void DisplayOption(PersonModel personDetail)
+    {
+
+        //     // var response = await App.Current.MainPage.DisplayActionSheet("Select Option", "Ok", null, "Update Contact", "Delete Contact");
+
+        //     // if (response == "Update Contact")
+
+        //     // {
+        //     //     NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+
+        //     // }
+        //     // else if (response == "Delete Contact")
+
+        //     // {
+
+        //     //        DisplayDeleteConfirmation(personDetail.Id);
+
+
+
+
+    }
+
+
+    [Parameter] public EventCallback<bool> OnConfirmation { get; set; }
+
+    private async Task ConfirmDelete()
+    {
+        await OnConfirmation.InvokeAsync(true);
+    }
+}
+
+
+
+
+
