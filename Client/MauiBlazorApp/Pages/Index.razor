@@ -160,11 +160,12 @@
                         <th>Land</th>
                     </tr>
                 </thead>
-                <tbody class="table-body-s">
-                    @foreach (var person in searchResults)
+                <tbody class="table-body">
+                    @foreach (var person in _PersonList)
                     {
-
-                        <tr @onclick="(() => DisplayDetails(person.Id))">
+                        <tr @onclick="(() => DisplayDetails(person.Id))"
+                            @oncontextmenu:preventDefault="true"
+                            @oncontextmenu="((e) => DisplayOption(e, person))">
                             <td>@person.Vorname </td>
                             <td> @person.Nachname </td>
                             <td>@person.Zwischenname</td>
@@ -471,7 +472,7 @@
                 nachname = person.Nachname,
                 vorname = person.Vorname,
                 zwischenname = person.Zwischenname,
-                telefonnummer = person.PersonNummern,
+                personNummern = person.PersonNummern,
                 eMail = person.Email,
                 strasse = ReplaceUnicodeEscapeSequences(person.Strasse), // Replace Unicode escape sequences
                 hausnummer = person.Hausnummer,
