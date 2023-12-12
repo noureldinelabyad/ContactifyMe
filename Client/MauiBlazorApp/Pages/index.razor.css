@@ -215,12 +215,12 @@
 
 .table-page {
     display: block;
+    width: 100%;
     margin-top: 150px;
 }
 
 .table-container {
     position: relative;
-
 }
 
 .table {
@@ -228,8 +228,7 @@
     background-color: #D4DEE7;
     border: hidden;
     flex: 1;
-    table-layout: auto;
-
+    table-layout: auto ;
 }
 
     .table th,
@@ -264,7 +263,6 @@
     z-index: 1;
     color: #FFFFFF;
     top: 150px; /* Fixed position */
-
 }
 
 .table-body {

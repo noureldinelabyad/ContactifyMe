@@ -10,13 +10,19 @@
 @using CurrieTechnologies.Razor.SweetAlert2;
 @using Microsoft.JSInterop;
 @using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Components;
 @using iTextSharp.text;
 @using iTextSharp.text.pdf;
+@using Microsoft.Extensions.Logging
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.AspNetCore.Mvc
+@using System.Net.Http.Json
 
 @inject SweetAlertService Swal    // sweet alert call it Swal
-@inject CommonCode.Services.IPersonService PersonService
+@inject IPersonService PersonService
 @inject IJSRuntime JSRuntime
-@inject NavigationManager NavManager;
+@inject NavigationManager NavManager
+
 
 <head>
     <meta charset="UTF-8">
@@ -161,7 +167,7 @@
                     </tr>
                 </thead>
                 <tbody class="table-body">
-                    @foreach (var person in _PersonList)
+                    @foreach (var person in searchResults)
                     {
                         <tr @onclick="(() => DisplayDetails(person.Id))"
                             @oncontextmenu:preventDefault="true"
@@ -449,18 +455,8 @@
         {
             // Handle any exceptions
             Console.WriteLine("Error: " + ex.Message);
-
-
-            await Swal.FireAsync(new SweetAlertOptions
-                {
-                    Title = "Eport Failed",
-                    Text = "somthing went wrong",
-                    Icon = SweetAlertIcon.Error
-                });
         }
     }
-
-
 
     private async Task DownloadAsJson()
     {
@@ -497,13 +493,6 @@
         {
             // Handle any exceptions
             Console.WriteLine("Error: " + ex.Message);
-
-            await Swal.FireAsync(new SweetAlertOptions
-                {
-                    Title = "Export Failed",
-                    Text = "somthing went wrong",
-                    Icon = SweetAlertIcon.Error
-                });
         }
     }
 
@@ -538,63 +527,74 @@
     {
         if (!string.IsNullOrWhiteSpace(searchText))
         {
-            searchResults = allPersons
+            searchText = searchText.Trim();
+
+            // Filter persons based on search text
+            searchResults = _PersonList
             .Where(person =>
-            person.Nachname.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0
-            || person.Vorname.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                (person.Vorname + " " + person.Nachname + person.Email + " " + person.Strasse + " " + person.Hausnummer + " " + person.Stadt + " " + person.PLZ + " " + person.Land)
+                    .IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0) 
+ 
             .ToList();
+
+            // Mark the matching persons as search results
+            foreach (var person in _PersonList)
+            {
+                person.IsSearchResult = searchResults.Contains(person);
+            }
         }
         else
         {
-            searchResults = null; // Set it to null when search text is empty so the search results dissapear
+            // Clear search results when search text is empty
+            searchResults = null;
+
+            // Reset the IsSearchResult property for all persons
+            foreach (var person in _PersonList)
+            {
+                person.IsSearchResult = false;
+            }
         }
     }
 
-    private async void BtnSearch_Clicked()
+    private async Task BtnSearch_Clicked()
     {
-        string searchText = this.searchText;
-
         if (!string.IsNullOrEmpty(searchText))
         {
-            var result = await Swal.FireAsync(new SweetAlertOptions
-                {
-                    Title = $"Contact with name '{searchText}' does not exist.",
-                    Text = "Do you want to add it?",
-                    //Icon = SweetAlertIcon.Warning,
-                    ShowCancelButton = true,
-                    ConfirmButtonText = "yes",
-                    CancelButtonText = "No",
-
-                    CustomClass = new SweetAlertCustomClass
-                    {
-                        Popup = "my-custom-popup-class",
-                        Title = "my-custom-title-class",
-                        Icon = "Icon-popup",
-                        Content = "my-custom-content-class",
-                        ConfirmButton = "my-custom-confirm-button-class",
-                        CancelButton = "my-custom-cancel-button-class"
-                    }
-                });
-
-            var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
-
-            if (confrim)
+            // Check if there are any matching results
+            if (searchResults != null && searchResults.Any())
             {
-                NavManager.NavigateTo($"addPerson?name={searchText}");
+                // Highlight the matching results
+                foreach (var person in searchResults)
+                {
+                    person.IsSearchResult = true;
+                }
             }
-
-            //     bool addContact = await JSRuntime.InvokeAsync<bool>(
-            //         "confirm",
-            //         $"Contact with name '{searchText}' does not exist. Do you want to add it?");
-
-            //     if (addContact)
-            //     {
-            //         NavManager.NavigateTo($"addPerson?name={searchText}");
-            //     }
-            // }
             else
             {
-                //  await oninitializedasync();
+                // Show alert if there are no matching results
+                var result = await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = $"Contact with name '{searchText}' does not exist.",
+                        Text = "Do you want to add it?",
+                        ShowCancelButton = true,
+                        ConfirmButtonText = "Yes",
+                        CancelButtonText = "No",
+
+                        CustomClass = new SweetAlertCustomClass
+                        {
+                            Popup = "my-custom-popup-class",
+                            Title = "my-custom-title-class",
+                            Icon = "Icon-popup",
+                            Content = "my-custom-content-class",
+                            ConfirmButton = "my-custom-confirm-button-class",
+                            CancelButton = "my-custom-cancel-button-class"
+                        }
+                    });
+
+                if (!string.IsNullOrEmpty(result.Value))
+                {
+                    NavManager.NavigateTo($"addPerson?name={searchText}");
+                }
             }
         }
     }
@@ -707,7 +707,6 @@
     }
 
 }
-
 
 
 

@@ -11,6 +11,8 @@ namespace CommonCode.Models
 {
     public class PersonModel
     {
+        public bool IsSearchResult { get; set; }
+
         public int Id { get; set; }
 
         public string Nachname { get; set; }

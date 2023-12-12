@@ -167,8 +167,9 @@
                     </tr>
                 </thead>
                 <tbody class="table-body">
-                    @foreach (var person in _PersonList)
-                    { <tr @onclick="(() => DisplayDetails(person.Id))"
+                    @foreach (var person in searchResults)
+                    {
+                        <tr @onclick="(() => DisplayDetails(person.Id))"
                             @oncontextmenu:preventDefault="true"
                             @oncontextmenu="((e) => DisplayOption(e, person))">
                             <td>@person.Vorname </td>
@@ -506,7 +507,7 @@
     private void ClearSearchText()
     {
         searchResults = null;      //hide the search results
-        searchText = "";           //delete the search txt                          
+        searchText = "";           //delete the search txt
     }
 
     protected override async Task OnInitializedAsync()
@@ -526,63 +527,74 @@
     {
         if (!string.IsNullOrWhiteSpace(searchText))
         {
-            searchResults = allPersons
+            searchText = searchText.Trim();
+
+            // Filter persons based on search text
+            searchResults = _PersonList
             .Where(person =>
-            person.Nachname.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0
-            || person.Vorname.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                (person.Vorname + " " + person.Nachname + person.Email + " " + person.Strasse + " " + person.Hausnummer + " " + person.Stadt + " " + person.PLZ + " " + person.Land)
+                    .IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0) 
+ 
             .ToList();
+
+            // Mark the matching persons as search results
+            foreach (var person in _PersonList)
+            {
+                person.IsSearchResult = searchResults.Contains(person);
+            }
         }
         else
         {
-            searchResults = null; // Set it to null when search text is empty so the search results dissapear
+            // Clear search results when search text is empty
+            searchResults = null;
+
+            // Reset the IsSearchResult property for all persons
+            foreach (var person in _PersonList)
+            {
+                person.IsSearchResult = false;
+            }
         }
     }
 
-    private async void BtnSearch_Clicked()
+    private async Task BtnSearch_Clicked()
     {
-        string searchText = this.searchText;
-
         if (!string.IsNullOrEmpty(searchText))
         {
-            var result = await Swal.FireAsync(new SweetAlertOptions
-                {
-                    Title = $"Contact with name '{searchText}' does not exist.",
-                    Text = "Do you want to add it?",
-                    //Icon = SweetAlertIcon.Warning,
-                    ShowCancelButton = true,
-                    ConfirmButtonText = "yes",
-                    CancelButtonText = "No",
-
-                    CustomClass = new SweetAlertCustomClass
-                    {
-                        Popup = "my-custom-popup-class",
-                        Title = "my-custom-title-class",
-                        Icon = "Icon-popup",
-                        Content = "my-custom-content-class",
-                        ConfirmButton = "my-custom-confirm-button-class",
-                        CancelButton = "my-custom-cancel-button-class"
-                    }
-                });
-
-            var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
-
-            if (confrim)
+            // Check if there are any matching results
+            if (searchResults != null && searchResults.Any())
             {
-                NavManager.NavigateTo($"addPerson?name={searchText}");
+                // Highlight the matching results
+                foreach (var person in searchResults)
+                {
+                    person.IsSearchResult = true;
+                }
             }
-
-            //     bool addContact = await JSRuntime.InvokeAsync<bool>(
-            //         "confirm",
-            //         $"Contact with name '{searchText}' does not exist. Do you want to add it?");
-
-            //     if (addContact)
-            //     {
-            //         NavManager.NavigateTo($"addPerson?name={searchText}");
-            //     }
-            // }
             else
             {
-                //  await oninitializedasync();
+                // Show alert if there are no matching results
+                var result = await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = $"Contact with name '{searchText}' does not exist.",
+                        Text = "Do you want to add it?",
+                        ShowCancelButton = true,
+                        ConfirmButtonText = "Yes",
+                        CancelButtonText = "No",
+
+                        CustomClass = new SweetAlertCustomClass
+                        {
+                            Popup = "my-custom-popup-class",
+                            Title = "my-custom-title-class",
+                            Icon = "Icon-popup",
+                            Content = "my-custom-content-class",
+                            ConfirmButton = "my-custom-confirm-button-class",
+                            CancelButton = "my-custom-cancel-button-class"
+                        }
+                    });
+
+                if (!string.IsNullOrEmpty(result.Value))
+                {
+                    NavManager.NavigateTo($"addPerson?name={searchText}");
+                }
             }
         }
     }
@@ -603,7 +615,7 @@
                 ConfirmButtonText = "Update",
                 DenyButtonText = "Delete",
                 CancelButtonText = "Close",
-                
+
                 CustomClass = new SweetAlertCustomClass
                 {
                     Popup = "my-custom-popup-class",
@@ -630,7 +642,7 @@
         var result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Confirmation",
-                Text = $"you sure you want to delete Person ID:{ personDetail.Id} { personDetail.Vorname} { personDetail.Nachname}? ",
+                Text = $"you sure you want to delete Person ID:{personDetail.Id} {personDetail.Vorname} {personDetail.Nachname}? ",
                 Icon = SweetAlertIcon.Warning,
                 ShowCancelButton = true,
                 ConfirmButtonText = "yes",
