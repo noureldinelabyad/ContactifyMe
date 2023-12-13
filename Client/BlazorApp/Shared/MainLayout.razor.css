@@ -1,13 +1,13 @@
 .page {
     display: flex;
-   
+    flex-direction: column;
 }
 
 main {
-    flex: 1;
-    display: block;
     margin-left: 20px;
-    margin-right:20px;
+    margin-right: 20px;
+    display: block;
+    z-index: 0;
 }
 
 .sidebar {
@@ -15,6 +15,9 @@ main {
 */
     background-color: #17324D;
     display: block;
+    top: 0;
+    z-index: 1;
+    position: sticky;
 }
 
 
@@ -22,17 +25,13 @@ main {
     .page {
         flex-direction: row;
     }
-
+  
     .sidebar {
         width: 250px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
     }
 
     .article {
-       /* padding-left: 2rem !important;
+        /* padding-left: 2rem !important;
         padding-right: 1.5rem !important;*/
-
     }
 }

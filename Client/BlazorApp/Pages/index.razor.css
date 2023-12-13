@@ -8,11 +8,13 @@
     z-index: 20;
     position: fixed;
     margin-left: -20px;
+    padding-top: 35px;
 }
 
 .personList {
     font: normal bold 30px/38px Arial;
     color: #17324D;
+   
 }
 
 .search-bar-container {
@@ -216,7 +218,7 @@
 .table-page {
     display: block;
     width: 100%;
-    margin-top: 150px;
+    margin-top: 175px;
 }
 
 .table-container {
@@ -254,6 +256,7 @@
     .table tr {
         border: hidden;
         width: 100%;
+        font-size:15px;
     }
 
 .table-head {
@@ -262,7 +265,7 @@
     position: sticky;
     z-index: 1;
     color: #FFFFFF;
-    top: 150px; /* Fixed position */
+    top: 175px; /* Fixed position */
 }
 
 .table-body {
@@ -286,7 +289,7 @@
     z-index: 2;
     color: #FFFFFF;
     width: 100%;
-    top: 150px; /* Fixed position */
+    top: 175px; /* Fixed position */
 }
 
 .table-body-s {
