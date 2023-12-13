@@ -242,13 +242,13 @@
     }
 
     .table td {
-        border: 1px solid #17324D;
+        border: 1px solid #FFFFFF;
         padding: 15px;
     }
 
     .table tr:nth-child(even) {
-        @* background-color: #FFFFFF;
-        *@ background-color: red;
+         background-color: #FFFFFF;
+        
     }
 
     .table tr {
