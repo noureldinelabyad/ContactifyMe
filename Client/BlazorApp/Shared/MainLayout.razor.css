@@ -3,7 +3,7 @@
     flex-direction: column;
 }
 
-main {
+.main {
     margin-left: 20px;
     margin-right: 20px;
     display: block;
@@ -18,20 +18,30 @@ main {
     top: 0;
     z-index: 1;
     position: sticky;
+    height: 100vh;
 }
 
+@media (max-width: 641px) {
 
-@media (min-width: 641px) {
-    .page {
-        flex-direction: row;
-    }
-  
     .sidebar {
-        width: 250px;
-    }
-
-    .article {
-        /* padding-left: 2rem !important;
-        padding-right: 1.5rem !important;*/
+        width: 100%;
+        height: fit-content;
+        z-index: 2;
     }
 }
+
+
+    @media (min-width: 641px) {
+        .page {
+            flex-direction: row;
+        }
+
+        .sidebar {
+            width: 250px;
+        }
+
+        .article {
+            /* padding-left: 2rem !important;
+        padding-right: 1.5rem !important;*/
+        }
+    }
