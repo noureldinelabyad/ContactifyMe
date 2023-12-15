@@ -1,102 +1,283 @@
 ﻿@page "/contact2"
+@using CommonCode.Models
+@using CommonCode.Services
+@using CurrieTechnologies.Razor.SweetAlert2
 
-<div class="grid-container">
-    <div class="grid-item">
-        <!-- Content for Grid Item 1 -->
-        <p>This is Grid Item 1.</p>
+
+@inject IPersonService PeronService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
+@inject SweetAlertService Swal
+
+<span class="personList">Personen Liste</span>
+
+<div class="header">
+    <!-- desplayed as a row  -->
+
+    <div class="search-bar">
+        <input type="text" @bind="searchText" @oninput="HandleSearchTextChanged"
+               class="search-bar" placeholder="SUCHE"
+               aria-label="Search"
+               aria-describedby="search-addon" />
+
+        @if (!string.IsNullOrEmpty(searchText))
+        {
+            <button class="btn-clear" type="button" @onclick="ClearSearchText">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                     class="i-clear" viewBox="0 0 20 20 ">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z" />
+                </svg>
+            </button>
+        }
+
+        <button class="search-btn" type="button" @onclick="BtnSearch_Clicked">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="30" height="30" fill="currentColor" class="i-search"
+                 viewBox="0 0 20 20">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+            </svg>
+        </button>
+
     </div>
-    <div class="grid-item">
-        <!-- Content for Grid Item 2 -->
-        <p>This is Grid Item 2.</p>
+
+    <div class="grid-item1">
+        <button class="export-btn">
+            Exportieren
+        </button>
+
+        <button class="import-btn">
+            Importieren
+        </button>
     </div>
-    <div class="grid-item">
-        <!-- Content for Grid Item 3 -->
-        <p>This is Grid Item 3.</p>
+
+    <div class="grid-item1">
     </div>
-    <!-- Add more grid items as needed -->
+
+
 </div>
-              <div class="grid-container">
-    <div class="grid-item">
-        <!-- Content for Grid Item 1 -->
-        <p>This is Grid Item 1.</p>
-    </div>
-    <div class="grid-item">
-        <!-- Content for Grid Item 2 -->
-        <p>This is Grid Item 2.</p>
-    </div>
-    <div class="grid-item">
-        <!-- Content for Grid Item 3 -->
-        <p>This is Grid Item 3.</p>
-    </div>
-    <!-- Add more grid items as needed -->
-</div>
-              <div class="grid-container">
-    <div class="grid-item">
-        <!-- Content for Grid Item 1 -->
-        <p>This is Grid Item 1.</p>
-    </div>
-    <div class="grid-item">
-        <!-- Content for Grid Item 2 -->
-        <p>This is Grid Item 2.</p>
-    </div>
-    <div class="grid-item">
-        <!-- Content for Grid Item 3 -->
-        <p>This is Grid Item 3.</p>
-    </div>
-    <!-- Add more grid items as needed -->
-</div>
-              <div class="grid-container">
-    <div class="grid-item">
-        <!-- Content for Grid Item 1 -->
-        <p>This is Grid Item 1.</p>
-    </div>
-    <div class="grid-item">
-        <!-- Content for Grid Item 2 -->
-        <p>This is Grid Item 2.</p>
-    </div>
-    <div class="grid-item">
-        <!-- Content for Grid Item 3 -->
-        <p>This is Grid Item 3.</p>
-    </div>
-    <!-- Add more grid items as needed -->
-</div>
-              <div class="grid-container">
-    <div class="grid-item">
-        <!-- Content for Grid Item 1 -->
-        <p>This is Grid Item 1.</p>
-    </div>
-    <div class="grid-item">
-        <!-- Content for Grid Item 2 -->
-        <p>This is Grid Item 2.</p>
-    </div>
-    <div class="grid-item">
-        <!-- Content for Grid Item 3 -->
-        <p>This is Grid Item 3.</p>
-    </div>
-    <!-- Add more grid items as needed -->
-</div>
+
 
 
 <div class="container">
+
     <div class="row">
+
         <div class="col-md-6">
             <!-- Left Content -->
             <p>This is the left content.</p>
         </div>
+
         <div class="col-md-6">
             <!-- Right Content -->
             <p>This is the right content.</p>
         </div>
+
     </div>
-</div>                      <div class="container">
     <div class="row">
+
         <div class="col-md-6">
             <!-- Left Content -->
             <p>This is the left content.</p>
         </div>
+
         <div class="col-md-6">
             <!-- Right Content -->
             <p>This is the right content.</p>
         </div>
+
     </div>
-</div>                      
+    <div class="row">
+
+        <div class="col-md-6">
+            <!-- Left Content -->
+            <p>This is the left content.</p>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Right Content -->
+            <p>This is the right content.</p>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col-md-6">
+            <!-- Left Content -->
+            <p>This is the left content.</p>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Right Content -->
+            <p>This is the right content.</p>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col-md-6">
+            <!-- Left Content -->
+            <p>This is the left content.</p>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Right Content -->
+            <p>This is the right content.</p>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col-md-6">
+            <!-- Left Content -->
+            <p>This is the left content.</p>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Right Content -->
+            <p>This is the right content.</p>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col-md-6">
+            <!-- Left Content -->
+            <p>This is the left content.</p>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Right Content -->
+            <p>This is the right content.</p>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col-md-6">
+            <!-- Left Content -->
+            <p>This is the left content.</p>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Right Content -->
+            <p>This is the right content.</p>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col-md-6">
+            <!-- Left Content -->
+            <p>This is the left content.</p>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Right Content -->
+            <p>This is the right content.</p>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col-md-6">
+            <!-- Left Content -->
+            <p>This is the left content.</p>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Right Content -->
+            <p>This is the right content.</p>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col-md-6">
+            <!-- Left Content -->
+            <p>This is the left content.</p>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Right Content -->
+            <p>This is the right content.</p>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col-md-6">
+            <!-- Left Content -->
+            <p>This is the left content.</p>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Right Content -->
+            <p>This is the right content.</p>
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private string searchText = string.Empty;
+    private List<PersonModel>? searchResults = new List<PersonModel>();
+
+    private void HandleSearchTextChanged(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? string.Empty;
+
+    }
+
+    private void ClearSearchText()
+    {
+        searchResults = null;      //hide the search results
+        searchText = "";           //delete the search txt
+    }
+
+    private async Task BtnSearch_Clicked()
+    {
+        if (!string.IsNullOrEmpty(searchText))
+        {
+            // Check if there are any matching results
+            if (searchResults != null && searchResults.Any())
+            {
+                // Highlight the matching results
+                foreach (var person in searchResults)
+                {
+                    person.IsSearchResult = true;
+                }
+            }
+            else
+            {
+                // Show alert if there are no matching results
+                var result = await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = $"Contact with name '{searchText}' does not exist.",
+                        Text = "Do you want to add it?",
+                        ShowCancelButton = true,
+                        ConfirmButtonText = "Yes",
+                        CancelButtonText = "No",
+
+                        CustomClass = new SweetAlertCustomClass
+                        {
+                            Popup = "my-custom-popup-class",
+                            Title = "my-custom-title-class",
+                            Icon = "Icon-popup",
+                            Content = "my-custom-content-class",
+                            ConfirmButton = "my-custom-confirm-button-class",
+                            CancelButton = "my-custom-cancel-button-class"
+                        }
+                    });
+
+                if (!string.IsNullOrEmpty(result.Value))
+                {
+                    NavManager.NavigateTo($"addPerson?name={searchText}");
+                }
+            }
+        }
+    }
+
+}

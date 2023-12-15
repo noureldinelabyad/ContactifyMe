@@ -1,4 +1,9 @@
-﻿
+﻿.personList {
+    font: normal bold 30px/38px Arial;
+    color: #17324D;
+   
+}
+
 .header {
     padding: 10px 16px;
     background: white;
@@ -11,11 +16,6 @@
     padding-top: 35px;
 }
 
-.personList {
-    font: normal bold 30px/38px Arial;
-    color: #17324D;
-   
-}
 
 .search-bar-container {
     padding-top: 20px;

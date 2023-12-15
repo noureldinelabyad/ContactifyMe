@@ -1,33 +1,107 @@
 ﻿
-
-
-
 /* Define a grid container */
-.grid-container {
+.personList {
+    font: normal bold 30px/38px Arial;
+    color: #17324D;
+}
+
+.header {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    width: 100%;
+}
+
+    .header > * {
+        flex: 0 0 calc(33.33% - 15px);
+        max-width: calc(33.33% - 15px);
+        margin-bottom: 15px;
+        box-sizing: border-box;
+    }
+
+
+.search-bar {
+    flex: 1; /* Take up remaining space */
+    display: flex;
+    z-index: 0;
+    width: 300px;
+    font-size: x-large;
+    height: 50px;
+    padding-inline: 10px;
+}
+
+.btn-clear,
+.search-btn {
+    color: #17324D;
+    background-color: transparent;
+    border: none;
+    z-index: 1;
+    position: absolute;
+    display: flex;
+    margin-left: 265px;
+    margin-top: 10px;
+}
+
+
+.btn-clear {
+    margin-left: 235px;
 }
 
 /* Style for each grid item */
-.grid-item {
-    flex: 0 0 calc(33.33% - 15px);
-    max-width: calc(33.33% - 15px);
+.grid-item1 {
+    flex: 0 0 calc(15% - 15px);
+    max-width: calc(15% - 15px);
+    display:flex;
     margin-bottom: 15px;
+    margin-left:50px;
     box-sizing: border-box;
+    margin-left: 45px;
 }
 
+.export-btn {
+    margin-right: 10px;
+}
+
+.import-btn {
+}
 /* Media query for responsiveness */
-@media (max-width: 768px) {
-    .grid-item {
+@media (max-width: 850px) {
+    .grid-item1 {
         flex: 0 0 calc(50% - 15px);
-        max-width: calc(50% - 15px);
+        max-width: calc(50% - 55px);
+        margin-left: 10px;
+    }
+
+    .header > * {
+        flex: 0 0 calc(50% - 15px);
+        max-width: calc(50% - 55px);
+    }
+
+    .btn-clear,
+    .search-btn {
+    }
+
+    .import-btn {
     }
 }
 
-@media (max-width: 480px) {
-    .grid-item {
+@media (max-width: 850px) {
+    .grid-item1 {
         flex: 0 0 100%;
         max-width: 100%;
+    }
+
+    .header > * {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .btn-clear,
+    .search-btn {
+        right: 25px;
+    }
+
+    .btn-clear {
+        right: 55px;
     }
 }
