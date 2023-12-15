@@ -15,7 +15,7 @@
     <!-- desplayed as a row  -->
 
     <div class="search-bar">
-        <input type="text" @bind="searchText" @oninput="HandleSearchTextChanged"
+        <input type="text" id="searchInput" @bind="searchText" @oninput="HandleSearchTextChanged"
                class="search-bar" placeholder="SUCHE"
                aria-label="Search"
                aria-describedby="search-addon" />
