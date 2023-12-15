@@ -23,7 +23,7 @@
     height: 100vh;
 }
 
-@media (max-width: 730px) {
+@media (max-width: 729px) {
 
     .sidebar {
         width: 100%;

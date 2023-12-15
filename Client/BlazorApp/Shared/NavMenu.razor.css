@@ -55,7 +55,7 @@ body {
     color: white;
 }
 
-@media (min-width: 641px) {
+@media (min-width: 730px) {
     .navbar-toggler {
         display: none;
     }
