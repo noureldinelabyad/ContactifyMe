@@ -2,34 +2,34 @@
 /* Define a grid container */
 .personList {
     font: normal bold 30px/38px Arial;
-    color: #17324D;
+    grid-column: span 2 ;
 }
 
 .header {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
     flex-wrap: wrap;
-    justify-content:left;
+    justify-content: left;
+    z-index: 1;
+    background-color: white;
+    position: sticky;
+    top: 0px;
 }
 
     .header > * {
         flex: 0 0 calc(33.33% - 15px);
-        max-width: calc(33.33% - 15px);
         margin-bottom: 15px;
         box-sizing: border-box;
-
     }
 
 
 .search-bar {
-    flex: 1; /* Take up remaining space */
-    display: flex;
-    z-index: 0;
-    width: 300px;
+    grid-column: 1 / span 1;
+    position: relative; /* Add relative positioning to establish a positioning context */
     font-size: x-large;
     height: 40px;
     padding-inline: 10px;
-    margin-right:125px;
-
+    left: -5px;
 }
 
 .btn-clear,
@@ -37,61 +37,83 @@
     color: #17324D;
     background-color: transparent;
     border: none;
-    z-index: 1;
     position: absolute;
-    display: flex;
-    margin-left: 265px;
-    margin-top: 5px; 
+    right: 10px; /* Adjusted margin from the right */
+    top: 50%; /* Align to the middle vertically */
+    transform: translateY(-50%); /* Adjust to center vertically */
 }
 
 
 .btn-clear {
-    margin-left: 235px;
+    right: 40px; /* Adjusted margin from the right */
 }
 
 /* Style for each grid item */
 .grid-item1 {
+    grid-column: span 1;
     flex: 0 0 calc(15% - 15px);
     max-width: calc(15% - 15px);
-    display:flex;
+    display: flex;
     margin-bottom: 15px;
-    box-sizing: border-box;
 }
 
 .export-btn {
     margin-right: 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-content {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    color: #17324D;
+    background-color: #FFFFFF;
+    width: 125px;
 }
 
 .import-btn {
+    align-items: center;
+    display: flex;
 }
 
 
 /* Media query for responsiveness */
 
-@media (max-width: 850px) {
-    .grid-item1 {
-        flex: 0 0 100%;
-        max-width: 100%;
+
+
+    @media (max-width: 850px) {
+        .grid-item1 {
+            grid-column: span 2;
+        }
+
+        .header {
+            position: sticky;
+            top: 55px;
+        }
+
+            .header > * {
+            }
     }
 
-    .header > * {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
+@media (min-width: 659px) {
 
-    .btn-clear,
-    .search-btn {
-        right: 155px;
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-
-    .btn-clear {
-        right: 185px;
+    .header {
+        position: sticky;
+        top: 0px;
     }
 }
+    .container {
+        width: 80%;
+        justify-content: center;
+    }
 
-.container{
-    width:80%;
-    justify-content:center;
-}
+    .row {
+        display: flex;
+        justify-content: center;
+    }
+
