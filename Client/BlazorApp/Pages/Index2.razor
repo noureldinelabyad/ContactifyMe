@@ -4,7 +4,8 @@
 @using CurrieTechnologies.Razor.SweetAlert2
 
 
-@inject IPersonService PeronService
+@inject IPersonService PersonService
+
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
 @inject SweetAlertService Swal
@@ -80,163 +81,74 @@
 
     <div class="container">
 
-        <div class="row">
+    @if (_PersonList == null)
+    {
+        <div class="loading">
 
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>1-This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>2-This is the right content.</p>
-            </div>
+            <button class="btn btn-primary" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span role="status">Loading...</span>
+            </button>
 
         </div>
-        <div class="row">
+    }
+    else
+    {
+        <div class="table-container">
+            <table class="table">
+                <thead class="table-head">
+                    <tr>
+                        <th>Vorname</th>
+                        <th>Nachname</th>
+                        <th>Mittelname</th>
+                        <th>Gender</th>
+                        <th>Email</th>
+                        <th>TelNummer</th>
+                        <th>Straße</th>
+                        <th>Nr.</th>
+                        <th>Stadt</th>
+                        <th>PLZ</th>
+                        <th>Land</th>
+                    </tr>
+                </thead>
 
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>3-This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>4-This is the right content.</p>
-            </div>
-
+                <tbody class="table-body">
+                    @foreach (var person in _PersonList)
+                    {
+                        <tr @onclick="(() => DisplayDetails(person.Id))"
+                            @oncontextmenu:preventDefault="true"
+                            @oncontextmenu="((e) => DisplayOption(e, person))">
+                            <td>@person.Vorname </td>
+                            <td> @person.Nachname </td>
+                            <td>@person.Zwischenname</td>
+                            <td>@person.Gender</td>
+                            <td>@person.Email</td>
+                            <td>
+                                @if (person.PersonNummern.Any())
+                                {
+                                    var firstNumber = person.PersonNummern.First().TelNummer;
+                                    if (person.PersonNummern.Count > 1)
+                                    {
+                                        var secondNumber = person.PersonNummern[1].TelNummer.Substring(0, Math.Min(5, person.PersonNummern[1].TelNummer.Length));
+                                        <div>@firstNumber /***</div>
+                                    }
+                                    else
+                                    {
+                                        <div>@firstNumber</div>
+                                    }
+                                }
+                            </td>
+                            <td>@person.Strasse</td>
+                            <td>@person.Hausnummer</td>
+                            <td>@person.Stadt</td>
+                            <td>@person.PLZ</td>
+                            <td>@person.Land</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>This is the right content.</p>
-            </div>
-
-        </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>This is the right content.</p>
-            </div>
-
-        </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>This is the right content.</p>
-            </div>
-
-        </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>This is the right content.</p>
-            </div>
-
-        </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>This is the right content.</p>
-            </div>
-
-        </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>This is the right content.</p>
-            </div>
-
-        </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>This is the right content.</p>
-            </div>
-
-        </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>This is the right content.</p>
-            </div>
-
-        </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>This is the right content.</p>
-            </div>
-
-        </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <!-- Left Content -->
-                <p>This is the left content.</p>
-            </div>
-
-            <div class="col-md-6">
-                <!-- Right Content -->
-                <p>This is the right content.</p>
-            </div>
-
-        </div>
-
+    }
     </div>
 
 
@@ -316,5 +228,119 @@
     {
 
     }
+
+    List<PersonModel> _PersonList = new List<PersonModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _PersonList = await PersonService.GetAllPersonsList();
+    }
+
+    private void DisplayDetails(int id)
+    {
+        NavManager.NavigateTo($"/personDisplay/{id}");     //navigate to Person display
+    }
+
+    private async Task DisplayOption(MouseEventArgs e, PersonModel personDetail)
+    {
+        var result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"Person ID:{personDetail.Id}, {personDetail.Vorname} {personDetail.Nachname} ",
+                ShowCancelButton = true,
+                ShowDenyButton = true,
+                ConfirmButtonText = "Update",
+                DenyButtonText = "Delete",
+                CancelButtonText = "Close",
+
+                CustomClass = new SweetAlertCustomClass
+                {
+                    Popup = "my-custom-popup-class",
+                    Title = "my-custom-title-class",
+                    Icon = "Icon-popup",
+                    Content = "my-custom-content-class",
+                    ConfirmButton = "my-custom-confirm-button-class",
+                    DenyButton = "my-custom-cancel-button-class"
+                },
+            });
+
+        if (result.IsConfirmed)
+        {
+            NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+        }
+        if (result.IsDenied)
+        {
+            DisplayDeleteConfirmation(personDetail.Id, personDetail);
+        }
+    }
+
+    private async void DisplayDeleteConfirmation(int personId, PersonModel personDetail)
+    {
+        var result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmation",
+                Text = $"you sure you want to delete Person ID:{personDetail.Id} {personDetail.Vorname} {personDetail.Nachname}? ",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "yes",
+                CancelButtonText = "No",
+
+                CustomClass = new SweetAlertCustomClass
+                {
+                    Popup = "my-custom-popup-class",
+                    Title = "my-custom-title-class",
+                    Icon = "Icon-popup",
+                    Content = "my-custom-content-class",
+                    ConfirmButton = "my-custom-confirm-button-class",
+                    CancelButton = "my-custom-cancel-button-class"
+                }
+            });
+
+        var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
+
+        if (confrim)
+        {
+            var deleteresponse = await PersonService.DeletePerson(personId);
+
+            if (deleteresponse.Success)
+            {
+                await OnInitializedAsync();
+
+                StateHasChanged();
+
+                if (!string.IsNullOrEmpty(result.Value))
+                {
+                    await Swal.FireAsync(new SweetAlertOptions
+                        {
+                            Icon = SweetAlertIcon.Success,
+                            Text = "Contact deleted",
+
+                            CustomClass = new SweetAlertCustomClass
+                            {
+                                Content = "my-custom-content-class",
+                                ConfirmButton = "my-custom-confirm-button-class",
+                            }
+                        });
+                }
+
+            }
+            else
+            {
+                await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Icon = SweetAlertIcon.Error,
+                        Text = "something went wrong :(",
+
+                        CustomClass = new SweetAlertCustomClass
+                        {
+                            Content = "my-custom-content-class",
+                            ConfirmButton = "my-custom-confirm-button-class",
+                        }
+
+
+                    });
+            }
+        }
+    }
+
 
 }
