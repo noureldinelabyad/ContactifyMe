@@ -1,85 +1,90 @@
 ﻿@page "/contact2"
-@using CommonCode.Models
-@using CommonCode.Services
-@using CurrieTechnologies.Razor.SweetAlert2
+@using CommonCode.Models;
+@using CommonCode.Services;
+@using CurrieTechnologies.Razor.SweetAlert2;
+@using Newtonsoft.Json;
+@using System.Text;
+@using System.Text.RegularExpressions;
+@using iTextSharp.text;
+@using iTextSharp.text.pdf;
 
 
 @inject IPersonService PersonService
-
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
 @inject SweetAlertService Swal
 
 <head>
 
+    <script src="exportPdf.js"></script>
+
 </head>
 
-
-    <div class="header">
+<div class="header">
     <span class="personList">Personen Liste</span>
 
-        <!-- desplayed as a row  -->
+    <!-- desplayed as a row  -->
 
-        <div class="search-bar">
-            <input type="text" id="searchInput" @bind="searchText" @oninput="HandleSearchTextChanged"
-                   class="search-bar" placeholder="SUCHE"
-                   aria-label="Search"
-                   aria-describedby="search-addon" />
+    <div class="search-bar">
+        <input type="text" id="searchInput" @bind="searchText" @oninput="HandleSearchTextChanged"
+               class="search-bar" placeholder="SUCHE"
+               aria-label="Search"
+               aria-describedby="search-addon" />
 
-            @if (!string.IsNullOrEmpty(searchText))
-            {
-                <button class="btn-clear" type="button" @onclick="ClearSearchText">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
-                         class="i-clear" viewBox="0 0 20 20 ">
-                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z" />
-                    </svg>
-                </button>
-            }
-
-            <button class="search-btn" type="button" @onclick="BtnSearch_Clicked">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     width="30" height="30" fill="currentColor" class="i-search"
-                     viewBox="0 0 20 20">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+        @if (!string.IsNullOrEmpty(searchText))
+        {
+            <button class="btn-clear" type="button" @onclick="ClearSearchText">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                     class="i-clear" viewBox="0 0 20 20 ">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z" />
                 </svg>
             </button>
+        }
 
-        </div>
-
-        <div class="grid-item1">
-
-            <button class="export-btn" @onclick="OpenExport">
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor"
-                     class="i-export" viewBox="0 0 17 17">
-                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
-                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
-                </svg>
-                <span style="margin-left: 5px;">Exportieren</span>
-                @if (showExportPopup)
-                {
-                    <div class="dropdown-content">
-                        <button class="dropdown-item" @onclick="DownloadAsJson">JSON</button>
-                        <button class="dropdown-item" @onclick="DownloadAsPdf">PDF</button>
-                    </div>
-                }
-            </button>
-
-
-            <button class="import-btn">
-                <span style="margin-right: 5px;">Importieren</span>
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     width="25" height="25" fill="currentColor" class="i-import" viewBox="0 0 17 17">
-                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
-                    <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
-                </svg>
-            </button>
-
-        </div>
-
+        <button class="search-btn" type="button" @onclick="BtnSearch_Clicked">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="30" height="30" fill="currentColor" class="i-search"
+                 viewBox="0 0 20 20">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+            </svg>
+        </button>
 
     </div>
 
-    <div class="container">
+    <div class="grid-item1">
+
+        <button class="export-btn" @onclick="OpenExport">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor"
+                 class="i-export" viewBox="0 0 17 17">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+            </svg>
+            <span style="margin-left: 5px;">Exportieren</span>
+            @if (showExportPopup)
+            {
+                <div class="dropdown-content">
+                    <button class="dropdown-item" @onclick="DownloadAsJson">JSON</button>
+                    <button class="dropdown-item" @onclick="DownloadAsPdf">PDF</button>
+                </div>
+            }
+        </button>
+
+
+        <button class="import-btn">
+            <span style="margin-right: 5px;">Importieren</span>
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="25" height="25" fill="currentColor" class="i-import" viewBox="0 0 17 17">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
+            </svg>
+        </button>
+
+    </div>
+
+
+</div>
+
+<div class="container">
 
     @if (_PersonList == null)
     {
@@ -149,13 +154,15 @@
             </table>
         </div>
     }
-    </div>
+</div>
 
 
 @code {
 
     private string searchText = string.Empty;
     private List<PersonModel>? searchResults = new List<PersonModel>();
+
+    List<PersonModel> _PersonList = new List<PersonModel>();
 
     private void HandleSearchTextChanged(ChangeEventArgs e)
     {
@@ -219,18 +226,200 @@
         showExportPopup = !showExportPopup;
     }
 
-    private async Task DownloadAsPdf()
+    private string ReplaceUnicodeEscapeSequences(string input)
     {
-
+        return Regex.Replace(input, @"\\u(?<Value>[a-zA-Z0-9]{4})", m =>
+        {
+            return ((char)int.Parse(m.Groups["Value"].Value, System.Globalization.NumberStyles.HexNumber)).ToString();
+        });
     }
 
     private async Task DownloadAsJson()
     {
+        try
+        {
+            var transformedList = _PersonList.Select(person => new
+            {
+                id = person.Id,
+                nachname = person.Nachname,
+                vorname = person.Vorname,
+                zwischenname = person.Zwischenname,
+                personNummern = person.PersonNummern,
+                eMail = person.Email,
+                strasse = ReplaceUnicodeEscapeSequences(person.Strasse), // Replace Unicode escape sequences
+                hausnummer = person.Hausnummer,
+                plz = person.PLZ,
+                stadt = person.Stadt,
+                land = person.Land,
+                gender = person.Gender
+            }).ToList();
 
+            var jsonContent = JsonConvert.SerializeObject(transformedList, Formatting.Indented);
+
+            var fileName = "person_data.json";
+
+            // Create a byte array from the JSON content
+            byte[] data = Encoding.UTF8.GetBytes(jsonContent);
+
+            // Trigger the download
+            await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", fileName, data);
+
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions
+            Console.WriteLine("Error: " + ex.Message);
+        }
     }
 
-    List<PersonModel> _PersonList = new List<PersonModel>();
+    public class CustomPdfPageEventHelper : PdfPageEventHelper
+    {
+        // Add any additional properties or methods you may need
 
+        public override void OnEndPage(PdfWriter writer, Document document)
+        {
+            base.OnEndPage(writer, document);
+
+            // Add a logo in the upper right corner
+            iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(Path.Combine("wwwroot", "thinfabrics-logo_200x30.png"));
+            float logoWidth = 80f;
+            float logoHeight = 80f;
+
+            logo.ScaleToFit(logoWidth, logoHeight);
+            logo.Alignment = Element.ALIGN_RIGHT;  // Alignment
+            document.Add(logo);  // Add the logo
+
+            // Add a title above the table
+            Paragraph title = new Paragraph("Kontakttabelle", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, new BaseColor(0, 204, 102)));
+            title.Alignment = Element.ALIGN_LEFT;
+            document.Add(title);
+
+            // Add page number
+            int pageN = writer.PageNumber;
+            string text = "Page " + pageN;
+            Rectangle pageSize = document.PageSize;
+            ColumnText.ShowTextAligned(writer.DirectContent, Element.ALIGN_CENTER, new Phrase(text), pageSize.GetRight(40), pageSize.GetBottom(30), 0);
+        }
+    }
+
+    private async Task DownloadAsPdf()
+    {
+        var pgSize = new iTextSharp.text.Rectangle(141.732f, 141.732f);
+        Document doc = new Document(pgSize);
+        try
+        {
+            // Create a new PDF document
+            Document document = new Document(PageSize.A4, 26, 36, 15, 0);
+
+            MemoryStream memoryStream = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+
+            document.Open();
+
+                // Add a logo in the upper right corner
+                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(Path.Combine("wwwroot", "thinfabrics-logo_200x30.png"));
+                float logoWidth = 80f;
+                float logoHeight = 80f;
+
+                logo.ScaleToFit(logoWidth, logoHeight); logo.Alignment = Element.ALIGN_RIGHT;  // Alignment
+                document.Add(logo);                 // Add the logo
+
+                // Add a title above the table
+                Paragraph title = new Paragraph("Kontakttabelle", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, new BaseColor(0, 204, 102)));
+                title.Alignment = Element.ALIGN_LEFT;
+                document.Add(title);
+
+                // Add content to the PDF
+                PdfPTable table = new PdfPTable(11); // Adjust the number of columns as per your data
+
+                // Set custom column widths
+                float[] columnWidths = new float[] { 110f, 120f, 120f, 200f, 140f, 100f, 100f, 100f, 100f, 100f, 100f };
+                table.SetWidths(columnWidths);
+
+                // Set table properties
+                table.WidthPercentage = 98;
+                table.SpacingBefore = 10f;
+                table.SpacingAfter = 10f;
+                table.HorizontalAlignment = Element.ALIGN_CENTER;
+
+
+
+                // Headers style
+                BaseFont bfHelvetica = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                Font headerFont = new Font(bfHelvetica, 9, Font.BOLD, BaseColor.WHITE); // Header font style
+
+                // Set header background color
+                BaseColor headerBgColor = new BaseColor(0, 204, 102); // #00CC66
+                headerFont.Color = BaseColor.WHITE; // White text color for headers
+
+                // Add headers with bold font and specified background color
+                string[] headerTitles = { "Vorname", "Nachname", "Mittelname", "Email", "Tel.Nr", "Straße", "Haus.Nr", "PLZ", "Stadt", "Land", "Gender" };
+                foreach (var headerTitle in headerTitles)
+                {
+                    PdfPCell headerCell = new PdfPCell(new Phrase(headerTitle, headerFont))
+                        {
+                            BackgroundColor = headerBgColor,
+                            HorizontalAlignment = Element.ALIGN_CENTER,
+                            VerticalAlignment = Element.ALIGN_CENTER
+
+                        };
+                    table.AddCell(headerCell);
+                }
+
+
+                // Body style
+                Font bodyFont = new Font(bfHelvetica, 8, Font.NORMAL, new BaseColor(23, 50, 77)); // #17324D
+
+                // Set even and odd row background colors
+                BaseColor evenBgColor = new BaseColor(255, 255, 255); // White background for even rows
+                BaseColor oddBgColor = new BaseColor(238, 238, 238); // Light gray background for odd rows
+
+                // Add data with small font size and alternating row background colors
+                for (int i = 0; i < _PersonList.Count; i++)
+                {
+                    var person = _PersonList[i];
+
+                    table.AddCell(new PdfPCell(new Phrase(person.Vorname, bodyFont)));
+                    table.AddCell(new PdfPCell(new Phrase(person.Nachname, bodyFont)));
+                    table.AddCell(new PdfPCell(new Phrase(person.Zwischenname, bodyFont)));
+                    table.AddCell(new PdfPCell(new Phrase(person.Email, bodyFont)));
+                    var telefonnummern = string.Join(", ", person.PersonNummern.Select(p => p.TelNummer));
+                    table.AddCell(new PdfPCell(new Phrase(telefonnummern, bodyFont)));
+                    table.AddCell(new PdfPCell(new Phrase(person.Strasse, bodyFont)));
+                    table.AddCell(new PdfPCell(new Phrase(person.Hausnummer, bodyFont)));
+                    table.AddCell(new PdfPCell(new Phrase(person.PLZ.ToString(), bodyFont)));
+                    table.AddCell(new PdfPCell(new Phrase(person.Stadt, bodyFont)));
+                    table.AddCell(new PdfPCell(new Phrase(person.Land, bodyFont)));
+                    table.AddCell(new PdfPCell(new Phrase(person.Gender, bodyFont)));
+
+                    // Set padding to wrap text
+                    foreach (PdfPCell cell in table.Rows[table.Rows.Count - 1].GetCells())
+                    {
+                        cell.Padding = 3;
+                        cell.FixedHeight = 15f;
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.VerticalAlignment = Element.ALIGN_CENTER;
+                    
+
+                    }
+                }
+
+                document.Add(table);
+
+                document.Close();
+
+                // Trigger the download
+                byte[] data = memoryStream.ToArray();
+                await JSRuntime.InvokeVoidAsync("downloadPdf", Convert.ToBase64String(data), "person_data.pdf");
+            
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+    
     protected override async Task OnInitializedAsync()
     {
         _PersonList = await PersonService.GetAllPersonsList();

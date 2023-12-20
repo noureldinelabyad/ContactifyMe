@@ -1,34 +1,28 @@
 ﻿
 /* Define a grid container */
-.personList {
-    font: normal bold 30px/38px Arial;
-    grid-column: span 2 ;
-}
 
 .header {
     display: grid;
     grid-template-columns: 1fr 2fr;
-    flex-wrap: wrap;
-    justify-content: left;
-    z-index: 1;
     background-color: white;
     position: sticky;
     top: 0px;
 }
 
     .header > * {
-        flex: 0 0 calc(33.33% - 15px);
         margin-bottom: 15px;
-        box-sizing: border-box;
     }
 
+.personList {
+    font: normal bold 30px/38px Arial;
+    grid-column: span 2;
+}
 
 .search-bar {
     grid-column: 1 / span 1;
-    width:100%;
+    width: 100%;
     position: relative; /* Add relative positioning to establish a positioning context */
     font-size: x-large;
-    height: 40px;
     padding-inline: 10px;
     left: -5px;
 }
@@ -87,19 +81,19 @@
 
 
 
-    @media (max-width: 850px) {
-        .grid-item1 {
-            grid-column: span 2;
-        }
-
-        .header {
-            position: sticky;
-            top: 55px;
-        }
-
-            .header > * {
-            }
+@media (max-width: 850px) {
+    .grid-item1 {
+        grid-column: span 2;
     }
+
+    .header {
+        position: sticky;
+        top: 55px;
+    }
+
+        .header > * {
+        }
+}
 
 @media (min-width: 659px) {
 
@@ -108,9 +102,13 @@
         top: 0px;
     }
 }
-    .container {
-        justify-content: center;
-    }
 
-  
+.container {
+    justify-content: center;
+}
 
+
+.loading {
+    z-index: 30;
+    margin: 250px;
+}
