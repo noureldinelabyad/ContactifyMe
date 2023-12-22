@@ -17,6 +17,8 @@
 <head>
 
     <script src="exportPdf.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 </head>
 
@@ -272,41 +274,72 @@
         }
     }
 
-     public class CustomPdfPageEventHelper : PdfPageEventHelper
-     {
+    public class PageNumberEvent : PdfPageEventHelper
+    {
+        private int pageNumber;
+        private int totalPages;
 
-    //     // Add any additional properties or methods you may need
+        public void SetTotalPages(int total)
+        {
+            totalPages = total;
+        }
 
-    //     public override void OnEndPage(PdfWriter writer, Document document)
-    //     {
-    //         base.OnEndPage(writer, document);
+        public PageNumberEvent()
+        {
+            pageNumber = 0;
+        }
 
-    //         // Add a logo in the upper right corner
-    //         iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(Path.Combine("wwwroot", "thinfabrics-logo_200x30.png"));
-    //         float logoWidth = 80f;
-    //         float logoHeight = 80f;
+        public override void OnEndPage(PdfWriter writer, Document document)
+        {
+            try
+            {
+                base.OnEndPage(writer, document);
 
-    //         logo.ScaleToFit(logoWidth, logoHeight);
-    //         logo.Alignment = Element.ALIGN_RIGHT;  // Alignment
-    //         document.Add(logo);  // Add the logo
+                // Increment the page number
+                pageNumber++;
 
-    //         // Add a title above the table
-    //         Paragraph title = new Paragraph("Kontakttabelle", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, new BaseColor(0, 204, 102)));
-    //         title.Alignment = Element.ALIGN_LEFT;
-    //         document.Add(title);
+                // Create a phrase with the current page number and total page count
+                string pageText = $"Page {pageNumber} of {totalPages}";
+                Phrase phrase = new Phrase(pageText, new Font(Font.FontFamily.HELVETICA, 8));
 
-    //         // Add page number
-    //         int pageN = writer.PageNumber;
-    //         string text = "Page " + pageN;
-    //         Rectangle pageSize = document.PageSize;
-    //         ColumnText.ShowTextAligned(writer.DirectContent, Element.ALIGN_CENTER, new Phrase(text), pageSize.GetRight(40), pageSize.GetBottom(30), 0);
-    //     }
+                // Create a table for the footer with one column
+                PdfPTable footerTable = new PdfPTable(1);
+                footerTable.DefaultCell.Border = Rectangle.NO_BORDER;
+                footerTable.TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+                footerTable.HorizontalAlignment = Element.ALIGN_RIGHT;
+
+                // Add the phrase to the footer table
+                footerTable.AddCell(phrase);
+
+                // Write the footer table to the bottom right of the document
+                footerTable.WriteSelectedRows(0, -1, document.LeftMargin, document.BottomMargin, writer.DirectContent);
+
+                document.Add(footerTable);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in OnEndPage: {ex.Message}");
+            }
+        }
+    }
+
+    private int CalculateTotalPages()
+    {
+        int rowsPerPage = 45;
+        int totalRows = _PersonList.Count;
+        int fullPages = totalRows / rowsPerPage;
+        int remainingRows = totalRows % rowsPerPage;
+        // If there are remaining rows, add an extra page for them
+        int totalPages = remainingRows > 0 ? fullPages + 1 : fullPages;
+        return totalPages;
     }
 
     private async Task DownloadAsPdf()
     {
         var pgSize = new iTextSharp.text.Rectangle(141.732f, 141.732f);
         Document doc = new Document(pgSize);
+
         try
         {
             // Create a new PDF document
@@ -314,6 +347,18 @@
 
             MemoryStream memoryStream = new MemoryStream();
             PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+
+            // Declare pageNumberEvent before using it
+            PageNumberEvent pageNumberEvent;
+
+            // Create instances of the PageNumberEvent class
+            pageNumberEvent = new PageNumberEvent();
+
+            // Set the total pages
+            pageNumberEvent.SetTotalPages(CalculateTotalPages());
+
+            // Set the page event to use the page number event
+            writer.PageEvent = pageNumberEvent;
 
             // Open the document
             document.Open();
@@ -325,25 +370,17 @@
 
             logo.ScaleToFit(logoWidth, logoHeight);
             logo.Alignment = Element.ALIGN_RIGHT;
-            document.Add(logo);
 
             // Add a title above the table
             Paragraph title = new Paragraph("Kontakttabelle", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, new BaseColor(0, 204, 102)));
             title.Alignment = Element.ALIGN_LEFT;
-            document.Add(title);
 
             // Add content to the PDF
             PdfPTable table = new PdfPTable(11); // Adjust the number of columns as per your data
 
             // Set custom column widths
-            float[] columnWidths = new float[] { 110f, 120f, 120f, 200f, 140f, 100f, 100f, 100f, 100f, 100f, 100f };
+            float[] columnWidths = new float[] { 120f, 150f, 150f, 200f, 140f, 100f, 100f, 100f, 100f, 100f, 100f };
             table.SetWidths(columnWidths);
-
-            // Set table properties
-            table.WidthPercentage = 98;
-            table.SpacingBefore = 10f;
-            table.SpacingAfter = 10f;
-            table.HorizontalAlignment = Element.ALIGN_CENTER;
 
             // Headers style
             BaseFont bfHelvetica = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
@@ -355,6 +392,15 @@
 
             // Add headers with bold font and specified background color
             string[] headerTitles = { "Vorname", "Nachname", "Mittelname", "Email", "Tel.Nr", "Straße", "Haus.Nr", "PLZ", "Stadt", "Land", "Gender" };
+
+            // Set custom column widths for the header table
+            float[] headerColumnWidths = new float[] { 120f, 150f, 150f, 200f, 140f, 100f, 100f, 100f, 100f, 100f, 100f };
+
+            // Declare headerTable outside the loop
+            PdfPTable headerTable = new PdfPTable(headerTitles.Length);
+
+            headerTable.SetWidths(headerColumnWidths);
+
             foreach (var headerTitle in headerTitles)
             {
                 PdfPCell headerCell = new PdfPCell(new Phrase(headerTitle, headerFont))
@@ -363,7 +409,8 @@
                         HorizontalAlignment = Element.ALIGN_CENTER,
                         VerticalAlignment = Element.ALIGN_CENTER
                     };
-                table.AddCell(headerCell);
+
+                headerTable.AddCell(headerCell);
             }
 
             // Body style
@@ -398,16 +445,30 @@
                 }
 
                 // Add new row every 30 rows for page breaks
-                if (i > 0 && i % 50 == 0)
+                if (i > 0 && i % 45 == 0)
                 {
+                    headerTable.WidthPercentage = 99;
+                    headerTable.SpacingBefore = 10f;
+                    headerTable.SpacingAfter = -8f;
+                    headerTable.HorizontalAlignment = Element.ALIGN_CENTER;
+
+                    // Set table properties
+                    table.WidthPercentage = 99;
+                    table.SpacingBefore = 10f;
+                    table.SpacingAfter = 10f;
+                    table.HorizontalAlignment = Element.ALIGN_CENTER;
+
+                    document.Add(logo);
+                    document.Add(title);
+                    document.Add(headerTable);
+
                     document.Add(table);
+                    table = new PdfPTable(columnWidths);
                     document.NewPage();
-                    table = new PdfPTable(11); // Create a new table for the next page
-                                               // Set custom column widths, table properties, and headers as needed
+
                 }
             }
 
-            document.Add(table);
 
             document.Close();
 
