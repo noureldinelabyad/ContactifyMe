@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddSingleton<WeatherForecastService>();
@@ -20,6 +21,8 @@ builder.Services.AddSingleton<IPersonService, PersonService>();
 builder.Services.AddScoped<Radzen.DialogService>();
 
 builder.Services.AddSweetAlert2();
+
+
 
 
 // new injections for sql from Dapper and after 

@@ -115,9 +115,9 @@
 //        BaseColor oddBgColor = new BaseColor(238, 238, 238); // Light gray background for odd rows
 
 //        // Add data with small font size and alternating row background colors
-//        for (int i = 0; i < _PersonList.Count; i++)
+//        for (int i = 0; i < PersonList.Count; i++)
 //        {
-//            var person = _PersonList[i];
+//            var person = PersonList[i];
 
 //            table.AddCell(new PdfPCell(new Phrase(person.Vorname, bodyFont)));
 //            table.AddCell(new PdfPCell(new Phrase(person.Nachname, bodyFont)));

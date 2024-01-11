@@ -208,7 +208,7 @@
 
 <div class="table-page">
 
-    @if (_PersonList == null)
+    @if (PersonList == null)
     {
         <div class="loading">
 
@@ -247,7 +247,7 @@
                 </thead>
 
                 <tbody class="table-body">
-                    @foreach (var person in _PersonList)
+                    @foreach (var person in PersonList)
                     {
                         <tr @onclick="(() => DisplayDetails(person.Id))"
                             @oncontextmenu:preventDefault="true"
@@ -371,7 +371,7 @@
         NavManager.NavigateTo($"/personDisplay/{id}");     //navigate to Person display
     }
 
-    List<PersonModel> _PersonList;
+    List<PersonModel> PersonList;
     private string searchText = string.Empty;
     private List<PersonModel> allPersons;
     private List<PersonModel> searchResults;
@@ -419,9 +419,9 @@
             // Add data with small font size and alternating row background colors
             BaseColor evenBgColor = new BaseColor(255, 255, 255); // White background for even rows
             BaseColor oddBgColor = new BaseColor(238, 238, 238); // Light gray background for odd rows
-            for (int i = 0; i < _PersonList.Count; i++)
+            for (int i = 0; i < PersonList.Count; i++)
             {
-                var person = _PersonList[i];
+                var person = PersonList[i];
 
                 table.AddCell(new PdfPCell(new Phrase(person.Vorname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 table.AddCell(new PdfPCell(new Phrase(person.Nachname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
@@ -462,7 +462,7 @@
     {
         try
         {
-            var transformedList = _PersonList.Select(person => new
+            var transformedList = PersonList.Select(person => new
             {
                 id = person.Id,
                 nachname = person.Nachname,
@@ -513,7 +513,7 @@
     protected override async Task OnInitializedAsync()
     {
         allPersons = await PersonService.GetAllPersonsList();
-        _PersonList = await PersonService.GetAllPersonsList();
+        PersonList = await PersonService.GetAllPersonsList();
 
     }
 
@@ -530,7 +530,7 @@
             searchText = searchText.Trim();
 
             // Filter persons based on search text
-            searchResults = _PersonList
+            searchResults = PersonList
             .Where(person =>
                 (person.Vorname + " " + person.Nachname + person.Email + " " + person.Strasse + " " + person.Hausnummer + " " + person.Stadt + " " + person.PLZ + " " + person.Land)
                     .IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0) 
@@ -538,7 +538,7 @@
             .ToList();
 
             // Mark the matching persons as search results
-            foreach (var person in _PersonList)
+            foreach (var person in PersonList)
             {
                 person.IsSearchResult = searchResults.Contains(person);
             }
@@ -549,7 +549,7 @@
             searchResults = null;
 
             // Reset the IsSearchResult property for all persons
-            foreach (var person in _PersonList)
+            foreach (var person in PersonList)
             {
                 person.IsSearchResult = false;
             }

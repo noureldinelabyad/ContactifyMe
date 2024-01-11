@@ -27,7 +27,7 @@ namespace CommonCode.Services
 
         private string _baseUrl = "https://personalcontactinformation.azurewebsites.net"; // URL of the Azure API
 
-        private DbContext _appDbContext;
+        private DbContext ? _appDbContext;
 
 
         public async Task<MainResponseModel> AddPerson(AddUpdatePersonRequest personRequest)
@@ -67,12 +67,13 @@ namespace CommonCode.Services
                 string Msg = ex.Message;
                 // You might also consider rethrowing the exception if you want to propagate it further.
             }
-            return returnResponse;
+            return returnResponse ?? new MainResponseModel { /* Set default values if needed */ };
         }
 
         public async Task<List<PersonModel>> GetAllPersonsList()
         {
-            var returnResponse = new List<PersonModel>();
+            List<PersonModel>? returnResponse = null; // Initialize to null
+
             // Disable BCC4005
             try
             {
@@ -92,36 +93,19 @@ namespace CommonCode.Services
                         var response = await apiResponse.Content.ReadAsStringAsync();
                         returnResponse = JsonConvert.DeserializeObject<List<PersonModel>>(response);
 
-
-                    }
-
-                    foreach (var person in returnResponse)
-
-                    {
-
-                        // var zwischennameHelper = await returnResponse.person.FirstOrDefaultAsync(p => p.Zwischenname == null);
-
-
-                        // if (zwischennameHelper == null)
-
-                        if (person.Zwischenname == null)
+                        foreach (var person in returnResponse)
                         {
+                            if (person.Zwischenname == null)
+                            {
+                                person.Zwischenname = " ";
+                            }
 
-                            person.Zwischenname = " ";
-
+                            if (person.Gender == null)
+                            {
+                                person.Gender = " ";
+                            }
                         }
-
-
-
-                        if (person.Gender == null)
-                        {
-
-                            person.Gender = " ";
-
-                        }
-
                     }
-
                 }
             }
             catch (Exception ex)
@@ -130,7 +114,8 @@ namespace CommonCode.Services
                 string Msg = ex.Message;
                 // You might also consider rethrowing the exception if you want to propagate it further.
             }
-            return returnResponse;
+
+            return returnResponse ?? new List<PersonModel>(); // Now it's safe to return returnResponse or an empty list
         }
 
         public async Task<PersonModel> GetPersonDetailById(int Id)
@@ -142,7 +127,7 @@ namespace CommonCode.Services
                 var handler = new HttpClientHandler()
                 {
                     ClientCertificateOptions = ClientCertificateOption.Manual,
-                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
+                    ServerCertificateCustomValidationCallback  = (httpRequestMessage, cert, cetChain, policyErrors) => true
                 };
 
                 using (var client = new HttpClient(handler))
@@ -167,33 +152,26 @@ namespace CommonCode.Services
                 string Msg = ex.Message;
                 // You might also consider rethrowing the exception if you want to propagate it further.
             }
-            return returnResponse;
+            return returnResponse ?? new PersonModel(); // Now it's safe to return returnResponse or a new PersonModel
         }
 
         public async Task<MainResponseModel> DeletePerson(int Id)
         {
-            var returnresponse = new MainResponseModel();
+            var returnResponse = new MainResponseModel();
 
             try
             {
                 using (var client = new HttpClient())
                 {
                     string url = $"{_baseUrl}/api/Persons/DeletePerson?id={Id}";
-                    var apiResponse = await client.GetAsync(url);
 
-                    var serializeContent = JsonConvert.SerializeObject(Id);
-                    var request = new HttpRequestMessage();
-                    request.Method = HttpMethod.Delete;
-                    request.RequestUri = new Uri(url);
-                    request.Content = new StringContent(serializeContent, Encoding.UTF8, "application/json");
+                    var request = new HttpRequestMessage(HttpMethod.Delete, url);
+                    var apiResponse = await client.SendAsync(request);
 
-
-                    var apiresponse = await client.SendAsync(request);
-
-                    if (apiresponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        var response = await apiresponse.Content.ReadAsStringAsync();
-                        returnresponse = JsonConvert.DeserializeObject<MainResponseModel>(response);
+                        var response = await apiResponse.Content.ReadAsStringAsync();
+                        returnResponse = JsonConvert.DeserializeObject<MainResponseModel>(response);
                     }
                     else
                     {
@@ -203,11 +181,12 @@ namespace CommonCode.Services
             }
             catch (Exception ex)
             {
-                string msg = ex.Message;
-                // Handle the exception here, log it, and possibly return an error response.
+                // Log or handle the exception gracefully.
+                Console.WriteLine($"Exception during deletion: {ex.Message}");
+                // You might also consider rethrowing the exception if you want to propagate it further.
             }
 
-            return returnresponse;
+            return returnResponse ?? new MainResponseModel { /* Set default values if needed */ };
         }
 
         public async Task<MainResponseModel> UpdatePerson(AddUpdatePersonRequest personRequest)
@@ -284,15 +263,9 @@ namespace CommonCode.Services
                 {
                     string url = $"{_baseUrl}/api/Persons/UpdateTel";
 
-                    var content = new
-                    {
-                        personId = personId,
-                        oldNumber = oldNumber,
-                        newNumber = newNumber
-                    };
+                    var content = new { personId, oldNumber, newNumber };
 
-                    var serializeContent = JsonConvert.SerializeObject(content);
-                    var apiResponse = await client.PutAsync(url, new StringContent(serializeContent, Encoding.UTF8, "application/json"));
+                    var apiResponse = await client.PutAsync(url, JsonContent.Create(content, content.GetType()));
 
                     if (apiResponse.StatusCode == System.Net.HttpStatusCode.OK)
                     {
@@ -304,11 +277,11 @@ namespace CommonCode.Services
             catch (Exception ex)
             {
                 // Log or handle the exception gracefully.
-                string Msg = ex.Message;
+                Console.WriteLine($"Exception during update: {ex.Message}");
                 // You might also consider rethrowing the exception if you want to propagate it further.
             }
 
-            return returnResponse;
+            return returnResponse ?? new MainResponseModel { /* Set default values if needed */ };
         }
 
         public async Task<MainResponseModel> DeletePhoneNumber(int personId, string deleteNumber)
@@ -352,49 +325,28 @@ namespace CommonCode.Services
             return returnResponse;
         }
 
+        private const string JsonFilePartName = "jsonFile";
 
         public async Task<MainResponseModel> ADDJsonAsync(string jsonContent, UpdateStrategy updateStrategy)
         {
-            // Ensure that updateStrategy is a string before parsing
-            var strategy = Enum.Parse(typeof(UpdateStrategy), updateStrategy.ToString()) as string;
-
-
             var returnResponse = new MainResponseModel();
+
             try
             {
-                var multipart = new MultipartFormDataContent();
-
-                multipart.Add(new ByteArrayContent(System.Text.UTF8Encoding.UTF8.GetBytes(jsonContent)),  "jsonFile", "test.json");
-
                 using (var client = new HttpClient())
                 {
                     string url = $"{_baseUrl}/api/Persons/AddJson";
-                
-                    var content = new MultipartFormDataContent
-                     {
-                         { new StringContent(jsonContent, Encoding.UTF8), "application/json"}
-                     };
-                    //StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                    Console.WriteLine(jsonContent);
-                    Console.WriteLine(content);
-
-
+                    var multipart = new MultipartFormDataContent();
+                    multipart.Add(new ByteArrayContent(Encoding.UTF8.GetBytes(jsonContent)), JsonFilePartName, "test.json");
                     multipart.Add(new StringContent(((int)updateStrategy).ToString()), "updateStrategy");
-
-                   // multipart.Add(new StringContent(updateStrategy.ToString()), "updateStrategy");
-
-                   // var apiResponse = await client.PostAsync(url, multipart);
 
                     var apiResponse = await client.PostAsync($"{url}?updateStrategy={(int)updateStrategy}", multipart);
 
-
-                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.Accepted)
+                    if (apiResponse.StatusCode == HttpStatusCode.Accepted)
                     {
                         var response = await apiResponse.Content.ReadAsStringAsync();
-
                         return JsonConvert.DeserializeObject<MainResponseModel>(response);
-
                     }
                     else
                     {
@@ -408,10 +360,10 @@ namespace CommonCode.Services
             }
             catch (Exception ex)
             {
-                // Log or handle the exception gracefully.
                 Console.WriteLine($"Exception during JSON import: {ex.Message}");
                 return new MainResponseModel() { Message = "Import failed", Success = false };
             }
+
         }
     }
 }

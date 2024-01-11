@@ -101,6 +101,10 @@
         position: sticky;
         top: 0px;
     }
+
+    .table-page {
+        margin-top:0px;
+    }
 }
 
 .container {

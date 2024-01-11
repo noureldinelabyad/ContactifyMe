@@ -1,15 +1,56 @@
-﻿@inherits LayoutComponentBase
+﻿<!-- MainLayout.razor -->
+@inherits LayoutComponentBase
 
-<PageTitle>BlazorApp</PageTitle>
+<PageTitle>
+    Personal Contact Information
+</PageTitle>
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
+<div class="page" >
+    <div title="sidebar" class="sidebar" style="width: @((bkcolor ? "300px" : "50px"))">
+
+        <NavMenu TriggerParentMethod="ToggleBkColorTriger" />
+
     </div>
 
-    <main>
+    <main >
+
         <article class="content px-4">
             @Body
         </article>
+
     </main>
 </div>
+
+@code {
+    public bool bkcolor = true;
+
+    public void ToggleBkColorTriger()
+    {
+        bkcolor_triger();
+    }
+
+    public void bkcolor_triger()
+    {
+        bkcolor = !bkcolor;
+
+        if (!bkcolor)
+        {
+            
+        }
+    }
+
+    
+
+    // private bool isSidebarShown = true;
+
+    // private void GetSidebarStyle()
+    // {
+    //     // Adjust the width based on the value of _isSidebarShown
+    //     //return isSidebarShown ? "" : "width: 30px;";
+
+    //     isSidebarShown = !isSidebarShown;
+
+    // }
+
+
+}

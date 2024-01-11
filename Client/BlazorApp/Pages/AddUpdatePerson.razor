@@ -51,7 +51,9 @@
             @foreach (var g in genders)
             {
                 <div class="form-check mr-3 mx-3">
-                    <input checked="@(gender == g)" @onchange="@(()=>SetGender(g))" class="form-check-input" type="radio" name="flexRadioDefault" id="@($"flexRadioDefault_{g}")">
+                    <input checked="@(gender == g)" @onchange="@(()=>SetGender(g))"
+                    class="form-check-input" type="radio"
+                    name="flexRadioDefault" id="@($"flexRadioDefault_{g}")">
                     <label class="form-check-label" for="@($"flexRadioDefault_{g}")">
                         @g
                     </label>
@@ -60,12 +62,14 @@
             @if (gender == null || !genders.Contains(gender))
             {
                 <div class="form-check mr-3 mx-3">
-                    <input checked="@(gender == gender)" @onchange="@(()=>SetGender(gender))" class="form-check-input" type="radio" name="flexRadioDefault" id="@($"flexRadioDefault_{gender}")">
+                    <input checked="true" @onchange="@(()=>SetGender(gender ?? ""))" class="form-check-input" type="radio" name="flexRadioDefault" id="@($"flexRadioDefault_{gender}")">
+
                     <label class="form-check-label" for="@($"flexRadioDefault_{gender}")">
                         @gender
                     </label>
                 </div>
             }
+
         </div>
     </div>
 
@@ -192,17 +196,17 @@
 
     [Parameter]
     public int Id { get; set; }
-    private string Nachname;
-    private string Vorname;
-    private string Zwischenname;
-    private string Email;
-    private string TelNummer;
-    private string Strasse;
-    private string Hausnummer;
-    private string PLZ;
-    private string Stadt;
-    private string Land;
-    private string gender;
+    private string? Nachname;
+    private string? Vorname;
+    private string? Zwischenname;
+    private string? Email;
+    private string? TelNummer;
+    private string? Strasse;
+    private string? Hausnummer;
+    private string? PLZ;
+    private string? Stadt;
+    private string? Land;
+    private string? gender;
 
     private List<PersonModel.Telefonnummer> PersonNummern = new List<PersonModel.Telefonnummer> { new PersonModel.Telefonnummer() };
 
@@ -253,7 +257,7 @@
                 PersonNummern = existingPersonDetail.PersonNummern;
                 Strasse = existingPersonDetail.Strasse;
                 Hausnummer = existingPersonDetail.Hausnummer;
-                PLZ = existingPersonDetail.PLZ.ToString();
+                PLZ = existingPersonDetail.PLZ?.ToString();
                 Stadt = existingPersonDetail.Stadt;
                 Land = existingPersonDetail.Land;
                 gender = existingPersonDetail.Gender;
@@ -437,17 +441,17 @@
         var addUpdateRequest = new AddUpdatePersonRequest
             {
                 Id = Id,
-                Nachname = Nachname,
-                Vorname = Vorname,
-                Zwischenname = Zwischenname,
-                Email = Email,
-                PersonNummern = PersonNummern,
-                Strasse = Strasse,
-                Hausnummer = Hausnummer,
-                PLZ = PLZ,
-                Stadt = Stadt,
-                Land = Land,
-                Gender = gender,
+                Nachname = Nachname!,
+                Vorname = Vorname!,
+                Zwischenname = Zwischenname!,
+                Email = Email!,
+                PersonNummern = PersonNummern!,
+                Strasse = Strasse!,
+                Hausnummer = Hausnummer!,
+                PLZ = PLZ!,
+                Stadt = Stadt!,
+                Land = Land!,
+                Gender = gender!,
             };
 
         if (Id > 0)
@@ -511,17 +515,17 @@
 
     }
 
-    private bool IsValidNachname(string value)
+    private bool IsValidNachname(string? value)
     {
         return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
     }
 
-    private bool IsValidVorname(string value)
+    private bool IsValidVorname(string? value)
     {
         return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
     }
 
-    private bool IsValidEmail(string email)
+    private bool IsValidEmail(string? email)
     {
         if (string.IsNullOrEmpty(email))
         {
@@ -533,27 +537,27 @@
         return Regex.IsMatch(email, emailPattern);
     }
 
-    private bool IsValidStrasse(string value)
+    private bool IsValidStrasse(string? value)
     {
         return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
     }
 
-    private bool IsValidHausnummer(string value)
+    private bool IsValidHausnummer(string? value)
     {
         return !string.IsNullOrWhiteSpace(value) && value.Length >= 1;
     }
 
-    private bool IsValidPLZ(string value)
+    private bool IsValidPLZ(string? value)
     {
         return !string.IsNullOrWhiteSpace(value) && value.Length == 5;
     }
 
-    private bool IsValidStadt(string value)
+    private bool IsValidStadt(string? value)
     {
         return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
     }
 
-    private bool IsValidLand(string value)
+    private bool IsValidLand(string? value)
     {
         return !string.IsNullOrWhiteSpace(value) && value.Length >= 2;
     }

@@ -12,9 +12,9 @@ namespace CommonCode.Models
     public class MainResponseModel
     {
         public bool Success { get; set; }
-        public string ErrorMessage { get; set; }
-        public object Content { get; set; }
-        public string Message { get; set; }
+        public string? ErrorMessage { get; set; }
+        public string? Content { get; set; }
+        public string? Message { get; set; }
 
     }
 }

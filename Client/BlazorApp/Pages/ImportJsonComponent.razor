@@ -33,8 +33,8 @@
 <button @onclick="ImportJson">Import</button>
 
 @code {
-    private IBrowserFile jsonFile;
-    private string jsonContent;
+    private IBrowserFile ?jsonFile;
+    private string? jsonContent;
     private string selectedUpdateStrategy = "0"; // Default to "Skip"
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)

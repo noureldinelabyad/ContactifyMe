@@ -20,11 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Maui" Version="5.3.0" />
-    <PackageReference Include="CurrieTechnologies.Razor.SweetAlert2" Version="5.5.0" />
-    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
-    <PackageReference Include="Radzen.Blazor" Version="4.16.2" />
+    <PackageReference Include="CommunityToolkit.Maui" Version="5.3.0" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="CurrieTechnologies.Razor.SweetAlert2" Version="5.5.0" GeneratePathProperty="true" PrivateAssets="all"  />
+    <PackageReference Include="iTextSharp" Version="5.5.13.3" GeneratePathProperty="true" PrivateAssets="all"  />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="Radzen.Blazor" Version="4.16.2" GeneratePathProperty="true" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

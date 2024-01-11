@@ -55,10 +55,20 @@
                     </label>
                 </div>
             }
+            @foreach (var g in genders)
+            {
+                <div class="form-check mr-3 mx-3">
+                    <input checked="@(gender == g)" @onchange="@(()=>SetGender(g))" class="form-check-input" type="radio" name="flexRadioDefault" id="@($"flexRadioDefault_{g}")">
+                    <label class="form-check-label" for="@($"flexRadioDefault_{g}")">
+                        @g
+                    </label>
+                </div>
+            }
             @if (gender == null || !genders.Contains(gender))
             {
                 <div class="form-check mr-3 mx-3">
-                    <input checked="@(gender == gender)" @onchange="@(()=>SetGender(gender))" class="form-check-input" type="radio" name="flexRadioDefault" id="@($"flexRadioDefault_{gender}")">
+                    <input checked="@(gender == gender)" @onchange="@(()=>SetGender(gender))"
+                    class="form-check-input" type="radio" name="flexRadioDefault" id="@($"flexRadioDefault_{gender}")">
                     <label class="form-check-label" for="@($"flexRadioDefault_{gender}")">
                         @gender
                     </label>

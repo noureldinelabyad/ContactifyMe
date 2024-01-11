@@ -62,9 +62,9 @@
             </div>
         </div>
 
-        <button @onclick="@(e => UpdatePersonDetails())" class="mt-3 btn btn-primary mx-1">Edit</button>
+        <button @onclick="(Action)(() => UpdatePersonDetails())" class="mt-3 btn btn-primary mx-1">Edit</button>
 
-        <button @onclick="@(e => DisplayDeleteConfirmation(personDetail.Id))" class="mt-3 btn btn-primary mx-1">Delete</button>
+        <button @onclick="(Action)(() => DisplayDeleteConfirmation(personDetail.Id))" class="mt-3 btn btn-primary mx-1">Delete</button>
 
     }
     else

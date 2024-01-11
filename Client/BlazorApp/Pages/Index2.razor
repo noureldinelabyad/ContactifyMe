@@ -19,7 +19,6 @@
     <script src="exportPdf.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
 </head>
 
 <div class="header">
@@ -86,11 +85,18 @@
 
 </div>
 
-<div class="container">
+<div class="table-page">
 
-    @if (_PersonList == null)
+    @if (PersonList == null)
     {
         <div class="loading">
+
+            <p>Loading...</p>
+
+            <button class="btn btn-primary" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span class="visually-hidden" role="status">Loading...</span>
+            </button>
 
             <button class="btn btn-primary" type="button" disabled>
                 <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
@@ -118,26 +124,29 @@
                         <th>Land</th>
                     </tr>
                 </thead>
-
                 <tbody class="table-body">
-                    @foreach (var person in _PersonList)
+                    @foreach (var person in PersonList)
                     {
                         <tr @onclick="(() => DisplayDetails(person.Id))"
                             @oncontextmenu:preventDefault="true"
                             @oncontextmenu="((e) => DisplayOption(e, person))">
                             <td>@person.Vorname </td>
-                            <td> @person.Nachname </td>
+                            <td>@person.Nachname </td>
                             <td>@person.Zwischenname</td>
                             <td>@person.Gender</td>
                             <td>@person.Email</td>
                             <td>
                                 @if (person.PersonNummern.Any())
                                 {
-                                    var firstNumber = person.PersonNummern.First().TelNummer;
+                                    var firstNumber = person.PersonNummern.First()?.TelNummer;
                                     if (person.PersonNummern.Count > 1)
                                     {
-                                        var secondNumber = person.PersonNummern[1].TelNummer.Substring(0, Math.Min(5, person.PersonNummern[1].TelNummer.Length));
-                                        <div>@firstNumber /***</div>
+                                        var secondNumber = person.PersonNummern.ElementAtOrDefault(1)?.TelNummer;
+                                        if (!string.IsNullOrEmpty(secondNumber))
+                                        {
+                                            secondNumber = secondNumber.Substring(0, Math.Min(5, secondNumber.Length));
+                                            <div>@firstNumber /*** @secondNumber</div>
+                                        }
                                     }
                                     else
                                     {
@@ -164,7 +173,7 @@
     private string searchText = string.Empty;
     private List<PersonModel>? searchResults = new List<PersonModel>();
 
-    List<PersonModel> _PersonList = new List<PersonModel>();
+    List<PersonModel> PersonList = new List<PersonModel>();
 
     private void HandleSearchTextChanged(ChangeEventArgs e)
     {
@@ -240,7 +249,7 @@
     {
         try
         {
-            var transformedList = _PersonList.Select(person => new
+            var transformedList = PersonList.Select(person => new
             {
                 id = person.Id,
                 nachname = person.Nachname,
@@ -248,7 +257,7 @@
                 zwischenname = person.Zwischenname,
                 personNummern = person.PersonNummern,
                 eMail = person.Email,
-                strasse = ReplaceUnicodeEscapeSequences(person.Strasse), // Replace Unicode escape sequences
+                strasse = ReplaceUnicodeEscapeSequences(person.Strasse ?? string.Empty), // Replace Unicode escape sequences
                 hausnummer = person.Hausnummer,
                 plz = person.PLZ,
                 stadt = person.Stadt,
@@ -327,7 +336,7 @@
     private int CalculateTotalPages()
     {
         int rowsPerPage = 45;
-        int totalRows = _PersonList.Count;
+        int totalRows = PersonList.Count;
         int fullPages = totalRows / rowsPerPage;
         int remainingRows = totalRows % rowsPerPage;
         // If there are remaining rows, add an extra page for them
@@ -413,26 +422,30 @@
                 headerTable.AddCell(headerCell);
             }
 
-            // Body style
-            Font bodyFont = new Font(bfHelvetica, 8, Font.NORMAL, new BaseColor(23, 50, 77)); // #17324D
+            Font smallFont = new Font(bfHelvetica, 5, Font.NORMAL, BaseColor.BLACK); // Changed font size to 4 and set color to black
+            Font boldFont = new Font(bfHelvetica, 5, Font.BOLD, BaseColor.WHITE); // Added bold font for header row
+
+          
 
             // Add data with small font size and alternating row background colors
-            for (int i = 0; i < _PersonList.Count; i++)
+            BaseColor evenBgColor = new BaseColor(255, 255, 255); // White background for even rows
+            BaseColor oddBgColor = new BaseColor(238, 238, 238); // Light gray background for odd rows
+            for (int i = 0; i < PersonList?.Count; i++)
             {
-                var person = _PersonList[i];
+                var person = PersonList[i];
 
-                table.AddCell(new PdfPCell(new Phrase(person.Vorname, bodyFont)));
-                table.AddCell(new PdfPCell(new Phrase(person.Nachname, bodyFont)));
-                table.AddCell(new PdfPCell(new Phrase(person.Zwischenname, bodyFont)));
-                table.AddCell(new PdfPCell(new Phrase(person.Email, bodyFont)));
+                table.AddCell(new PdfPCell(new Phrase(person.Vorname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Nachname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Zwischenname, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Email, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
                 var telefonnummern = string.Join(", ", person.PersonNummern.Select(p => p.TelNummer));
-                table.AddCell(new PdfPCell(new Phrase(telefonnummern, bodyFont)));
-                table.AddCell(new PdfPCell(new Phrase(person.Strasse, bodyFont)));
-                table.AddCell(new PdfPCell(new Phrase(person.Hausnummer, bodyFont)));
-                table.AddCell(new PdfPCell(new Phrase(person.PLZ.ToString(), bodyFont)));
-                table.AddCell(new PdfPCell(new Phrase(person.Stadt, bodyFont)));
-                table.AddCell(new PdfPCell(new Phrase(person.Land, bodyFont)));
-                table.AddCell(new PdfPCell(new Phrase(person.Gender, bodyFont)));
+                table.AddCell(new PdfPCell(new Phrase(telefonnummern, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Strasse, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Hausnummer, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.PLZ?.ToString(), smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Stadt, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Land, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
+                table.AddCell(new PdfPCell(new Phrase(person.Gender, smallFont)) { BackgroundColor = (i % 2 == 0 ? evenBgColor : oddBgColor) });
 
                 // Set padding to wrap text
                 foreach (PdfPCell cell in table.Rows[table.Rows.Count - 1].GetCells())
@@ -486,7 +499,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _PersonList = await PersonService.GetAllPersonsList();
+        PersonList = await PersonService.GetAllPersonsList();
     }
 
     private void DisplayDetails(int id)

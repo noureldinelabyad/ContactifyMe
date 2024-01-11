@@ -114,22 +114,22 @@
 
 @code {
 
-    private List<string> PersonNummern = new List<string>(); 
-    private PersonModel personDetail;
+    private List<string?> PersonNummern = new List<string?>(); 
+    private PersonModel? personDetail;
 
     [Parameter]
     public int Id { get; set; }
-    private string Nachname;
-    private string Vorname;
-    private string Zwischenname;
-    private string Email;
-    private string Telefonnummer;
-    private string Strasse;
-    private string Hausnummer;
-    private string PLZ;
-    private string Stadt;
-    private string Land;
-    private string gender;
+    private string? Nachname;
+    private string? Vorname;
+    private string? Zwischenname;
+    private string? Email;
+    private string? Telefonnummer;
+    private string? Strasse;
+    private string? Hausnummer;
+    private string? PLZ;
+    private string? Stadt;
+    private string? Land;
+    private string? gender;
 
     private void SetGender(string gender)
     {
@@ -139,21 +139,28 @@
     protected override async Task OnInitializedAsync()
     {
         personDetail = await PersonService.GetPersonDetailById(Id);
-        if (Id > 0)
+
+        if (personDetail != null && personDetail.Id > 0)
         {
             var existingPersonDetail = await PersonService.GetPersonDetailById(Id);
+
             if (existingPersonDetail?.Id > 0)
             {
                 Nachname = existingPersonDetail.Nachname;
                 Vorname = existingPersonDetail.Vorname;
                 Zwischenname = existingPersonDetail.Zwischenname;
                 Email = existingPersonDetail.Email;
-                if (personDetail?.PersonNummern != null && personDetail.PersonNummern.Any())
+
+                if (personDetail.PersonNummern != null && personDetail.PersonNummern.Any())
                 {
                     PersonNummern = personDetail.PersonNummern.Select(tn => tn.TelNummer).ToList();
                 }
+
                 Hausnummer = existingPersonDetail.Hausnummer;
-                PLZ = existingPersonDetail.PLZ.ToString();
+
+                // Check if PLZ is not null before calling ToString()
+                PLZ = existingPersonDetail.PLZ?.ToString();
+
                 Stadt = existingPersonDetail.Stadt;
                 Land = existingPersonDetail.Land;
                 gender = existingPersonDetail.Gender;
@@ -163,7 +170,7 @@
 
     private void UpdatePersonDetails()
     {
-        NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
+        NavManager.NavigateTo($"updatePerson/{personDetail?.Id}");
     }
 
     private async void DisplayDeleteConfirmation(int personId)
