@@ -4,6 +4,7 @@ using CurrieTechnologies.Razor.SweetAlert2;
 using MauiBlazorApp.Pages;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
+using Blazored.Modal;
 
 namespace MauiBlazorApp
 {
@@ -32,7 +33,8 @@ namespace MauiBlazorApp
 
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddSweetAlert2();
-         
+            builder.Services.AddBlazoredModal();
+
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();

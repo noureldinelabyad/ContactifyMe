@@ -1,10 +1,8 @@
 using BlazorApp.Data;
-using BlazorApp.Pages;
+using Blazored.Modal;
 using CommonCode.Services;
 using CurrieTechnologies.Razor.SweetAlert2;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using static BlazorApp.Pages.Index;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +20,7 @@ builder.Services.AddScoped<Radzen.DialogService>();
 
 builder.Services.AddSweetAlert2();
 
+builder.Services.AddBlazoredModal();
 
 
 

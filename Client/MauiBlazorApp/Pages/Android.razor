@@ -2,12 +2,14 @@
 @using CommonCode.Models
 @using CommonCode.Services
 @using CurrieTechnologies.Razor.SweetAlert2;
+@using Blazored.Modal
 
 
 @inject SweetAlertService Swal    // sweet alert call it Swal
 @inject CommonCode.Services.IPersonService PersonService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager;
+@inject IModalService Modal
 
 <head>
 
@@ -72,11 +74,6 @@
         <tbody>
             @foreach (var person in searchResults)
             {
-                @*                     <tr @onclick="@( () => DisplayOption(person) )">
-
-        *@
-                @*                     <tr @onclick="@( () => DisplayOption(person) )">
-        *@
                 <tr @onclick="@(() => DisplayDetails(person.Id))">
                     <td>@person.Nachname</td>
                     <td>@person.Vorname</td>
@@ -99,17 +96,15 @@ else
         {
             <div class="card">
                 <div class="card-body">
+
                     <div class="person-item" @onclick="@(() => DisplayDetails(person.Id))">
+
+                        @*  <div class="person-item" @onclick="@(() => Modal.Show<PersonDisplay>(" ", new ModalParameters { { "Id", person.Id } }))"> *@
 
                         <div class="person-name">
                             <span class="person-vorname">@person.Vorname</span>
                             <span class="person-nachname">@person.Nachname</span>
                         </div>
-
-                        @* @foreach (var telefonnummer in person.PersonNummern)
-                {
-                <div>@telefonnummer.TelNummer</div>
-                } *@
 
                         @if (person.PersonNummern.Any())
                         {
@@ -129,6 +124,13 @@ else
                 </div>
             </div>
         }
+
+@* 
+        <CascadingBlazoredModal>
+
+        </CascadingBlazoredModal> *@
+
+
     </div>
 }
 

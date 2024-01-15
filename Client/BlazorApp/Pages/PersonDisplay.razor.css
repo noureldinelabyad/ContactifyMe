@@ -1,43 +1,34 @@
 ﻿
 .page {
     background-color: transparent;
-    vertical-align: auto;
-    display: grid;
-    justify-content: center;
-    height: fit-content;
-    margin-top: 50px;
-    font-size: 13px;
-
+    color: #17324D;
+    place-items: center;
+    text-align: start;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .pagetitle {
-}
-.editdiv {
-    width: 100%;
-    display :flex;
-    justify-content: space-between;
-}
-.editbtn {
-    background-color: #00CC66;
-    color: white;
-    border: 1px solid #ccc;
-    font-size: 18px;
-    margin: 10px;
-    padding: 10px;
-    justify-content:flex-end;
+    left: 0;
 }
 
-.card {
-    border: 1px solid #ccc;
-    border-radius: 1px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width:100%;
-   
-    
+.editdiv {
+    width: 100%;
+    top:0;
+    left:0;
+ 
 }
+
+
+.card {
+    margin: 20px;
+    border: none;
+}
+
     .card :nth-child(2n+1) {
         margin: 5px;
-        
     }
 
 .card-body {
@@ -47,8 +38,9 @@
 .card-title {
     font-size: 1.25rem;
     margin-bottom: 10px;
-    display:flex;
-    justify-content:center;
+    display: flex;
+    justify-content: flex-start;
+    font: bold;
 }
 
 .list-group-item {
@@ -67,6 +59,21 @@
 strong {
     font-weight: bold;
     justify-content: start;
+}
+
+.btndiv {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.editbtn {
+    background-color: #00CC66;
+    color: white;
+    border: 1px solid #ccc;
+    font-size: 18px;
+    margin: 10px;
+    padding: 10px;
 }
 
 .deletebtn {

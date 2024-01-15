@@ -8,63 +8,57 @@
 @inject NavigationManager NavManager
 @inject NavigationManager NavigationManager
 @inject SweetAlertService Swal    // sweet alert call it Swal
+@inject IModalService Modal
 
 
 <div class="page">
 
-    <h3>Person Details</h3>
     @if (personDetail != null)
     {
-        <div class="text-center mb-4">
-            <h4>Contact Details</h4>
+        <div class="editdiv">
+            <h3 class="pagetitle">Personen Daten</h3>
+
+            <button @onclick="(Action)(() => UpdatePersonDetails())" class="editbtn">Bearbeiten</button>
         </div>
 
         <div class="card mb-4">
             <div class="card-body">
-                <h5 class="card-title">Name</h5>
+                <h5 class="card-title">Personenbezogene Daten</h5>
                 <div><strong>Vorname:</strong> @personDetail.Vorname</div>
                 <div><strong>Nachname:</strong> @personDetail.Nachname</div>
                 <div><strong>Zwischenname:</strong> @personDetail.Zwischenname</div>
+                <div><strong>Geschlecht:</strong> @personDetail.Gender</div>
+
             </div>
         </div>
 
         <div class="card bg-light mb-4">
             <div class="card-body">
-                <h5 class="card-title">Contact Information</h5>
-                <div><strong>Email:</strong> @personDetail.Email</div>
-                <div>
-                    @if (PersonNummern != null)
-                    {
-                        foreach (var TelNummer in PersonNummern)
-                        {
-                            <div>@TelNummer</div>
-                        }
-                    }
-                </div>
-            </div>
-        </div>
-
-        <div class="card bg-light mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Address</h5>
-                <div><strong>Strasse:</strong> @personDetail.Strasse</div>
-                <div><strong>Hausnummer:</strong> @personDetail.Hausnummer</div>
-                <div><strong>PLZ:</strong> @personDetail.PLZ</div>
-                <div><strong>Stadt:</strong> @personDetail.Stadt</div>
+                <h5 class="card-title">Adresse</h5>
+                <h5 class="card-title">Adresse</h5>
+                <div><strong>Strasse, Nr:</strong> @personDetail.Strasse  @personDetail.Hausnummer </div>
+                <div><strong>Stadt,PLZ:</strong> @personDetail.Stadt @personDetail.PLZ </div>
                 <div><strong>Land:</strong> @personDetail.Land</div>
             </div>
         </div>
 
         <div class="card bg-light mb-4">
             <div class="card-body">
-                <h5 class="card-title">Additional Information</h5>
-                <div><strong>Gender:</strong> @personDetail.Gender</div>
+                <h5 class="card-title">Kontakt</h5>
+                <div><strong>Email:</strong> @personDetail.Email</div>
+                <div>
+                    @if (PersonNummern != null)
+                    {
+                        foreach (var TelNummer in PersonNummern)
+                        {
+                            <div><strong>Telefonnummer:</strong> @TelNummer</div>
+                        }
+                    }
+                </div>
             </div>
         </div>
 
-        <button @onclick="(Action)(() => UpdatePersonDetails())" class="mt-3 btn btn-primary mx-1">Edit</button>
-
-        <button @onclick="(Action)(() => DisplayDeleteConfirmation(personDetail.Id))" class="mt-3 btn btn-primary mx-1">Delete</button>
+        <button @onclick="(Action)(() => DisplayDeleteConfirmation(personDetail.Id))" class="deletebtn">Löschen</button>
 
     }
     else

@@ -2,68 +2,64 @@
 @using CommonCode.Models
 @using CommonCode.Services
 @using CurrieTechnologies.Razor.SweetAlert2;
+@using Blazored.Modal.Services
 
-@inject IPersonService PersonService;
+
+@inject CommonCode.Services.IPersonService PersonService
 @inject NavigationManager NavManager
 @inject NavigationManager NavigationManager
 @inject SweetAlertService Swal    // sweet alert call it Swal
+@inject IModalService Modal
 
 
+<div class="editdiv">
+    <h3 class="pagetitle"><strong>Personen Daten</strong></h3>
+</div>
 <div class="page">
 
-    <h3>Person Details</h3>
     @if (personDetail != null)
     {
-        <div class="text-center mb-4">
-            <h4>Contact Details</h4>
-        </div>
 
-        <div class="card mb-4">
+        <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Name</h5>
+                <h5 class="card-title"><strong> Personenbezogene Daten</strong></h5>
                 <div><strong>Vorname:</strong> @personDetail.Vorname</div>
                 <div><strong>Nachname:</strong> @personDetail.Nachname</div>
                 <div><strong>Zwischenname:</strong> @personDetail.Zwischenname</div>
+                <div><strong>Geschlecht:</strong> @personDetail.Gender</div>
+
             </div>
         </div>
 
-        <div class="card bg-light mb-4">
+        <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Contact Information</h5>
+                <h5 class="card-title"><strong>Adresse</strong></h5>
+                <div><strong>Strasse, Nr:</strong> @personDetail.Strasse  @personDetail.Hausnummer </div>
+                <div><strong>Stadt,PLZ:</strong> @personDetail.Stadt @personDetail.PLZ </div>
+                <div><strong>Land:</strong> @personDetail.Land</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"> <strong>Kontakt</strong></h5>
                 <div><strong>Email:</strong> @personDetail.Email</div>
                 <div>
                     @if (PersonNummern != null)
                     {
                         foreach (var TelNummer in PersonNummern)
                         {
-                            <div>@TelNummer</div>
+                            <div><strong>Telefonnummer:</strong> @TelNummer</div>
                         }
                     }
                 </div>
             </div>
         </div>
 
-        <div class="card bg-light mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Address</h5>
-                <div><strong>Strasse:</strong> @personDetail.Strasse</div>
-                <div><strong>Hausnummer:</strong> @personDetail.Hausnummer</div>
-                <div><strong>PLZ:</strong> @personDetail.PLZ</div>
-                <div><strong>Stadt:</strong> @personDetail.Stadt</div>
-                <div><strong>Land:</strong> @personDetail.Land</div>
-            </div>
+        <div class="btndiv">
+            <button @onclick="(Action)(() => DisplayDeleteConfirmation(personDetail.Id))" class="deletebtn">Löschen</button>
+            <button @onclick="(Action)(() => UpdatePersonDetails())" class="editbtn">Bearbeiten</button>
         </div>
-
-        <div class="card bg-light mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Additional Information</h5>
-                <div><strong>Gender:</strong> @personDetail.Gender</div>
-            </div>
-        </div>
-
-        <button @onclick="@(e => UpdatePersonDetails())" class="mt-3 btn btn-primary mx-1">Edit</button>
-
-        <button @onclick="@(e => DisplayDeleteConfirmation(personDetail.Id))" class="mt-3 btn btn-primary mx-1">Delete</button>
 
     }
     else
@@ -72,49 +68,13 @@
     }
 </div>
 
-<style>
-
-    .page {
-        background-color: gray;
-    }
-
-    .card {
-        margin: 20px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-body {
-        padding: 20px;
-    }
-
-    .card-title {
-        font-size: 1.25rem;
-        margin-bottom: 10px;
-    }
-
-    .list-group-item {
-        padding: 8px 0;
-        border: none;
-    }
-
-        .list-group-item:first-child {
-            border-top: none;
-        }
-
-        .list-group-item:last-child {
-            border-bottom: none;
-        }
-
-    strong {
-        font-weight: bold;
-    }
-</style>
 
 @code {
 
-    private List<string?> PersonNummern = new List<string?>(); 
+    //private List<PersonModel.Telefonnummer> PersonNummern = new List<PersonModel.Telefonnummer>();
+
+    private List<string> PersonNummern = new List<string>(); // Assuming phone numbers are strings
+
     private PersonModel? personDetail;
 
     [Parameter]
@@ -131,6 +91,7 @@
     private string? Land;
     private string? gender;
 
+
     private void SetGender(string gender)
     {
         this.gender = gender;
@@ -139,28 +100,21 @@
     protected override async Task OnInitializedAsync()
     {
         personDetail = await PersonService.GetPersonDetailById(Id);
-
-        if (personDetail != null && personDetail.Id > 0)
+        if (Id > 0)
         {
             var existingPersonDetail = await PersonService.GetPersonDetailById(Id);
-
             if (existingPersonDetail?.Id > 0)
             {
                 Nachname = existingPersonDetail.Nachname;
                 Vorname = existingPersonDetail.Vorname;
                 Zwischenname = existingPersonDetail.Zwischenname;
                 Email = existingPersonDetail.Email;
-
-                if (personDetail.PersonNummern != null && personDetail.PersonNummern.Any())
+                if (personDetail?.PersonNummern != null && personDetail.PersonNummern.Any())
                 {
-                    PersonNummern = personDetail.PersonNummern.Select(tn => tn.TelNummer).ToList();
+                    PersonNummern = personDetail.PersonNummern.Select(tn => tn.TelNummer!).ToList();
                 }
-
                 Hausnummer = existingPersonDetail.Hausnummer;
-
-                // Check if PLZ is not null before calling ToString()
-                PLZ = existingPersonDetail.PLZ?.ToString();
-
+                PLZ = existingPersonDetail.PLZ!.ToString();
                 Stadt = existingPersonDetail.Stadt;
                 Land = existingPersonDetail.Land;
                 gender = existingPersonDetail.Gender;
@@ -170,7 +124,7 @@
 
     private void UpdatePersonDetails()
     {
-        NavManager.NavigateTo($"updatePerson/{personDetail?.Id}");
+        NavManager.NavigateTo($"updatePerson/{personDetail!.Id}");
     }
 
     private async void DisplayDeleteConfirmation(int personId)
@@ -194,6 +148,8 @@
                     ConfirmButton = "my-custom-confirm-button-class",
                     CancelButton = "my-custom-cancel-button-class"
                 }
+
+
             });
 
         var confrim = !string.IsNullOrEmpty(result.Value); // if value ture means that user clikced on conferm btn.
@@ -238,5 +194,6 @@
             }
         }
     }
+
 
 }
