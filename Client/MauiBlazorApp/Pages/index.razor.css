@@ -1,19 +1,20 @@
-﻿
+﻿.personList {
+    font: normal bold 30px/38px Arial;
+    color: #17324D;
+}
+
 .header {
     padding: 10px 16px;
     background: white;
     width: 100%;
     padding-bottom: 20px;
     top: 0;
-    z-index: 20;
+    z-index: 2;
     position: fixed;
     margin-left: -20px;
+    padding-top: 35px;
 }
 
-.personList {
-    font: normal bold 30px/38px Arial;
-    color: #17324D;
-}
 
 .search-bar-container {
     padding-top: 20px;
@@ -72,7 +73,7 @@
 .search-dropdown {
     margin-top: 150px;
     position: sticky;
-    z-index: 2;
+    z-index: 0;
 }
 
 
@@ -113,7 +114,6 @@
     font: normal normal bold 30px/38px;
     text-align: left;
     font-size: large;
-    z-index: 3; /* Bring the elements to the front */
     display: block;
 }
 
@@ -209,14 +209,15 @@
 
 
 .loading {
-    z-index: 30;
+    z-index: 4;
     margin: 250px;
 }
 
 .table-page {
     display: block;
     width: 100%;
-    margin-top: 150px;
+    margin-top: 175px;
+    z-index: 0;
 }
 
 .table-container {
@@ -228,7 +229,7 @@
     background-color: #D4DEE7;
     border: hidden;
     flex: 1;
-    table-layout: auto ;
+    table-layout: auto;
 }
 
     .table th,
@@ -242,18 +243,18 @@
     }
 
     .table td {
-        border: 1px solid #17324D;
+        border: 1px solid #FFFFFF;
         padding: 15px;
     }
 
     .table tr:nth-child(even) {
-        @* background-color: #FFFFFF;
-        *@ background-color: red;
+        background-color: #FFFFFF;
     }
 
     .table tr {
         border: hidden;
         width: 100%;
+        font-size: 15px;
     }
 
 .table-head {
@@ -262,7 +263,7 @@
     position: sticky;
     z-index: 1;
     color: #FFFFFF;
-    top: 150px; /* Fixed position */
+    top: 175px; /* Fixed position */
 }
 
 .table-body {
@@ -283,16 +284,16 @@
     background-color: #00CC66;
     font-size: 20px;
     position: sticky;
-    z-index: 2;
+    z-index: 0;
     color: #FFFFFF;
     width: 100%;
-    top: 150px; /* Fixed position */
+    top: 175px; /* Fixed position */
 }
 
 .table-body-s {
     font-size: 20px;
     color: #17324D;
-    z-index: 1;
+    z-index: 0;
     width: 100%;
 }
 

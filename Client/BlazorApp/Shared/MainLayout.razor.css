@@ -27,16 +27,13 @@
 }
     
 
-
-
-
 @media (max-width: 729px) {
 
     .sidebar {
         width: 100% !important;
         height: fit-content;
-        position: sticky;
-        z-index: 2;
+        position: fixed;
+        z-index: 3;
     }
 }
 
@@ -47,7 +44,7 @@
     }
 
     .sidebar {
-        width: 100%;
+        transition: width 0.3s; /* Add a smooth transition effect */
     }
 
 
@@ -58,5 +55,8 @@
     }
 }
 
+/* Style when sidebar width is 50px or ToggleBkColorTriger is triggered */
 
-
+.sidebar[style*="width: 50px;"] {
+    background-color: red;
+}

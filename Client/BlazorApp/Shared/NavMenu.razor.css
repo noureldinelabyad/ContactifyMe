@@ -12,7 +12,7 @@
 }
 
 .hide-show-btn {
-    background-color: greenyellow;
+    background-color: transparent;
     height: 30px;
     width: 30px;
     justify-content: end;
@@ -82,10 +82,10 @@ body {
     }
 
         .nav-item ::deep a.active {
-/*            background-color: rgba(255,255,255,0.25);
-*/
-          background-color: aqua;
+            background-color: rgba(255,255,255,0.25);
 
+/*          background-color: aqua;
+*/
             color: #00CC66;
         }
 
@@ -95,23 +95,32 @@ body {
         }
 
 
+    @media (max-width: 730px) {
 
+        .mav {
+    
+        }
 
-@media (main-width: 730px) {
-    .mav {
-        background-color: red;
+        .collapse {
+            transition: 0.6s; /* smooth transition effect */
+            animation: growDown 300ms ease-in-out forwards;
+            transform-origin: top center;
+        }
+
+        .hide-show-btn {
+            display: none;
+        }
     }
 
-    .nav-text {
-        display: none;
-    }
-}
+
 
 
     @media (min-width: 730px) {
         .navbar-toggler {
             display: none;
         }
+
+
 
         .collapse {
             /* Never collapse the sidebar for wide screens */
@@ -127,5 +136,15 @@ body {
         }
     }
 
+.NavMenuCssClass {
+    background-color: red;
+    transition: 0.6s; /* smooth transition effect */
+    animation: growDown 300ms ease-in-out forwards;
+    transform-origin: top center;
+}
 
+/* Style when sidebar width is 50px or ToggleBkColorTriger is triggered */
 
+.sidebar[style*="width: 50px;"] {
+    background-color: red;
+}

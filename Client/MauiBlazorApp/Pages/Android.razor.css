@@ -1,2 +1,156 @@
-﻿body {
+﻿.page {
+    background-color: white;
+    color: #17324D !important;
+    font-family: Calibri !important;
+}
+
+.personList {
+    font: normal bold 25px/30px Arial;
+    color: #17324D;
+}
+
+.header {
+    background: white;
+    width: 100%;
+    top: 0;
+    z-index: 2;
+    position: sticky;
+    padding-top: 40px;
+    padding-bottom: 20px;
+    margin-bottom: 1px !important;
+}
+
+
+.search-bar-container {
+    padding-top: 20px;
+    position: relative;
+    width: 100%;
+}
+
+.search-bar-wrapper {
+    padding-top: 20px;
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+
+.search-bar {
+    border: 1px solid #B2C2D1;
+    font-size: large;
+    width: 100%;
+    height: 38px;
+    padding-inline: 10px;
+}
+
+    .search-bar::placeholder {
+        color: #748DA6;
+    }
+
+.btn-container {
+    position: absolute;
+    top: 0;
+    right: 0; /* Position buttons on the right */
+    bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+.btn-clear,
+.search-btn {
+    color: #17324D;
+    background-color: transparent;
+    border: none;
+}
+
+.i-clear,
+.i-search {
+    margin-top: 25px;
+}
+
+.i-clear {
+    margin-right: -10px;
+}
+
+.btn-clear:hover {
+    color: red;
+}
+
+.search-btn:hover {
+    color: green;
+}
+
+.search-dropdown {
+    margin-top: 0px;
+    position: sticky;
+    z-index: 0;
+}
+
+
+.names {
+    display: flex;
+    justify-content: center;
+    z-index: 0;
+}
+
+
+.card {
+    border: 1px solid #D4DEE7;
+    border-radius: 2px;
+    opacity:1;
+    box-shadow: 1px 2px 4px #00000029;
+    margin-bottom: 10px;
+    height:110px;
+    justify-content:center;
+}
+
+    .card:nth-child(odd) {
+        background-color: #D4DEE7 !important;
+    }
+
+
+.card-body {
+    font-size:12px;
+}
+        .card-body :nth-child(2n+1){
+            margin-bottom:5px;
+        }
+/*----------------------------------------------------------------     ---------------------------------------------------------------- --------------------------------
+*/
+
+
+.person-nachname {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.person-vorname {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.person-telefonnummer {
+    color: black;
+    font-family: Britannic;
+    font: bold;
+}
+
+.person-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.person-item {
+    padding: 2px;
+}
+
+.divider {
+    border-bottom: 1px solid black;
+    margin-bottom: 0,1px;
+    margin-top: 0px;
+}
+
+.table {
+    z-index: 2;
+    margin-top: -25px;
+    border-bottom: 1px solid;
 }
