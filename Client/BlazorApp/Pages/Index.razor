@@ -488,7 +488,7 @@
         int fullPages = totalRows / rowsPerPage;
         int remainingRows = totalRows % rowsPerPage;
         // If there are remaining rows, add an extra page for them
-        int totalPages = remainingRows > 0 ? fullPages + 1 : fullPages;
+        int totalPages = remainingRows > 0 ? fullPages  : fullPages;
         return totalPages;
     }
 
@@ -605,7 +605,7 @@
 
                 }
 
-                // Add new row every 30 rows for page breaks
+                // Add new row every 45 rows for page breaks
                 if (i > 0 && i % 45 == 0)
                 {
                     headerTable.WidthPercentage = 99;

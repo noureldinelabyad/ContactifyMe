@@ -25,6 +25,7 @@
 
 .arrow {
     transition: var(--transition-props);
+    color:red;
 }
 
     .arrow.reversed {
