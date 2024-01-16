@@ -297,24 +297,26 @@
 
 
 @code {
-
+    // State variables for controlling popups and file import/export
     private bool showPopup = false;
     private bool showExport = false;
     private IBrowserFile? jsonFile;
     private string? jsonContent;
     private string selectedUpdateStrategy = "4"; // Default to "update"
 
+    // Toggles the visibility of the main popup
     private void OpenPopup()
     {
         showPopup = !showPopup; // Toggle showPopup between true and false
-
     }
 
+    // Toggles the visibility of the export popup
     private void OpenExport()
     {
         showExport = !showExport;
     }
 
+    // Handles the selection of a JSON file for import
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
         jsonFile = e.File;
@@ -327,6 +329,7 @@
         }
     }
 
+    // Imports JSON data using the selected update strategy
     private async Task ImportJson()
     {
         var updateStrategy = (UpdateStrategy)Enum.Parse(typeof(UpdateStrategy), selectedUpdateStrategy);
@@ -337,13 +340,14 @@
 
             if (result.Success)
             {
-                // Import successful, handle UI updates or redirection
-                //  show a success message or refresh the UI
                 // redirect to the list page after import
                 NavManager.NavigateTo("/");
                 showPopup = false;
+
                 // Reload or refresh the page
                 NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
+
+                //show popup
                 await Swal.FireAsync(new SweetAlertOptions
                     {
                         Title = "Import Succesed",
@@ -353,9 +357,7 @@
             }
             else
             {
-                // Import failed, handle error
-                //  show an error message to the user
-                // display a modal or toast with the error message
+                // display a (popup)  with the error message
                 await Swal.FireAsync(new SweetAlertOptions
                     {
                         Title = "Import Failed",
@@ -376,16 +378,21 @@
         }
     }
 
+    //navigate to Person display
     private void DisplayDetails(int id)
     {
-        NavManager.NavigateTo($"/personDisplay/{id}");     //navigate to Person display
+        NavManager.NavigateTo($"/personDisplay/{id}");
     }
 
+    // List of PersonModel objects
     List<PersonModel> PersonList = new List<PersonModel>();
+
+    // Search-related properties
     private string searchText = string.Empty;
     private List<PersonModel>? allPersons;
     private List<PersonModel>? searchResults;
 
+    // Initializes the component and fetches the list of persons
     protected override async Task OnInitializedAsync()
     {
         allPersons = await PersonService.GetAllPersonsList();
@@ -393,6 +400,7 @@
 
     }
 
+    // Downloads the list of persons as a JSON file
     private async Task DownloadAsJson()
     {
         try
@@ -488,10 +496,11 @@
         int fullPages = totalRows / rowsPerPage;
         int remainingRows = totalRows % rowsPerPage;
         // If there are remaining rows, add an extra page for them
-        int totalPages = remainingRows > 0 ? fullPages  : fullPages;
+        int totalPages = remainingRows > 0 ? fullPages : fullPages;
         return totalPages;
     }
 
+    // Downloads the list of persons as a PDF file
     private async Task DownloadAsPdf()
     {
         var pgSize = new iTextSharp.text.Rectangle(141.732f, 141.732f);
@@ -645,6 +654,7 @@
         }
     }
 
+    // Replaces Unicode escape sequences in a string
     private string ReplaceUnicodeEscapeSequences(string input)
     {
         return Regex.Replace(input, @"\\u(?<Value>[a-zA-Z0-9]{4})", m =>
@@ -653,18 +663,21 @@
         });
     }
 
+    // Clears search text and results
     private void ClearSearchText()
     {
         searchResults = null;      //hide the search results
         searchText = "";           //delete the search txt
     }
 
+    // Handles changes in the search text
     private void HandleSearchTextChanged(ChangeEventArgs e)
     {
         searchText = e.Value?.ToString() ?? string.Empty;
         HandleSearch();
     }
 
+    // Filters and updates search results based on the search text
     private void HandleSearch()
     {
         if (!string.IsNullOrWhiteSpace(searchText))
@@ -673,9 +686,18 @@
 
             // Filter persons based on search text
             searchResults = PersonList?
-            .Where(person =>
-                (person.Vorname + " " + person.Nachname + person.Email + " " + person.Strasse + " " + person.Hausnummer + " " + person.Stadt + " " + person.PLZ + " " + person.Land)
-                    .IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+            .Where(
+                    person => (
+                               person.Vorname + " " +
+                               person.Nachname + person.Email + " " + 
+                               person.Strasse + " " +
+                               person.Hausnummer + " " + 
+                               person.Stadt + " " +
+                               person.PLZ + " " +
+                               person.Land
+                               )
+                    .IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0
+                 )
 
             .ToList();
 
@@ -698,6 +720,7 @@
         }
     }
 
+    // Handles the search button click
     private async Task BtnSearch_Clicked()
     {
         if (!string.IsNullOrEmpty(searchText))
@@ -741,12 +764,13 @@
         }
     }
 
+    // Displays the update page for a person
     private void DisplayUpdate(int personId)
     {
         NavManager.NavigateTo($"updatePerson/{personId}");
-
     }
 
+    // Displays options (update/delete) for a perso
     private async Task DisplayOption(MouseEventArgs e, PersonModel personDetail)
     {
         var result = await Swal.FireAsync(new SweetAlertOptions
@@ -779,6 +803,7 @@
         }
     }
 
+    // Displays delete confirmation and handles the deletion
     private async void DisplayDeleteConfirmation(int personId, PersonModel personDetail)
     {
         var result = await Swal.FireAsync(new SweetAlertOptions
@@ -827,7 +852,6 @@
                             }
                         });
                 }
-
             }
             else
             {

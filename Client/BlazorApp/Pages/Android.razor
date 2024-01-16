@@ -140,78 +140,70 @@
 </div>
 
 @code {
-
+    // Handles navigation to the person's details page
     private void DisplayDetails(int id)
     {
         NavManager.NavigateTo($"/personDisplay/{id}");
     }
 
-
+    // Clears the search text and resets search results
     private void ClearSearchText()
     {
         searchText = "";
         searchResults = null;
     }
 
+    // List of PersonModel objects
     List<PersonModel>? PersonList;
 
+    // Search-related properties
     private string searchText = string.Empty;
     private List<PersonModel>? allPersons;
     private List<PersonModel>? searchResults;
 
+    // Initializes the component and fetches the list of persons
     protected override async Task OnInitializedAsync()
     {
         allPersons = await PersonService.GetAllPersonsList();
-
         PersonList = await PersonService.GetAllPersonsList();
-
     }
 
+    // Handles changes in the search text
     private void HandleSearchTextChanged(ChangeEventArgs e)
     {
         searchText = e.Value?.ToString() ?? string.Empty;
         HandleSearch();
     }
 
+    // Filters and updates search results based on the search text
     private void HandleSearch()
     {
         if (!string.IsNullOrWhiteSpace(searchText))
         {
             searchResults = allPersons?
-            // .Where(person => person.Nachname.Contains(searchText) || person.Vorname.Contains(searchText))
-            // .ToList();
-            .Where(person =>
-            person.Nachname?.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0
-            || person.Vorname?.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
-            .ToList();
+                .Where(person =>
+                    person.Nachname?.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0
+                    || person.Vorname?.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                .ToList();
         }
         else
         {
             searchResults = null; // Set it to null when search text is empty
-
         }
     }
 
+    // Handles the search button click
     private async void BtnSearch_Clicked()
     {
         string searchText = this.searchText;
 
         if (!string.IsNullOrEmpty(searchText))
         {
-            // var results = await PersonService.SearchPersonsByName(searchText);
+            bool addContact = await JSRuntime.InvokeAsync<bool>("confirm", $"Contact with name '{searchText}' does not exist. Do you want to add it?");
 
-            // if (results.Count > 0)
-            // {
-            //     searchResults = results;
-            // }
-            // else
+            if (addContact)
             {
-                bool addContact = await JSRuntime.InvokeAsync<bool>("confirm", $"Contact with name '{searchText}' does not exist. Do you want to add it?");
-
-                if (addContact)
-                {
-                    NavManager.NavigateTo($"addPerson?name={searchText}");
-                }
+                NavManager.NavigateTo($"addPerson?name={searchText}");
             }
         }
         else
@@ -220,22 +212,19 @@
         }
     }
 
-
+    // Navigates to the update person page
     private void DisplayUpdate(int personId)
     {
         NavManager.NavigateTo($"updatePerson/{personId}");
     }
 
+    // Displays a confirmation dialog before deleting a person
     private async void DisplayDeleteConfirmation(int personId)
     {
         bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this person?");
         if (confirmed)
         {
-            var deleteresponse = await PersonService.DeletePerson(personId
-                // {
-                //     Id = personId
-                // }
-                );
+            var deleteresponse = await PersonService.DeletePerson(personId);
 
             if (deleteresponse.Success)
             {
@@ -245,29 +234,7 @@
         }
     }
 
-    // private async void DisplayOption(PersonModel personDetail)
-    // {
-
-    //     //     // var response = await App.Current.MainPage.DisplayActionSheet("Select Option", "Ok", null, "Update Contact", "Delete Contact");
-
-    //     //     // if (response == "Update Contact")
-
-    //     //     // {
-    //     //     //     NavManager.NavigateTo($"updatePerson/{personDetail.Id}");
-
-    //     //     // }
-    //     //     // else if (response == "Delete Contact")
-
-    //     //     // {
-
-    //     //     //        DisplayDeleteConfirmation(personDetail.Id);
-
-
-
-
-    // }
-
-
+    // Invokes the OnConfirmation event for delete confirmation
     [Parameter] public EventCallback<bool> OnConfirmation { get; set; }
 
     private async Task ConfirmDelete()

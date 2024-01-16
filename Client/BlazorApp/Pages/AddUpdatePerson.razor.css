@@ -1,0 +1,65 @@
+﻿
+.page {
+    background-color: transparent;
+    color: #17324D;
+    place-items: center;
+    text-align: start;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: Calibri !important;
+}
+
+.pagetitle {
+    left: 0;
+}
+
+.editdiv {
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+
+.card {
+    margin: 20px;
+    border: none;
+}
+
+.input-group{
+}
+
+.my-custom-popup-class {
+    background-color: #1E314B !important;
+    border-radius: 20px !important;
+    border-block: 20px white solid;
+    padding-bottom: 10px;
+    box-shadow: initial;
+    color: white !important; /* White text color */
+    font-size: 20px !important;
+    font-weight: bold !important;
+}
+
+.my-custom-title-class {
+    color: #fff !important; /* White text color */
+}
+
+.my-custom-confirm-button-class {
+    background-color: blue !important; /* Blue button color */
+    font-size: 20px !important;
+    padding: 1px,1px,1px,1px !important;
+    font-weight: bold;
+}
+
+.my-custom-cancel-button-class {
+    background-color: red !important; /* Red button color */
+    font-size: 20px !important;
+    padding: 1px,1px,1px,1px !important;
+    font-weight: bold;
+}
+
+.Icon-popup {
+    color: red !important;
+}
+
