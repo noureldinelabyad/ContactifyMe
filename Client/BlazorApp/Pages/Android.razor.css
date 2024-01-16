@@ -1,9 +1,25 @@
 ﻿.page {
     background-color: white;
     color: #17324D !important;
-    font-family: Calibri !important;
+    width: 500%; /* Set a maximum width for the page */
+    margin: 0 auto; /* Center the page horizontally */
+    /* Add padding or other styles as needed */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
+    .page -div {
+        display: grid;
+        justify-content: center !important;
+    }
+
+/* Add a media query for smaller screens */
+@media only screen and (max-width: 768px) {
+    .page {
+        /* Adjust styles for smaller screens */
+        width: 100%; /* You can set a different width or 100% for full width */
+    }
+}
 .personList {
     font: normal bold 25px/30px Arial;
     color: #17324D;
@@ -90,6 +106,7 @@
     display: flex;
     justify-content: center;
     z-index: 0;
+    
 }
 
 
